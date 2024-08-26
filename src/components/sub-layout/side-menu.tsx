@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import sideMenuStyle from './index.module.less';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 export interface MenuItem {
   label: string;
@@ -12,18 +13,27 @@ export interface MenuItem {
 
 interface SideMenuProps {
   menuItems: MenuItem[];
+  children?: React.ReactNode;
+  showBackButton?: boolean;
+  onBackButtonClick?: () => void;
 }
 
-const SideMenu: React.FC<SideMenuProps> = ({ menuItems }) => {
+const SideMenu: React.FC<SideMenuProps> = ({ 
+  menuItems, 
+  children, 
+  showBackButton = true, 
+  onBackButtonClick 
+}) => {
   const pathname = usePathname();
 
   return (
-    <aside className={`w-[216px] border-r pr-4 flex flex-col ${sideMenuStyle.sideMenu}`}>
-      <div className="p-4 text-gray-600">
-        <h2 className="text-lg font-semibold">Menu Introduction</h2>
-        <p className="text-sm">This is a brief introduction about the menu.</p>
-      </div>
-      <nav className={`flex-1 rounded-md ${sideMenuStyle.nav}`}>
+    <aside className={`w-[216px] pr-4 flex flex-col h-full ${sideMenuStyle.sideMenu}`}>
+      {children && (
+        <div className={`p-4 rounded-md mb-3 ${sideMenuStyle.introduction}`}>
+          {children}
+        </div>
+      )}
+      <nav className={`flex-1 relative rounded-md ${sideMenuStyle.nav}`}>
         <ul className="p-3">
           {menuItems.map((item) => (
             <li key={item.path} className={`rounded-md mb-1 ${pathname === item.path ? sideMenuStyle.active : ''}`}>
@@ -33,6 +43,14 @@ const SideMenu: React.FC<SideMenuProps> = ({ menuItems }) => {
             </li>
           ))}
         </ul>
+        {showBackButton && (
+          <button
+            className="absolute bottom-4 left-4 flex items-center py-2 rounded-md text-sm"
+            onClick={onBackButtonClick}
+          >
+            <ArrowLeftOutlined className="mr-2" />
+          </button>
+        )}
       </nav>
     </aside>
   );

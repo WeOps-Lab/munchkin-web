@@ -1,6 +1,6 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { HomeFilled, AlertFilled } from '@ant-design/icons';
+import { HomeFilled, BookOutlined } from '@ant-design/icons';
 import { ComponentType } from 'react';
 import Image from 'next/image';
 import UserInfo from '../user-info';
@@ -13,7 +13,7 @@ interface IconComponentProps {
 
 const iconMap: { [key: string]: ComponentType } = {
   HomeFilled,
-  AlertFilled,
+  BookOutlined,
 };
 
 const TopMenu = () => {
@@ -23,7 +23,7 @@ const TopMenu = () => {
   // 菜单项配置
   const menuItems = [
     { label: t('home'), icon: 'HomeFilled', path: '/' },
-    { label: t('menu.log'), icon: 'AlertFilled', path: '/about' },
+    { label: t('knowledge'), icon: 'BookOutlined', path: '/knowledge' },
   ];
 
   return (

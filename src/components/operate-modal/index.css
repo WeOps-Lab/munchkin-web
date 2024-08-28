@@ -1,0 +1,19 @@
+.custom-modal-content {
+    padding: 0 0 20px 0 !important;
+}
+
+.custom-modal-footer,
+.custom-modal-body {
+    padding: 0 24px !important;
+}
+
+.custom-modal-header {
+    background: #eff7ff !important;
+    font-weight: 600;
+    font-size: 16px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px !important;
+    margin-bottom: 20px !important;
+}

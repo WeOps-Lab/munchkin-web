@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, ModalProps } from "antd";
-import "./index.css";
+import customModalStyle from "./index.module.less";
 
 interface CustomModalProps
   extends Omit<ModalProps, "title" | "footer" | "centered" | "subTitle"> {
@@ -19,12 +19,12 @@ const OperateModal: React.FC<CustomModalProps> = ({
 }) => {
   return (
     <Modal
-      className="customModal"
+      className={customModalStyle.customModal}
       classNames={{
-        body: "custom-modal-body",
-        header: "custom-modal-header",
-        footer: "custom-modal-footer",
-        content: "custom-modal-content",
+        body: customModalStyle.customModalBody,
+        header: customModalStyle.customModalHeader,
+        footer: customModalStyle.customModalFooter,
+        content: customModalStyle.customModalContent,
       }}
       title={
         <>

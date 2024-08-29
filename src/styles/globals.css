@@ -73,6 +73,10 @@
 body {
   color: var(--color-components-nav-button-text);
   background: var(--color-background-body);
+  background-image: url('/system-bg.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 html:not(.dark) body {

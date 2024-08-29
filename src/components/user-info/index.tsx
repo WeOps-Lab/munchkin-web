@@ -3,11 +3,13 @@ import { Dropdown, Space, Menu, Avatar } from 'antd';
 import { signOut, useSession } from 'next-auth/react';
 import { DownOutlined } from '@ant-design/icons';
 import SettingsModal from './settings';
+import ConfigurationsModal from './configurations';
 
 const UserInfo = () => {
   const { data: session } = useSession();
   const username = session?.user?.name || 'Qiu-Jia';
   const [visible, setVisible] = useState<boolean>(false);
+  const [configurationsVisible, setConfigurationsVisible] = useState<boolean>(false);
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });
@@ -17,17 +19,29 @@ const UserInfo = () => {
     setVisible(true);
   };
 
+  const handleConfigurations = () => {
+    setConfigurationsVisible(true);
+  };
+
+
   const items: Array<{ label: JSX.Element; key: string } | { type: 'divider' }> = [
     {
-      label: <a onClick={handleSettings}>Settings</a>,
+      label: <a onClick={handleConfigurations}>Configurations</a>,
       key: '0',
     },
     {
       type: 'divider',
     },
     {
-      label: <a onClick={handleLogout}>Logout</a>,
+      label: <a onClick={handleSettings}>Settings</a>,
       key: '1',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      label: <a onClick={handleLogout}>Logout</a>,
+      key: '2',
     },
   ];
 
@@ -54,6 +68,9 @@ const UserInfo = () => {
       <SettingsModal 
         visible={visible} 
         onClose={() => setVisible(false)} />
+      <ConfigurationsModal 
+        visible={configurationsVisible} 
+        onClose={() => setConfigurationsVisible(false)} />
     </div>
   );
 };

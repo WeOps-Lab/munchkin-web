@@ -1,20 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Input, Dropdown, Menu } from 'antd';
-import { FileAddOutlined, BookOutlined, MoreOutlined } from '@ant-design/icons';
-import classNames from 'classnames';
+import { useRouter } from 'next/navigation';
+import { Input, Dropdown, Menu, Modal, message } from 'antd';
 import Icon from '@/components/icon';
-import knowledgeStyle from './index.module.less'
-
-const { Search } = Input;
-
-interface Card {
-  id: number;
-  title: string;
-  description: string;
-  owner: string;
-}
+import { KnowledgeValues, Card } from '@/types/knowledge';
+import ModifyKnowledgeModal from './modifyKnowledge';
+import knowledgeStyle from './index.module.less';
 
 const initialCards: Card[] = [
   {
@@ -28,49 +20,72 @@ const initialCards: Card[] = [
     title: 'Understanding React Hooks',
     description: 'An introduction to React Hooks and their usage. An introduction to React Hooks and their usage. An introduction to React Hooks and their usage.',
     owner: 'Jane Smith',
-  },
-  {
-    id: 3,
-    title: 'Understanding React Hooks',
-    description: 'An introduction to React Hooks and their usage. An introduction to React Hooks and their usage. An introduction to React Hooks and their usage.',
-    owner: 'Jane Smith',
-  },
-  {
-    id: 4,
-    title: 'Understanding React Hooks',
-    description: 'An introduction to React Hooks and their usage. An introduction to React Hooks and their usage. An introduction to React Hooks and their usage.',
-    owner: 'Jane Smith',
-  },
+  }
 ];
 
-const getRandomColorClass = () => {
-  const colors = ['bg-purple-100', 'bg-blue-100', 'bg-orange-100'];
-  const randomIndex = Math.floor(Math.random() * colors.length);
-  return colors[randomIndex];
+const iconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
+
+const getRandomIconType = () => {
+  const randomIndex = Math.floor(Math.random() * iconTypes.length);
+  return iconTypes[randomIndex];
 };
 
 const KnowledgePage = () => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [cards, setCards] = useState<Card[]>(initialCards);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingCard, setEditingCard] = useState<null | Card>(null); // 新增这个状态用于编辑
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
   };
 
-  const handleMenuClick = (action: string, cardId: number) => {
-    if (action === 'settings') {
-      console.log(`Settings for card ${cardId}`);
+  const handleAddKnowledge = (values: KnowledgeValues) => {
+    if (editingCard) {
+      // 如果正在编辑，则更新现有卡片
+      setCards(cards.map(card => card.id === editingCard.id ? { ...card, ...values } : card));
+      message.success('Knowledge updated successfully');
+    } else {
+      // 否则新增卡片
+      const newCard: Card = {
+        id: cards.length + 1,
+        title: values.name,
+        description: values.introduction,
+        owner: 'New Owner',
+      };
+      setCards([...cards, newCard]);
+      message.success('Knowledge added successfully');
+    }
+    setIsModalVisible(false);
+    setEditingCard(null); // 清空编辑状态
+  };
+
+  const handleDelete = (cardId: number) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this knowledge?',
+      onOk() {
+        setCards(cards.filter(card => card.id !== cardId));
+        message.success('Knowledge deleted successfully');
+      },
+    });
+  };
+
+  const handleMenuClick = (action: string, card: Card) => {
+    if (action === 'edit') {
+      setEditingCard(card);
+      setIsModalVisible(true);
     } else if (action === 'delete') {
-      setCards(cards.filter(card => card.id !== cardId));
+      handleDelete(card.id);
     }
   };
 
-  const menu = (cardId: number) => (
+  const menu = (card: Card) => (
     <Menu>
-      <Menu.Item key="settings" onClick={() => handleMenuClick('settings', cardId)}>
-        Settings
+      <Menu.Item key="edit" onClick={() => handleMenuClick('edit', card)}>
+        Edit
       </Menu.Item>
-      <Menu.Item key="delete" onClick={() => handleMenuClick('delete', cardId)}>
+      <Menu.Item key="delete" onClick={() => handleMenuClick('delete', card)}>
         Delete
       </Menu.Item>
     </Menu>
@@ -83,29 +98,37 @@ const KnowledgePage = () => {
   return (
     <div className="px-12 mx-auto">
       <div className="flex justify-end mb-4">
-        <Search
+        <Input 
+          size="large"
           placeholder="Search..."
-          onSearch={handleSearch}
-          onChange={(e) => handleSearch(e.target.value)}
-          className="max-w-xs"
+          style={{ width: '350px' }}
+          onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
         />
       </div>
       <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${knowledgeStyle.knowledge}`}>
-        <div className={`p-4 rounded flex items-center justify-center shadow-md ${knowledgeStyle.add}`}>
-          <FileAddOutlined />
-          <Icon type="zhishiku" className="text-2xl" />
+        <div
+          className={`p-4 rounded-xl flex items-center justify-center shadow-md cursor-pointer ${knowledgeStyle.add}`}
+          onClick={() => { setIsModalVisible(true); setEditingCard(null); }} // 清空编辑状态
+        >
+          <Icon type="tianjia" className="text-2xl" />
           <span className="ml-2">Add New</span>
         </div>
         {filteredCards.map((card) => (
-          <div key={card.id} className={`p-4 rounded relative shadow-md ${knowledgeStyle.card}`}>
-            <div className="absolute top-4 right-2">
-              <Dropdown overlay={menu(card.id)} trigger={['click']}>
-                <MoreOutlined className="cursor-pointer" />
+          <div
+            key={card.id}
+            className={`p-4 rounded-xl relative shadow-md cursor-pointer ${knowledgeStyle.card}`}
+            onClick={() => router.push(`/knowledge/detail?id=${card.id}`)} // 跳转到详情页
+          >
+            <div className="absolute top-6 right-2" onClick={(e) => e.stopPropagation()}> {/* 阻止冒泡 */}
+              <Dropdown overlay={menu(card)} trigger={['click']} placement="bottomRight">
+                <div className="cursor-pointer">
+                  <Icon type="sangedian-copy" className="text-xl" />
+                </div>
               </Dropdown>
             </div>
             <div className="flex items-center mb-2">
-              <div className={classNames('rounded-full py-1 px-2', getRandomColorClass())}>
-                <BookOutlined />
+              <div className="rounded-full">
+                <Icon type={getRandomIconType()} className="text-4xl" />
               </div>
               <h3 className="ml-2 text-base font-semibold truncate" title={card.title}>
                 {card.title}
@@ -116,6 +139,12 @@ const KnowledgePage = () => {
           </div>
         ))}
       </div>
+      <ModifyKnowledgeModal
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        onConfirm={handleAddKnowledge}
+        initialValues={editingCard ? { name: editingCard.title, group: 'group1', introduction: editingCard.description } : undefined} // 传递初始值
+      />
     </div>
   );
 };

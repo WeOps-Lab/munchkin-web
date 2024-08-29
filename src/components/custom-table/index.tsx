@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, TableProps } from "antd";
+import customTableStyle from "./index.module.less";
 
 interface CustomTableProps extends Omit<TableProps, "bordered" | "size"> {
   bordered?: boolean;
@@ -12,7 +13,14 @@ const CustomTable: React.FC<CustomTableProps> = ({
   size = "large",
   ...TableProps
 }) => {
-  return <Table bordered={bordered} size={size} {...TableProps} />;
+  return (
+    <Table
+      className={customTableStyle.customTable}
+      bordered={bordered}
+      size={size}
+      {...TableProps}
+    />
+  );
 };
 
 export default CustomTable;

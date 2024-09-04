@@ -9,7 +9,7 @@ export default function KnowledgeDetailPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
-    const targetUrl = `/knowledge/detail/document?${params.toString()}`;
+    const targetUrl = `/knowledge/detail/documents?${params.toString()}`;
     // 执行重定向
     router.push(targetUrl);
   }, [router, searchParams]);

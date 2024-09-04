@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import sideMenuStyle from './index.module.less';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import Icon from '@/components/icon';
+import TaskProgress from './taskProgress'
 
 export interface MenuItem {
   label: string;
@@ -34,6 +35,11 @@ const SideMenu: React.FC<SideMenuProps> = ({
     return `${path}?${params.toString()}`;
   };
 
+  const isActive = (path: string): boolean => {
+    // 判断当前路径是否以菜单项的路径开头
+    return pathname.startsWith(path);
+  };
+
   return (
     <aside className={`w-[216px] pr-4 flex flex-col h-full ${sideMenuStyle.sideMenu}`}>
       {children && (
@@ -44,7 +50,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
       <nav className={`flex-1 relative rounded-md ${sideMenuStyle.nav}`}>
         <ul className="p-3">
           {menuItems.map((item) => (
-            <li key={item.path} className={`rounded-md mb-1 ${pathname === item.path ? sideMenuStyle.active : ''}`}>
+            <li key={item.path} className={`rounded-md mb-1 ${isActive(item.path) ? sideMenuStyle.active : ''}`}>
               <Link legacyBehavior href={buildUrlWithParams(item.path)}>
                 <a className={`group flex items-center h-9 rounded-md py-2 text-sm font-normal px-3`}>
                   {item.icon && <Icon type={item.icon} className="text-xl pr-1.5" />}
@@ -54,6 +60,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
             </li>
           ))}
         </ul>
+        <TaskProgress />
         {showBackButton && (
           <button
             className="absolute bottom-4 left-4 flex items-center py-2 rounded-md text-sm"

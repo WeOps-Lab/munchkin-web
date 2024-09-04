@@ -1,17 +1,17 @@
-FROM node:18-alpine AS deps
+FROM node:20.11.1-alpine AS deps
 WORKDIR /app
 COPY package*.json .
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV
 RUN npm install
 
-FROM node:18-alpine AS builder
+FROM node:20.11.1-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 ADD . .
 RUN npm run build
 
-FROM node:18-alpine
+FROM node:20.11.1-alpine
 WORKDIR /app
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public

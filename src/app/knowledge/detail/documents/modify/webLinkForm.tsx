@@ -5,49 +5,65 @@ const { TextArea } = Input;
 
 interface WebLinkFormProps {
   onFormChange: (isValid: boolean) => void;
+  onFormDataChange: (data: { name: string, link: string, deep: number }) => void;
 }
 
-const WebLinkForm: React.FC<WebLinkFormProps> = ({ onFormChange }) => {
+const WebLinkForm: React.FC<WebLinkFormProps> = ({ onFormChange, onFormDataChange }) => {
   const [form] = Form.useForm();
-  const [name, setName] = useState<string>('');
-  const [link, setLink] = useState<string>('');
-  const [deep, setDeep] = useState<number>(1);
+  const [formData, setFormData] = useState<{ name: string; link: string; deep: number }>({
+    name: '',
+    link: '',
+    deep: 1,
+  });
 
   useEffect(() => {
-    onFormChange(name.trim() !== '' && link.trim() !== '');
-  }, [name, link, onFormChange]);
+    const isValid = formData.name.trim() !== '' && formData.link.trim() !== '';
+    onFormChange(isValid);
+    onFormDataChange(formData);
+  }, [formData, onFormChange, onFormDataChange]);
+
+  const handleInputChange = (field: string, value: any) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
 
   return (
     <div className="px-16">
-      <Form 
-        form={form} 
+      <Form
+        form={form}
         labelCol={{ span: 3 }}
         wrapperCol={{ span: 20 }}
-        onValuesChange={() => onFormChange(name.trim() !== '' && link.trim() !== '')}
+        onValuesChange={() => {
+          const isValid = formData.name.trim() !== '' && formData.link.trim() !== '';
+          onFormChange(isValid);
+          onFormDataChange(formData);
+        }}
       >
         <Form.Item label="Name">
           <Input
             placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formData.name}
+            onChange={(e) => handleInputChange('name', e.target.value)}
           />
         </Form.Item>
         <Form.Item label="Link">
           <TextArea
             placeholder="Link"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
+            value={formData.link}
+            onChange={(e) => handleInputChange('link', e.target.value)}
             rows={3}
           />
         </Form.Item>
         <Form.Item label="Deep">
           <InputNumber
             min={1}
-            value={deep}
+            value={formData.deep}
             style={{ width: '100%' }}
             onChange={(value) => {
               if (value !== null) {
-                setDeep(value);
+                handleInputChange('deep', value);
               }
             }}
           />

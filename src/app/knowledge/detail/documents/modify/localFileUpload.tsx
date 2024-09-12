@@ -1,19 +1,33 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useTranslation } from '@/utils/i18n';
 
 const { Dragger } = Upload;
 
 interface LocalFileUploadProps {
-  onFileChange: (hasFile: boolean) => void;
+  onFileChange: (files: File[]) => void;
 }
 
 const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange }) => {
+  const { t } = useTranslation();
   const [fileList, setFileList] = useState<any[]>([]);
 
   useEffect(() => {
-    onFileChange(fileList.length > 0);
+    const files = fileList.map(file => file.originFileObj).filter(Boolean) as File[];
+    onFileChange(files);
   }, [fileList, onFileChange]);
+
+  const handleBeforeUpload = (file: File) => {
+    const allowedTypes = ['application/zip', 'application/x-rar-compressed', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/plain', 'text/csv'];
+    const isAllowedType = allowedTypes.includes(file.type);
+    if (!isAllowedType) {
+      message.error(`${file.name} is not a supported file type.`);
+    }
+    return isAllowedType;
+  };
 
   return (
     <div className="px-16">
@@ -21,25 +35,17 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange }) => {
         name="file"
         multiple
         fileList={fileList}
+        beforeUpload={handleBeforeUpload}
         onChange={(info) => {
-          const { status } = info.file;
           setFileList(info.fileList);
-          if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
-          }
-          if (status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully.`);
-          } else if (status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
         }}
       >
         <p className="ant-upload-drag-icon">
           <UploadOutlined />
         </p>
-        <p className="ant-upload-text">Click or drag files here to upload</p>
+        <p className="ant-upload-text">{t('common.uploadText')}</p>
         <p className="ant-upload-hint">
-          Supports: .rar .zip .doc .docx .pdf .xlsx .txt .csv...
+          {t('common.supports')}: .rar .zip .doc .docx .pdf .xlsx .txt .csv...
         </p>
       </Dragger>
     </div>

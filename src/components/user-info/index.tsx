@@ -4,9 +4,11 @@ import { signOut, useSession } from 'next-auth/react';
 import { DownOutlined } from '@ant-design/icons';
 import SettingsModal from './settings';
 import ConfigurationsModal from './configurations';
+import { useTranslation } from '@/utils/i18n';
 
 const UserInfo = () => {
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const username = session?.user?.name || 'Qiu-Jia';
   const [visible, setVisible] = useState<boolean>(false);
   const [configurationsVisible, setConfigurationsVisible] = useState<boolean>(false);
@@ -26,7 +28,7 @@ const UserInfo = () => {
 
   const items: Array<{ label: JSX.Element; key: string } | { type: 'divider' }> = [
     {
-      label: <a onClick={handleConfigurations}>Configurations</a>,
+      label: <a onClick={handleConfigurations}>{t('secret.menu')}</a>,
       key: '0',
     },
     {
@@ -40,7 +42,7 @@ const UserInfo = () => {
       type: 'divider',
     },
     {
-      label: <a onClick={handleLogout}>Logout</a>,
+      label: <a onClick={handleLogout}>{t('common.logout')}</a>,
       key: '2',
     },
   ];

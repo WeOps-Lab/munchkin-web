@@ -4,7 +4,7 @@ import { HomeFilled, BookOutlined } from '@ant-design/icons';
 import { ComponentType } from 'react';
 import Image from 'next/image';
 import UserInfo from '../user-info';
-import { useTranslation } from '../../utils/i18n';
+import { useTranslation } from '@/utils/i18n';
 import menuStyle from './index.module.less';
 
 interface IconComponentProps {
@@ -20,10 +20,9 @@ const TopMenu = () => {
   const { t } = useTranslation();
   const pathname = usePathname();
 
-  // 菜单项配置
   const menuItems = [
     { label: t('home'), icon: 'HomeFilled', path: '/' },
-    { label: t('knowledge'), icon: 'BookOutlined', path: '/knowledge' },
+    { label: t('knowledge.menu'), icon: 'BookOutlined', path: '/knowledge' },
   ];
 
   return (
@@ -38,7 +37,7 @@ const TopMenu = () => {
             const IconComponent: React.ComponentType<IconComponentProps> = iconMap[item.icon];
             const isActive = item.path === '/' ? pathname === '/' : pathname.startsWith(item.path);
             return (
-              <Link key={item.path} href={item.path} legacyBehavior>
+              <Link key={item.path} prefetch={false} href={item.path} legacyBehavior>
                 <a className={`px-3 py-2 rounded-[10px] flex items-center ${menuStyle.menuCol} ${isActive ? menuStyle.active : ''}`}>
                   {IconComponent && <IconComponent className="mr-2 w-4 h-4" />}
                   {item.label}

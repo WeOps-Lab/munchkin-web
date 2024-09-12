@@ -1,27 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Dropdown, Menu, Modal, message } from 'antd';
+import { Input, Dropdown, Menu, Modal, message, Spin } from 'antd';
 import Icon from '@/components/icon';
 import { KnowledgeValues, Card } from '@/types/knowledge';
 import ModifyKnowledgeModal from './modifyKnowledge';
 import knowledgeStyle from './index.module.less';
-
-const initialCards: Card[] = [
-  {
-    id: 1,
-    title: 'How to use Next.js',
-    description: 'A comprehensive guide on how to use Next.js.',
-    owner: 'John Doe',
-  },
-  {
-    id: 2,
-    title: 'Understanding React Hooks',
-    description: 'An introduction to React Hooks and their usage. An introduction to React Hooks and their usage. An introduction to React Hooks and their usage.',
-    owner: 'Jane Smith',
-  }
-];
+import useApiClient from '@/utils/request';
+import { useTranslation } from '@/utils/i18n';
 
 const iconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
 
@@ -32,41 +19,63 @@ const getRandomIconType = () => {
 
 const KnowledgePage = () => {
   const router = useRouter();
+  const { t } = useTranslation();
+  const { get, post, patch, del } = useApiClient();
   const [searchTerm, setSearchTerm] = useState('');
-  const [cards, setCards] = useState<Card[]>(initialCards);
+  const [cards, setCards] = useState<Card[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingCard, setEditingCard] = useState<null | Card>(null); // 新增这个状态用于编辑
+  const [editingCard, setEditingCard] = useState<null | Card>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getKnowledgeBase = async () => {
+      setLoading(true); 
+      try {
+        const data = await get('/knowledge_mgmt/knowledge_base/');
+        setCards(Array.isArray(data) ? data : []);
+      } catch (error) {
+        message.error(t('common.fetchFailed'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getKnowledgeBase();
+  }, [get]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
   };
 
-  const handleAddKnowledge = (values: KnowledgeValues) => {
-    if (editingCard) {
-      // 如果正在编辑，则更新现有卡片
-      setCards(cards.map(card => card.id === editingCard.id ? { ...card, ...values } : card));
-      message.success('Knowledge updated successfully');
-    } else {
-      // 否则新增卡片
-      const newCard: Card = {
-        id: cards.length + 1,
-        title: values.name,
-        description: values.introduction,
-        owner: 'New Owner',
-      };
-      setCards([...cards, newCard]);
-      message.success('Knowledge added successfully');
+  const handleAddKnowledge = async (values: KnowledgeValues) => {
+    try {
+      if (editingCard) {
+        await patch(`/knowledge_mgmt/knowledge_base/${editingCard.id}/`, values);
+        setCards(cards.map(card => card.id === editingCard?.id ? { ...card, ...values } : card));
+        message.success(t('common.uodateSuccess'));
+      } else {
+        const newCard = await post('/knowledge_mgmt/knowledge_base/', values);
+        setCards([newCard, ...cards]);
+        message.success(t('common.addSuccess'));
+      }
+      setIsModalVisible(false);
+      setEditingCard(null);
+    } catch (error) {
+      message.error(t('common.saveFailed'));
     }
-    setIsModalVisible(false);
-    setEditingCard(null); // 清空编辑状态
   };
 
   const handleDelete = (cardId: number) => {
     Modal.confirm({
       title: 'Are you sure you want to delete this knowledge?',
-      onOk() {
-        setCards(cards.filter(card => card.id !== cardId));
-        message.success('Knowledge deleted successfully');
+      onOk: async () => {
+        try {
+          await del(`/knowledge_mgmt/knowledge_base/${cardId}/`);
+          setCards(cards.filter(card => card.id !== cardId));
+          message.success('Knowledge deleted successfully');
+        } catch (error) {
+          message.error('Failed to delete knowledge');
+        }
       },
     });
   };
@@ -83,20 +92,20 @@ const KnowledgePage = () => {
   const menu = (card: Card) => (
     <Menu>
       <Menu.Item key="edit" onClick={() => handleMenuClick('edit', card)}>
-        Edit
+        {t('common.edit')}
       </Menu.Item>
       <Menu.Item key="delete" onClick={() => handleMenuClick('delete', card)}>
-        Delete
+        {t('common.delete')}
       </Menu.Item>
     </Menu>
   );
 
   const filteredCards = cards.filter((card) =>
-    card.title.toLowerCase().includes(searchTerm.toLowerCase())
+    card.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="px-12 mx-auto">
+    <div className="px-12 w-full">
       <div className="flex justify-end mb-4">
         <Input 
           size="large"
@@ -105,45 +114,50 @@ const KnowledgePage = () => {
           onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
         />
       </div>
-      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${knowledgeStyle.knowledge}`}>
-        <div
-          className={`p-4 rounded-xl flex items-center justify-center shadow-md cursor-pointer ${knowledgeStyle.add}`}
-          onClick={() => { setIsModalVisible(true); setEditingCard(null); }} // 清空编辑状态
-        >
-          <Icon type="tianjia" className="text-2xl" />
-          <span className="ml-2">Add New</span>
-        </div>
-        {filteredCards.map((card) => (
+      <Spin spinning={loading}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${knowledgeStyle.knowledge}`}>
           <div
-            key={card.id}
-            className={`p-4 rounded-xl relative shadow-md cursor-pointer ${knowledgeStyle.card}`}
-            onClick={() => router.push(`/knowledge/detail?id=${card.id}`)} // 跳转到详情页
+            className={`p-4 rounded-xl flex items-center justify-center shadow-md cursor-pointer ${knowledgeStyle.add}`}
+            onClick={() => { setIsModalVisible(true); setEditingCard(null); }}
           >
-            <div className="absolute top-6 right-2" onClick={(e) => e.stopPropagation()}> {/* 阻止冒泡 */}
-              <Dropdown overlay={menu(card)} trigger={['click']} placement="bottomRight">
-                <div className="cursor-pointer">
-                  <Icon type="sangedian-copy" className="text-xl" />
-                </div>
-              </Dropdown>
-            </div>
-            <div className="flex items-center mb-2">
-              <div className="rounded-full">
-                <Icon type={getRandomIconType()} className="text-4xl" />
-              </div>
-              <h3 className="ml-2 text-base font-semibold truncate" title={card.title}>
-                {card.title}
-              </h3>
-            </div>
-            <p className={`my-5 text-sm line-clamp-3 ${knowledgeStyle.desc}`}>{card.description}</p>
-            <div className={`absolute bottom-4 right-4 text-xs ${knowledgeStyle.desc}`}>Owner: {card.owner}</div>
+            <Icon type="tianjia" className="text-2xl" />
+            <span className="ml-2">Add New</span>
           </div>
-        ))}
-      </div>
+          {filteredCards.map((card) => (
+            <div
+              key={card.id}
+              className={`p-4 rounded-xl relative shadow-md cursor-pointer ${knowledgeStyle.card}`}
+              onClick={() => router.push(`/knowledge/detail?id=${card.id}&name=${card.name}&desc=${card.introduction}`)}
+            >
+              <div className="absolute top-6 right-2" onClick={(e) => e.stopPropagation()}>
+                <Dropdown overlay={menu(card)} trigger={['click']} placement="bottomRight">
+                  <div className="cursor-pointer">
+                    <Icon type="sangedian-copy" className="text-xl" />
+                  </div>
+                </Dropdown>
+              </div>
+              <div className="flex items-center mb-2">
+                <div className="rounded-full">
+                  <Icon type={getRandomIconType()} className="text-4xl" />
+                </div>
+                <h3 className="ml-2 text-base font-semibold truncate" title={card.name}>
+                  {card.name}
+                </h3>
+              </div>
+              <p className={`my-5 text-sm line-clamp-3 ${knowledgeStyle.desc}`}>{card.introduction}</p>
+              <div className={`absolute bottom-4 right-4 text-xs ${knowledgeStyle.desc}`}>
+                <span className="pr-5">Owner: {card.created_by}</span>
+                <span>Team: {Array.isArray(card.team_name) ? card.team_name.join(',') : '--'}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Spin>
       <ModifyKnowledgeModal
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onConfirm={handleAddKnowledge}
-        initialValues={editingCard ? { name: editingCard.title, group: 'group1', introduction: editingCard.description } : undefined} // 传递初始值
+        initialValues={editingCard ? { name: editingCard.name, team: editingCard.team || '', introduction: editingCard.introduction } : undefined}
       />
     </div>
   );

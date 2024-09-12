@@ -1,64 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Form } from 'antd';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+import 'aieditor/dist/style.css';
+
+// 动态加载 AIEditor 组件，并禁用服务器端渲染
+const AIEditor = dynamic(() => import('@/components/ai-editor'), { ssr: false });
 
 interface CustomTextFormProps {
   onFormChange: (isValid: boolean) => void;
+  onFormDataChange: (data: { name: string; content: string }) => void;
 }
 
-// 懒加载 ReactQuill 组件，并禁用服务器端渲染
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-
-const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange }) => {
+const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDataChange }) => {
   const [form] = Form.useForm();
-  const [name, setName] = useState<string>('');
-  const [content, setContent] = useState<string>('');
+  const [formData, setFormData] = useState<{ name: string; content: string }>({
+    name: '',
+    content: '',
+  });
 
   useEffect(() => {
-    onFormChange(name.trim() !== '' && content.trim() !== '');
-  }, [name, content, onFormChange]);
+    const isValid = formData.name.trim() !== '' && formData.content.trim() !== '';
+    onFormChange(isValid);
+    onFormDataChange(formData);
+  }, [formData, onFormChange, onFormDataChange]);
 
-  const modules = {
-    toolbar: [
-      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-      [{size: []}],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image', 'video'],
-      ['clean']
-    ],
+  const handleInputChange = (field: string, value: any) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
   };
-
-  const formats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image', 'video'
-  ];
 
   return (
     <div className="px-16">
-      <Form 
+      <Form
+        form={form}
         labelCol={{ span: 3 }}
         wrapperCol={{ span: 20 }}
-        form={form}
-        onValuesChange={() => onFormChange(name.trim() !== '' && content.trim() !== '')}>
+        onValuesChange={() => {
+          const isValid = formData.name.trim() !== '' && formData.content.trim() !== '';
+          onFormChange(isValid);
+          onFormDataChange(formData);
+        }}
+      >
         <Form.Item label="Name">
           <Input
             placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formData.name}
+            onChange={(e) => handleInputChange('name', e.target.value)}
           />
         </Form.Item>
         <Form.Item label="Content">
-          <div style={{ height: '200px' }}>
-            <ReactQuill
-              value={content}
-              onChange={setContent}
-              modules={modules}
-              formats={formats}
+          <div style={{ height: '500px' }}>
+            <AIEditor
+              value={formData.content}
+              onChange={(value) => handleInputChange('content', value)}
               placeholder="Content"
+              style={{ height: '100%' }}
             />
           </div>
         </Form.Item>

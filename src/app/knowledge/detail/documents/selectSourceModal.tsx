@@ -1,34 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Radio, Button } from 'antd';
 import OperateModal from '@/components/operate-modal';
-import styles from './index.module.less'; // 确保路径正确
+import styles from './index.module.less';
+import { useTranslation } from '@/utils/i18n';
 
 interface SelectSourceModalProps {
+  defaultSelected: string;
   visible: boolean;
   onCancel: () => void;
   onConfirm: (selectedType: string) => void;
 }
 
-const radioOptions = [
-  {
-    value: 'Local File',
-    title: 'Local File',
-    subTitle: 'Upload local files (such as PDF, DOCX, TXT) as a knowledge source.',
-  },
-  {
-    value: 'Web Link',
-    title: 'Web Link',
-    subTitle: 'Use web links as a knowledge source.',
-  },
-  {
-    value: 'Custom Text',
-    title: 'Custom Text',
-    subTitle: 'Enter custom text as a knowledge source.',
-  },
-];
+const SelectSourceModal: React.FC<SelectSourceModalProps> = ({ defaultSelected, visible, onCancel, onConfirm }) => {
+  const [selectedType, setSelectedType] = useState<string>(defaultSelected);
+  const { t } = useTranslation();
 
-const SelectSourceModal: React.FC<SelectSourceModalProps> = ({ visible, onCancel, onConfirm }) => {
-  const [selectedType, setSelectedType] = useState<string>('');
+  useEffect(() => {
+    setSelectedType(defaultSelected);
+  }, [defaultSelected]);
+
+  const radioOptions = [
+    {
+      value: 'file',
+      title: t('knowledge.localFile'),
+      subTitle: t('knowledge.fileSubTitle'),
+    },
+    {
+      value: 'web_page',
+      title: t('knowledge.webLink'),
+      subTitle: t('knowledge.linkSubTitle'),
+    },
+    {
+      value: 'manual',
+      title: t('knowledge.cusText'),
+      subTitle: t('knowledge.cusTextSubTitle'),
+    },
+  ];
 
   const handleConfirm = () => {
     onConfirm(selectedType);
@@ -41,10 +48,10 @@ const SelectSourceModal: React.FC<SelectSourceModalProps> = ({ visible, onCancel
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          Cancel
+          {t('common.cancel')}
         </Button>,
         <Button key="confirm" type="primary" onClick={handleConfirm} disabled={!selectedType}>
-          Confirm
+          {t('common.confirm')}
         </Button>,
       ]}
     >

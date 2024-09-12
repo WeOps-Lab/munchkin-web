@@ -5,11 +5,10 @@ import { signIn } from 'next-auth/react';
 import Icon from '@/components/icon';
 
 const HomePage = () => {
-  const { get, isLoading } = useApiClient();
+  const { get } = useApiClient();
   const [data, setData] = useState<unknown>(null);
 
   useEffect(() => {
-    if (isLoading) return;
     const fetchData = async () => {
       try {
         const response = await get('/new_app/test/');
@@ -21,7 +20,7 @@ const HomePage = () => {
     };
 
     fetchData();
-  }, [get, isLoading]);
+  }, [get]);
 
   const handleSignIn = async () => {
     try {

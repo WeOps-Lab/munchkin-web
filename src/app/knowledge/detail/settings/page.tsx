@@ -1,16 +1,23 @@
 'use client';
 import React, { useState } from 'react';
 import { Form, Input, Button, Row, Col } from 'antd';
+import ConfigComponent from '@/components/knowledge/config';
 
 const { TextArea } = Input;
 
-const ConfigPage: React.FC = () => {
+const SettingsPage: React.FC = () => {
   const [form] = Form.useForm();
   const [formData, setFormData] = useState({
     name: '',
     introduction: '',
     team: ''
   });
+  const [selectedSearchType, setSelectedSearchType] = useState<string | null>(null);
+  const [rerankModel, setRerankModel] = useState<boolean>(false);
+  const [selectedRerankModel, setSelectedRerankModel] = useState<string | null>(null);
+  const [weight, setWeight] = useState<number>(0.5);
+  const [quantity, setQuantity] = useState<number>(10);
+  const [candidate, setCandidate] = useState<number>(10);
 
   const handleConfirm = () => {
     form.validateFields()
@@ -74,8 +81,23 @@ const ConfigPage: React.FC = () => {
           <TextArea name="introduction" value={formData.introduction} onChange={handleInputChange} rows={4} />
         </Form.Item>
 
+        <ConfigComponent
+          selectedSearchType={selectedSearchType}
+          setSelectedSearchType={setSelectedSearchType}
+          rerankModel={rerankModel}
+          setRerankModel={setRerankModel}
+          selectedRerankModel={selectedRerankModel}
+          setSelectedRerankModel={setSelectedRerankModel}
+          weight={weight}
+          setWeight={setWeight}
+          quantity={quantity}
+          setQuantity={setQuantity}
+          candidate={candidate}
+          setCandidate={setCandidate}
+        />
+
         <Form.Item wrapperCol={{ span: 24 }}>
-          <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', padding: '20px', background: '#fff', borderTop: '1px solid #f0f0f0' }}>
+          <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', padding: '20px' }}>
             <Row justify="end" gutter={16}>
               <Col>
                 <Button onClick={handleCancel}>
@@ -95,4 +117,4 @@ const ConfigPage: React.FC = () => {
   );
 };
 
-export default ConfigPage;
+export default SettingsPage;

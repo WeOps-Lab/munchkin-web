@@ -3,21 +3,16 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Spin } from 'antd';
 import useApiClient from '@/utils/request';
-import { KnowledgeValues } from '@/types/knowledge';
+import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
+import { ModifyKnowledgeModalProps, groupProps } from '@/types/knowledge'
 
 const { Option } = Select;
 
-interface ModifyKnowledgeModalProps {
-  visible: boolean;
-  onCancel: () => void;
-  onConfirm: (values: KnowledgeValues) => void;
-  initialValues?: KnowledgeValues; // 使用更具体的类型
-}
-
 const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, onCancel, onConfirm, initialValues }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
-  const [groups, setGroups] = useState<string[]>([]);
+  const [groups, setGroups] = useState<groupProps[]>([]);
   const { get, isLoading } = useApiClient();
 
   useEffect(() => {
@@ -30,35 +25,33 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
 
   useEffect(() => {
     if (isLoading) return;
-    const fetchData = async () => {
+    const fetchGroups = async () => {
       try {
-        const response = await get('/new_app/test/');
-        console.log('Fetched data:', response);
-        setGroups(response.data);
+        const data = await get('/knowledge_mgmt/knowledge_base/get_teams/');
+        setGroups(data || []);
       } catch (error) {
-        console.error('Failed to fetch groups:', error);
+        console.error(`${(common.fetchFailed)}:`, error);
       }
     };
-    fetchData();
+    fetchGroups();
   }, [get, isLoading]);
 
-  const handleConfirm = () => {
-    form.validateFields()
-      .then(values => {
-        onConfirm(values);
-        form.resetFields();
-      })
-      .catch(info => {
-        console.log('Validate Failed:', info);
-      });
+  const handleConfirm = async () => {
+    try {
+      const values = await form.validateFields();
+      onConfirm(values);
+      form.resetFields();
+    } catch (info) {
+      console.log(t('common.valFailed'), info);
+    }
   };
 
   return (
     <OperateModal
       visible={visible}
-      title={initialValues ? "Edit Knowledge" : "Add New Knowledge"}
-      okText="Confirm"
-      cancelText="Cancel"
+      title={initialValues ? t('knowledge.edit') : t('knowledge.add')}
+      okText={t('common.confirm')}
+      cancelText={t('common.cancel')}
       onCancel={onCancel}
       onOk={handleConfirm}
     >
@@ -66,28 +59,28 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         <Form form={form} layout="vertical" name="knowledge_form">
           <Form.Item
             name="name"
-            label="Name"
-            rules={[{ required: true, message: 'Please input the name!' }]}
+            label={t('knowledge.form.name')}
+            rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.name')}!` }]}
           >
-            <Input />
+            <Input placeholder={t('common.input')} />
           </Form.Item>
           <Form.Item
-            name="group"
-            label="Group"
-            rules={[{ required: true, message: 'Please select the group!' }]}
+            name="team"
+            label={t('knowledge.form.group')}
+            rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.introduction')}!` }]}
           >
-            <Select placeholder="Select a group">
+            <Select mode="multiple" placeholder={t('common.select')}>
               {groups.map(group => (
-                <Option key={group} value={group}>{group}</Option>
+                <Option key={group.id} value={group.id}>{group.name}</Option>
               ))}
             </Select>
           </Form.Item>
           <Form.Item
             name="introduction"
-            label="Introduction"
-            rules={[{ required: true, message: 'Please input the introduction!' }]}
+            label={t('knowledge.form.introduction')}
+            rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.introduction')}!` }]}
           >
-            <Input.TextArea rows={4} />
+            <Input.TextArea rows={4} placeholder={t('common.input')} />
           </Form.Item>
         </Form>
       </Spin>

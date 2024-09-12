@@ -12,18 +12,19 @@
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.0",
+    "aieditor": "^1.1.0",
     "antd": "^5.19.3",
     "axios": "^1.7.3",
     "intl-messageformat": "^10.5.14",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
+    "moment": "^2.30.1",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
     "next-plugin-antd-less": "^1.8.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-intl": "^6.6.8",
-    "react-quill": "^2.0.0"
+    "react-intl": "^6.6.8"
   },
   "devDependencies": {
     "@types/node": "^20",

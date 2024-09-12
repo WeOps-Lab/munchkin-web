@@ -5,24 +5,31 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Input, Button, Modal, message, Tag, Tabs } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import CustomTable from '@/components/custom-table';
-import SelectSourceModal from './selectSourceModal'; // 确保路径正确
+import SelectSourceModal from './selectSourceModal';
+import useApiClient from '@/utils/request';
+import moment from 'moment';
 import type { TableColumnsType, PaginationProps } from 'antd';
+import { useTranslation } from '@/utils/i18n';
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;
 
 interface TableData {
-  key: string;
+  id: string | number;
   name: string;
-  total: number;
-  create_time: string;
-  creater: string;
-  status: string;
+  chunk_size: number;
+  created_by: string;
+  created_at: string;
+  train_status: number;
+  train_status_display: string;
+  [key: string]: any
 }
 
 const DocumentsPage: React.FC = () => {
   const router = useRouter();
-  const [activeTabKey, setActiveTabKey] = useState<string>('local');
+  const { t } = useTranslation();
+  const { get, post } = useApiClient();
+  const [activeTabKey, setActiveTabKey] = useState<string>('file');
   const [searchText, setSearchText] = useState<string>('');
   const [pagination, setPagination] = useState<PaginationProps>({
     current: 1,
@@ -34,76 +41,120 @@ const DocumentsPage: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const searchParams = useSearchParams();
-  const param1 = searchParams.get('id');
+  const id = searchParams.get('id');
+  const name = searchParams.get('name');
+  const desc = searchParams.get('desc');
+
+  const randomColors = ['#ff9214', '#875cff', '#00cba6', '#155aef'];
+
+  const getRandomColor = () => randomColors[Math.floor(Math.random() * randomColors.length)];
 
   const columns: TableColumnsType<TableData> = [
     {
-      title: 'Name',
+      title: t('knowledge.documents.name'),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'TOTAL DATA',
-      dataIndex: 'total',
-      key: 'total',
+      title: t('knowledge.documents.chunkSize'),
+      dataIndex: 'chunk_size',
+      key: 'chunk_size',
     },
     {
-      title: 'CREATE TIME',
-      dataIndex: 'create_time',
-      key: 'create_time',
+      title: t('knowledge.documents.createdAt'),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: 'CREATER',
-      key: 'creater',
-      dataIndex: 'creater',
-      render: (_, { creater }) => (
+      title: t('knowledge.documents.createdBy'),
+      key: 'created_by',
+      dataIndex: 'created_by',
+      render: (_, { created_by }) => (
         <div className='flex items-center'>
           <div
-            className='flex items-center justify-center rounded-full bg-blue-500 text-white mr-2'
-            style={{ width: 24, height: 24 }}
+            className='flex items-center justify-center rounded-full text-white mr-2'
+            style={{ width: 24, height: 24, backgroundColor: getRandomColor() }}
           >
-            {creater.charAt(0).toUpperCase()}
+            {created_by.charAt(0).toUpperCase()}
           </div>
-          {creater}
+          {created_by}
         </div>
       ),
     },
     {
-      title: 'STATUS',
-      key: 'status',
-      dataIndex: 'status',
-      render: (_, { status }) => (
-        <Tag color={status === 'Ready' ? 'green' : 'geekblue'}>
-          {status}
-        </Tag>
-      ),
-    },
+      title: t('knowledge.documents.status'),
+      key: 'train_status',
+      dataIndex: 'train_status',
+      render: (_, { train_status, train_status_display }) => {
+        const statusColors: { [key: string]: string } = {
+          '0': 'orange',
+          '1': 'green',
+          '2': 'red',
+        };
+    
+        const color = statusColors[train_status] || 'geekblue';
+        const text = train_status_display || '--';
+    
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },   
     {
-      title: 'ACTIONS',
+      title: t('knowledge.documents.actions'),
       key: 'action',
       render: (_, record) => (
         <>
-          <Button type='link' className='mr-[10px]'>
-            Edit
+          <Button type='link' className='mr-[10px]' onClick={() => handleSetClick(record)}>
+            {t('common.set')}
           </Button>
-          <Button type='link' onClick={() => handleDelete([record.key])}>
-            Delete
+          <Button type='link' onClick={() => handleDelete([record.id])}>
+            {t('common.delete')}
           </Button>
         </>
       ),
     },
   ];
 
+  const handleSetClick = (record: any) => {
+    const config = {
+      chunkParsing: record.enable_general_parse,
+      chunkSize: record.general_parse_chunk_size,
+      chunkOverlap: record.general_parse_chunk_overlap,
+      semanticChunkParsing: record.enable_semantic_chunk_parse,
+      semanticModel: record.semantic_chunk_parse_embedding_model,
+      ocrEnhancement: record.enable_ocr_parse,
+      ocrModel: record.ocr_model,
+      excelParsing: record.enable_excel_parse,
+      excelParseOption: record.excel_header_row_parse ? 'headerRow' : 'fullContent',
+    };
+    const queryParams = new URLSearchParams({
+      id: record.id?.toString() || '',
+      name: name,
+      desc: desc,
+      sourceType: activeTabKey,
+      config: JSON.stringify(config),
+    });
+    router.push(`/knowledge/detail/documents/config?${queryParams.toString()}`);
+  };
+
   const handleDelete = (keys: React.Key[]) => {
     confirm({
-      title: 'Do you want to delete the selected item(s)?',
-      content: 'After deletion, the data cannot be recovered.',
+      title: t('common.delConfirm'),
+      content: t('common.delConfirmCxt'),
       centered: true,
-      onOk() {
-        const newData = tableData.filter(item => !keys.includes(item.key));
-        setTableData(newData);
-        setSelectedRowKeys([]);
-        message.success('Delete successfully!');
+      onOk: async () => {
+        try {
+          await post('/knowledge_mgmt/knowledge_document/batch_delete/', {
+            doc_ids: keys, 
+            knowledge_base_id: id
+          });
+          const newData = tableData.filter(item => !keys.includes(item.id));
+          setTableData(newData);
+          setSelectedRowKeys([]);
+          message.success(t('common.delSuccess'));
+        } catch (error) {
+          message.error(t('common.delFailed'));
+        }
       },
     });
   };
@@ -128,45 +179,37 @@ const DocumentsPage: React.FC = () => {
 
   const getTableParams = useCallback(() => {
     return {
-      search: searchText,
-      current,
-      limit: pageSize,
+      name: searchText,
+      page: current,
+      page_size: pageSize,
+      knowledge_source_type: activeTabKey,
     };
-  }, [searchText, current, pageSize]);
+  }, [searchText, current, pageSize, activeTabKey]);
 
-  const generateRandomData = (count: number, type: string): TableData[] => {
-    return Array.from({ length: count }, (_, index) => ({
-      key: index.toString(),
-      name: type === 'local' ? '用户指南.docx' : type === 'web' ? 'https://example.com' : 'Custom Text',
-      total: 24,
-      create_time: '2024-08-30 10:51:42',
-      creater: 'kayla',
-      status: 'Ready',
-    }));
-  };
-
-  const fetchData = useCallback(() => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     const params = getTableParams();
-    console.log(params);
-    setTimeout(() => {
-      const data = generateRandomData(25, activeTabKey);
+    try {
+      const res = await get('/knowledge_mgmt/knowledge_document/', { params });
+      const { items: data } = res;
       setTableData(data);
       setPagination(prev => ({
         ...prev,
-        total: data.length,
+        total: res.count,
       }));
+    } catch (error) {
+      message.error('Failed to fetch data');
+    } finally {
       setLoading(false);
-    }, 500);
-  }, [activeTabKey, getTableParams]);
+    }
+  }, [get, getTableParams]);
 
   useEffect(() => {
-    console.log(param1);
     fetchData();
     return () => {
       console.log('Component unmounted');
     };
-  }, [fetchData, param1]);
+  }, [fetchData, id]);
 
   const rowSelection = {
     selectedRowKeys,
@@ -189,15 +232,15 @@ const DocumentsPage: React.FC = () => {
 
   const handleModalConfirm = (selectedType: string) => {
     setIsModalVisible(false);
-    router.push(`/knowledge/detail/documents/modify?type=${selectedType}`);
+    router.push(`/knowledge/detail/documents/modify?type=${selectedType}&id=${id}&name=${name}&desc=${desc}`);
   };
 
   return (
     <div>
       <Tabs defaultActiveKey='local' onChange={handleTabChange}>
-        <TabPane tab='Local file' key='local' />
-        <TabPane tab='Web link' key='web' />
-        <TabPane tab='Custom text' key='custom' />
+        <TabPane tab={t('knowledge.localFile')} key='file' />
+        <TabPane tab={t('knowledge.webLink')} key='web_page' />
+        <TabPane tab={t('knowledge.cusText')} key='manual' />
       </Tabs>
       <div className='nav-box flex justify-end mb-[10px]'>
         <div className='left-side w-[240px] mr-[8px]'>
@@ -217,7 +260,7 @@ const DocumentsPage: React.FC = () => {
             icon={<PlusOutlined />}
             onClick={handleAddClick}
           >
-            Add
+            {t('common.add')}
           </Button>
           <Button
             type='primary'
@@ -225,13 +268,14 @@ const DocumentsPage: React.FC = () => {
             onClick={() => handleDelete(selectedRowKeys)}
             disabled={!selectedRowKeys.length}
           >
-            Batch Delete
+            {t('common.batchDelete')}
           </Button>
         </div>
       </div>
       <CustomTable
+        rowKey="id"
         rowSelection={rowSelection}
-        scroll={{ y: 'calc(100vh - 345px)' }}
+        scroll={{ y: 'calc(100vh - 460px)' }}
         columns={columns}
         dataSource={tableData}
         pagination={pagination}
@@ -239,6 +283,7 @@ const DocumentsPage: React.FC = () => {
         onChange={handleTableChange}
       />
       <SelectSourceModal
+        defaultSelected={activeTabKey}
         visible={isModalVisible}
         onCancel={handleModalCancel}
         onConfirm={handleModalConfirm}

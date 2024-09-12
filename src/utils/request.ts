@@ -1,23 +1,37 @@
 import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useAuth } from '@/context/auth';
 import { message } from 'antd';
 import { signIn } from 'next-auth/react';
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'reqApi',
-  timeout: 10000, // 请求超时时间
+  baseURL: '/reqApi',
+  timeout: 120000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
+const handleResponse = (response: AxiosResponse, onError?: () => void) => {
+  const { result, message: msg, data } = response.data;
+  if (!result) {
+    message.error(msg);
+    if (onError) {
+      onError();
+    }
+    throw new Error(msg);
+  }
+  return data;
+};
+
 const useApiClient = () => {
   const authContext = useAuth();
   const token = authContext?.token || null;
+  const tokenRef = useRef(token);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    tokenRef.current = token;
     if (token) {
       setIsLoading(false);
     }
@@ -27,11 +41,11 @@ const useApiClient = () => {
     // 请求拦截器
     const requestInterceptor = apiClient.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        if (!token) {
+        if (!tokenRef.current) {
           signIn('keycloak');
           return Promise.reject(new Error('No token available'));
         }
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${tokenRef.current}`;
         return config;
       },
       (error) => {
@@ -41,22 +55,20 @@ const useApiClient = () => {
 
     // 响应拦截器
     const responseInterceptor = apiClient.interceptors.response.use(
-      (response: AxiosResponse) => {
-        return response.data;
-      },
+      (response: AxiosResponse) => response,
       (error) => {
         if (error.response) {
           const { status } = error.response;
-          const messgae = error.response?.data?.message
+          const messageText = error.response?.data?.message;
           if (status === 401) {
             // 处理 401 错误，重定向到 Keycloak 登录页面
             signIn('keycloak');
           } else if (status === 403) {
             // 处理 403 错误，显示无权限消息
-            message.error(messgae);
+            message.error(messageText);
           } else if (status === 500) {
             // 处理 500 错误，例如显示错误消息
-            console.error('Server error:', messgae);
+            console.error('Server error:', messageText);
             message.error('服务器错误，请稍后再试');
           }
         }
@@ -69,26 +81,35 @@ const useApiClient = () => {
       apiClient.interceptors.request.eject(requestInterceptor);
       apiClient.interceptors.response.eject(responseInterceptor);
     };
-  }, [token]);
+  }, []);
 
   // 封装请求方法，并使用 useCallback 确保函数是稳定的
-  const get = useCallback((url: string, config?: AxiosRequestConfig) => {
-    return apiClient.get(url, config);
+  const get = useCallback(async <T = any>(url: string, config?: AxiosRequestConfig, onError?: () => void): Promise<T> => {
+    const response = await apiClient.get<T>(url, config);
+    return handleResponse(response, onError);
   }, []);
 
-  const post = useCallback((url: string, data?: unknown, config?: AxiosRequestConfig) => {
-    return apiClient.post(url, data, config);
+  const post = useCallback(async <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig, onError?: () => void): Promise<T> => {
+    const response = await apiClient.post<T>(url, data, config);
+    return handleResponse(response, onError);
   }, []);
 
-  const put = useCallback((url: string, data?: unknown, config?: AxiosRequestConfig) => {
-    return apiClient.put(url, data, config);
+  const put = useCallback(async <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig, onError?: () => void): Promise<T> => {
+    const response = await apiClient.put<T>(url, data, config);
+    return handleResponse(response, onError);
   }, []);
 
-  const del = useCallback((url: string, config?: AxiosRequestConfig) => {
-    return apiClient.delete(url, config);
+  const del = useCallback(async <T = any>(url: string, config?: AxiosRequestConfig, onError?: () => void): Promise<T> => {
+    const response = await apiClient.delete<T>(url, config);
+    return handleResponse(response, onError);
   }, []);
 
-  return { get, post, put, del, isLoading };
+  const patch = useCallback(async <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig, onError?: () => void): Promise<T> => {
+    const response = await apiClient.patch<T>(url, data, config);
+    return handleResponse(response, onError);
+  }, []);
+
+  return { get, post, put, del, patch, isLoading };
 };
 
 export default useApiClient;

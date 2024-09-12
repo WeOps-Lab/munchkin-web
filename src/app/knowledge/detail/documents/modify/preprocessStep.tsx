@@ -194,7 +194,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
               onChange={(value) => handleChange('semanticModel', value)}
             >
               {semanticModels.map((model) => (
-                <Option key={model.id} value={model.id}>{model.name}</Option>
+                <Option key={model.id} value={model.id} disabled={!model.enabled}>{model.name}</Option>
               ))}
             </Select>
           </Form.Item>
@@ -214,7 +214,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
               onChange={(value) => handleChange('ocrModel', value)}
             >
               {ocrModels.map((model) => (
-                <Option key={model.id} value={model.id}>{model.name}</Option>
+                <Option key={model.id} value={model.id} disabled={!model.enabled}s>{model.name}</Option>
               ))}
             </Select>
           </Form.Item>

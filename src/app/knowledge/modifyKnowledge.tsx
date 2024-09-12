@@ -30,11 +30,11 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         const data = await get('/knowledge_mgmt/knowledge_base/get_teams/');
         setGroups(data || []);
       } catch (error) {
-        console.error(`${(common.fetchFailed)}:`, error);
+        console.error(`${t('common.fetchFailed')}:`, error);
       }
     };
     fetchGroups();
-  }, [get, isLoading]);
+  }, [get, isLoading, t]);
 
   const handleConfirm = async () => {
     try {

@@ -129,8 +129,8 @@ const DocumentsPage: React.FC = () => {
     };
     const queryParams = new URLSearchParams({
       id: record.id?.toString() || '',
-      name: name,
-      desc: desc,
+      name: name || '',
+      desc: desc || '',
       sourceType: activeTabKey,
       config: JSON.stringify(config),
     });

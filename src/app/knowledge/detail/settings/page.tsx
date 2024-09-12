@@ -1,29 +1,56 @@
 'use client';
 import React, { useState } from 'react';
-import { Form, Input, Button, Row, Col } from 'antd';
+import { Form, Input, Button, Row, Col, message } from 'antd';
 import ConfigComponent from '@/components/knowledge/config';
+import useApiClient from '@/utils/request';
 
 const { TextArea } = Input;
 
 const SettingsPage: React.FC = () => {
+  const { post } = useApiClient();
   const [form] = Form.useForm();
   const [formData, setFormData] = useState({
     name: '',
     introduction: '',
     team: ''
   });
-  const [selectedSearchType, setSelectedSearchType] = useState<string | null>(null);
-  const [rerankModel, setRerankModel] = useState<boolean>(false);
-  const [selectedRerankModel, setSelectedRerankModel] = useState<string | null>(null);
-  const [weight, setWeight] = useState<number>(0.5);
-  const [quantity, setQuantity] = useState<number>(10);
-  const [candidate, setCandidate] = useState<number>(10);
+  const [configData, setConfigData] = useState({
+    selectedSearchTypes: [] as string[],
+    rerankModel: false,
+    selectedRerankModel: null as string | null,
+    textSearchWeight: 0.5,
+    vectorSearchWeight: 0.5,
+    quantity: 10,
+    candidate: 10,
+    selectedEmbedModel: null as string | null,
+  });
 
   const handleConfirm = () => {
     form.validateFields()
-      .then(values => {
-        console.log('Form Values:', values);
-        // 在这里处理确认逻辑
+      .then(async values => {
+        const params = {
+          name: values.name,
+          introduction: values.introduction,
+          team: values.team,
+          embed_model: configData.selectedEmbedModel,
+          enable_rerank: configData.rerankModel,
+          rerank_model: configData.selectedRerankModel,
+          enable_text_search: configData.selectedSearchTypes.includes('textSearch'),
+          text_search_weight: configData.textSearchWeight,
+          enable_vector_search: configData.selectedSearchTypes.includes('vectorSearch'),
+          vector_search_weight: configData.vectorSearchWeight,
+          rag_k: configData.quantity,
+          rag_num_candidates: configData.candidate,
+        };
+
+        try {
+          const response = await post(`/knowledge_mgmt/knowledge_base/{id}/update_settings/`, params);
+          message.success('Settings updated successfully!');
+          console.log(response.data);
+        } catch (error) {
+          message.error('Failed to update settings.');
+          console.error(error);
+        }
       })
       .catch(errorInfo => {
         console.log('Validation Failed:', errorInfo);
@@ -82,18 +109,8 @@ const SettingsPage: React.FC = () => {
         </Form.Item>
 
         <ConfigComponent
-          selectedSearchType={selectedSearchType}
-          setSelectedSearchType={setSelectedSearchType}
-          rerankModel={rerankModel}
-          setRerankModel={setRerankModel}
-          selectedRerankModel={selectedRerankModel}
-          setSelectedRerankModel={setSelectedRerankModel}
-          weight={weight}
-          setWeight={setWeight}
-          quantity={quantity}
-          setQuantity={setQuantity}
-          candidate={candidate}
-          setCandidate={setCandidate}
+          configData={configData}
+          setConfigData={setConfigData}
         />
 
         <Form.Item wrapperCol={{ span: 24 }}>

@@ -1,20 +1,63 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Input, Button } from 'antd';
+import { useSearchParams } from 'next/navigation';
+import { Input, Button, message } from 'antd';
 import ConfigComponent from '@/components/knowledge/config';
+import { ResultItem } from '@/types/knowledge';
+import useApiClient from '@/utils/request';
 import styles from './index.module.less';
 
 const { TextArea } = Input;
 
 const TestingPage: React.FC = () => {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+  const { post } = useApiClient();
   const [searchText, setSearchText] = useState<string>('');
-  const [selectedSearchType, setSelectedSearchType] = useState<string | null>(null);
-  const [rerankModel, setRerankModel] = useState<boolean>(false);
-  const [selectedRerankModel, setSelectedRerankModel] = useState<string | null>(null);
-  const [weight, setWeight] = useState<number>(0.5);
-  const [quantity, setQuantity] = useState<number>(10);
-  const [candidate, setCandidate] = useState<number>(10);
+  const [configData, setConfigData] = useState({
+    selectedSearchTypes: [] as string[],
+    rerankModel: false,
+    selectedRerankModel: null as string | null,
+    textSearchWeight: 0.5,
+    vectorSearchWeight: 0.5,
+    quantity: 10,
+    candidate: 10,
+    selectedEmbedModel: null as string | null,
+  });
+  const [results, setResults] = useState<ResultItem[]>([]);
+
+  const handleApplyConfig = async () => {
+    const params = {
+      knowledge_base_id: id,
+      query: searchText,
+      embed_model: configData.selectedEmbedModel,
+      enable_rerank: configData.rerankModel,
+      rerank_model: configData.selectedRerankModel,
+      enable_text_search: configData.selectedSearchTypes.includes('textSearch'),
+      text_search_weight: configData.textSearchWeight,
+      enable_vector_search: configData.selectedSearchTypes.includes('vectorSearch'),
+      vector_search_weight: configData.vectorSearchWeight,
+      rag_k: configData.quantity,
+      rag_num_candidates: configData.candidate,
+    };
+    if (!searchText.trim()) {
+      message.error('Text cannot be empty. This field is required.');
+      return false;
+    }
+    if (configData.candidate < configData.quantity) {
+      message.error('Please input Candidate Quantity must be greater than Return Quantity');
+      return false;
+    }
+    try {
+      const data = await post('/knowledge_mgmt/knowledge_document/testing', params);
+      message.success('Configuration applied successfully!');
+      setResults(data);
+    } catch (error) {
+      message.error('Failed to apply configuration.');
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex p-4">
@@ -32,42 +75,31 @@ const TestingPage: React.FC = () => {
           <h2 className="text-lg font-semibold mb-2">Config</h2>
           <div className="p-4">
             <ConfigComponent
-              selectedSearchType={selectedSearchType}
-              setSelectedSearchType={setSelectedSearchType}
-              rerankModel={rerankModel}
-              setRerankModel={setRerankModel}
-              selectedRerankModel={selectedRerankModel}
-              setSelectedRerankModel={setSelectedRerankModel}
-              weight={weight}
-              setWeight={setWeight}
-              quantity={quantity}
-              setQuantity={setQuantity}
-              candidate={candidate}
-              setCandidate={setCandidate}
+              configData={configData}
+              setConfigData={setConfigData}
             />
-            <Button type="primary">Apply Config</Button>
+            <div className="flex justify-end mt-4">
+              <Button type="primary" onClick={handleApplyConfig}>Apply Config</Button>
+            </div>
           </div>
         </div>
       </div>
       <div className="w-1/2 pl-4">
         <h2 className="text-lg font-semibold mb-2">Results</h2>
         <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className={`p-4 border rounded-md ${styles.resultsItem}`}>
+          {results.map((result, index) => (
+            <div key={result.id} className={`p-4 border rounded-md ${styles.resultsItem}`}>
               <div className="flex justify-between mb-2">
-                <div>
-                  <span className="text-blue-500"># {index + 1}</span>
-                  <span className="ml-2 text-sm text-gray-500">| 分类名称</span>
+                <div className="border px-2 rounded-md">
+                  <span className={`text-xs ${styles.activeTxt}`}># {index + 1}</span>
+                  <span className="ml-2 text-xs">| Ranking</span>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <span>相关性: 0.8388</span>
-                  <span>类型: 文本</span>
-                  <span>更新时间: 0.057天</span>
+                  <span>Score: {result.score.toFixed(4)}</span>
                 </div>
               </div>
-              <p className="text-gray-800">WeOps工程流程自动化</p>
-              <p className="text-gray-600">WeOps工程流程自动化旨在提高工程团队的工作效率和项目交付的准确性。</p>
-              <p className="text-blue-500">WeOps工程流程自动化-AD.docx</p>
+              <p className={`text-sm ${styles.content} mb-2`}>{result.content}</p>
+              <p className={`text-sm ${styles.activeTxt}`}>{result.name}</p>
             </div>
           ))}
         </div>

@@ -24,7 +24,7 @@ const KnowledgePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [cards, setCards] = useState<Card[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingCard, setEditingCard] = useState<null | Card>(null);
+  const [editingCard, setEditingCard] = useState<null | KnowledgeValues>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const KnowledgePage = () => {
     };
 
     getKnowledgeBase();
-  }, [get]);
+  }, [get, t]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -157,7 +157,7 @@ const KnowledgePage = () => {
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onConfirm={handleAddKnowledge}
-        initialValues={editingCard ? { name: editingCard.name, team: editingCard.team || '', introduction: editingCard.introduction } : undefined}
+        initialValues={editingCard}
       />
     </div>
   );

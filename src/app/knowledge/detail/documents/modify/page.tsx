@@ -137,7 +137,8 @@ const KnowledgeModifyPage = () => {
       content: <PreprocessStep 
         knowledgeSourceType={type} 
         knowledgeDocumentIds={documentIds}
-        onConfigChange={handlePreprocessConfigChange} />,
+        onConfigChange={handlePreprocessConfigChange}
+        initialConfig={{}} />,
     },
     {
       title: 'Finish',

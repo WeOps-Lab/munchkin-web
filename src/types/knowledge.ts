@@ -1,4 +1,5 @@
 export interface KnowledgeValues {
+  id: number,
   name: string;
   team: string[];
   introduction: string;
@@ -10,14 +11,14 @@ export interface Card {
   introduction: string;
   created_by: string;
   team_name?: string;
-  team?: string[];
+  team: string[];
 }
   
 export interface ModifyKnowledgeModalProps {
   visible: boolean;
   onCancel: () => void;
   onConfirm: (values: KnowledgeValues) => void;
-  initialValues?: KnowledgeValues | undefined;
+  initialValues?: KnowledgeValues | null;
 }
 
 export interface groupProps {
@@ -35,6 +36,7 @@ export interface PreviewData {
 export interface ModelOption {
   id: number;
   name: string;
+  enabled: boolean;
 }
 
 export interface PreprocessStepProps {
@@ -42,4 +44,26 @@ export interface PreprocessStepProps {
   knowledgeSourceType: string | null;
   knowledgeDocumentIds: number[];
   initialConfig: any;
+}
+
+export interface TestConfigData {
+  selectedSearchTypes: string[];
+  rerankModel: boolean;
+  selectedRerankModel: string | null;
+  textSearchWeight: number;
+  vectorSearchWeight: number;
+  quantity: number;
+  candidate: number;
+  selectedEmbedModel: string | null;
+}
+
+export interface ResultItem {
+  id: number;
+  name: string;
+  content: string;
+  created_at: string;
+  created_by: string;
+  knowledge_source_type: string;
+  rerank_score: number;
+  score: number;
 }

@@ -34,7 +34,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
       }
     };
     fetchGroups();
-  }, [get, isLoading, t]);
+  }, [get, isLoading]);
 
   const handleConfirm = async () => {
     try {

@@ -41,7 +41,7 @@ const KnowledgePage = () => {
     };
 
     getKnowledgeBase();
-  }, [get, t]);
+  }, [get]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);

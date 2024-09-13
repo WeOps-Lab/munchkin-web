@@ -6,6 +6,7 @@ const useSaveConfig = () => {
   const { post } = useApiClient();
 
   const validateConfig = useCallback((config: any) => {
+    console.log('config', config);
     if (config.enable_semantic_chunk_parse && !config.semantic_chunk_parse_embedding_model) {
       message.error('Please select a semantic model when Semantic Chunk Parsing is enabled.');
       return false;

@@ -1,33 +1,38 @@
 'use client';
-import React, { useState } from 'react';
-import { Form, Input, Button, Row, Col, message } from 'antd';
+
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, Row, Col, message, Select, Spin } from 'antd';
 import ConfigComponent from '@/components/knowledge/config';
+import { useTranslation } from '@/utils/i18n';
 import useApiClient from '@/utils/request';
+import useGroups from '@/hooks/useGroups';
+import { useSearchParams } from 'next/navigation';
+import useFetchConfigData from '@/hooks/useFetchConfigData';
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 const SettingsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { post } = useApiClient();
   const [form] = Form.useForm();
-  const [formData, setFormData] = useState({
-    name: '',
-    introduction: '',
-    team: ''
-  });
-  const [configData, setConfigData] = useState({
-    selectedSearchTypes: [] as string[],
-    rerankModel: false,
-    selectedRerankModel: null as string | null,
-    textSearchWeight: 0.5,
-    vectorSearchWeight: 0.5,
-    quantity: 10,
-    candidate: 10,
-    selectedEmbedModel: null as string | null,
-  });
+  const { groups, loading: groupsLoading } = useGroups();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+  const { formData, configData, setFormData, setConfigData, loading } = useFetchConfigData(id);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  useEffect(() => {
+    if (!groupsLoading && groups.length > 0) {
+      form.setFieldsValue({ team: [groups[0].id] });
+    }
+    form.setFieldsValue(formData);
+  }, [groupsLoading, groups, form, formData]);
 
   const handleConfirm = () => {
     form.validateFields()
       .then(async values => {
+        setConfirmLoading(true);
         const params = {
           name: values.name,
           introduction: values.introduction,
@@ -44,16 +49,17 @@ const SettingsPage: React.FC = () => {
         };
 
         try {
-          const response = await post(`/knowledge_mgmt/knowledge_base/{id}/update_settings/`, params);
-          message.success('Settings updated successfully!');
-          console.log(response.data);
+          await post(`/knowledge_mgmt/knowledge_base/${id}/update_settings/`, params);
+          message.success(t('common.updateSuccess'));
         } catch (error) {
-          message.error('Failed to update settings.');
+          message.error(t('common.updateFailed'));
           console.error(error);
+        } finally {
+          setConfirmLoading(false);
         }
       })
       .catch(errorInfo => {
-        console.log('Validation Failed:', errorInfo);
+        console.log(`${t('common.valFailed')}: errorInfo`);
       });
   };
 
@@ -62,74 +68,71 @@ const SettingsPage: React.FC = () => {
     setFormData({
       name: '',
       introduction: '',
-      team: ''
-    });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
+      team: []
     });
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', position: 'relative' }}>
-      <Form
-        form={form}
-        layout="horizontal"
-        name="my_form"
-        initialValues={formData}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 18 }}
-      >
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: 'Please input your name!' }]}
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', position: 'relative' }}>
+      <Spin spinning={groupsLoading || loading}>
+        <Form
+          form={form}
+          layout="horizontal"
+          name="my_form"
+          labelCol={{ flex: '0 0 128px' }}
+          wrapperCol={{ flex: '1' }}
+          initialValues={formData}
+          onValuesChange={(changedValues, allValues) => setFormData(allValues)}
         >
-          <Input name="name" value={formData.name} onChange={handleInputChange} />
-        </Form.Item>
+          <Form.Item
+            name="name"
+            label={t('knowledge.form.name')}
+            rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.name')}!` }]}
+          >
+            <Input placeholder={t('common.input')} />
+          </Form.Item>
+          <Form.Item
+            name="team"
+            label={t('knowledge.form.group')}
+            rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.introduction')}!` }]}
+          >
+            <Select mode="multiple" placeholder={t('common.select')}>
+              {groups.map(group => (
+                <Option key={group.id} value={group.id}>{group.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="introduction"
+            label={t('knowledge.form.introduction')}
+            rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.introduction')}!` }]}
+          >
+            <Input.TextArea rows={4} placeholder={t('common.input')} />
+          </Form.Item>
 
-        <Form.Item
-          label="Team"
-          name="team"
-          rules={[{ required: true, message: 'Please input your team!' }]}
-        >
-          <Input name="team" value={formData.team} onChange={handleInputChange} />
-        </Form.Item>
+          <ConfigComponent
+            configData={configData}
+            setConfigData={setConfigData}
+          />
 
-        <Form.Item
-          label="Introduction"
-          name="introduction"
-          rules={[{ required: true, message: 'Please input your introduction!' }]}
-        >
-          <TextArea name="introduction" value={formData.introduction} onChange={handleInputChange} rows={4} />
-        </Form.Item>
-
-        <ConfigComponent
-          configData={configData}
-          setConfigData={setConfigData}
-        />
-
-        <Form.Item wrapperCol={{ span: 24 }}>
-          <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', padding: '20px' }}>
-            <Row justify="end" gutter={16}>
-              <Col>
-                <Button onClick={handleCancel}>
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <Button type="primary" onClick={handleConfirm}>
-                  Confirm
-                </Button>
-              </Col>
-            </Row>
-          </div>
-        </Form.Item>
-      </Form>
+          <Form.Item wrapperCol={{ span: 24 }}>
+            <div className="fixed bottom-10 right-10 z-50">
+              <Row justify="end" gutter={16}>
+                <Col>
+                  <Button onClick={handleCancel}>
+                    Cancel
+                  </Button>
+                </Col>
+                <Col>
+                  <Button type="primary" onClick={handleConfirm} loading={confirmLoading}>
+                    Confirm
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </Form.Item>
+        </Form>
+      </Spin>
     </div>
   );
 };

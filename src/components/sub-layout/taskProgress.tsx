@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import useApiClient from '@/utils/request';
 import styles from './index.module.less';
+import { useTranslation } from '@/utils/i18n';
 
 interface Task {
   id: number;
   name: string;
 }
 
-const tasks: Task[] = [
-  { id: 1, name: 'Task 1' },
-  { id: 2, name: 'Task 2' },
-];
-
 const TaskProgress: React.FC = () => {
+  const { t } = useTranslation();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const { get } = useApiClient();
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const data = await get('/knowledge_mgmt/knowledge_document/', { params: { train_status: 0 } });
+        setTasks(data);
+      } catch (error) {
+        console.error(`${t('common.fetchFailed')}: ${error}`);
+      }
+    };
+
+    fetchTasks();
+    const interval = setInterval(fetchTasks, 180000);
+    return () => clearInterval(interval);
+  }, [get]);
+
   return (
     <div className="p-4 absolute bottom-10 left-0 w-full">
       {tasks.map((task) => (

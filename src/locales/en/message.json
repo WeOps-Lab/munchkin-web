@@ -18,12 +18,14 @@
     "valFailed": "Validate Failed",
     "fetchFailed": "Failed to fetch list",
     "updateSuccess": "Updated successfully",
+    "updateFailed": "Failed to update",
     "addSuccess": "Added successfully",
     "saveFailed": "Failed to save them(s)",
     "selectMsg": "Please select the",
     "inputMsg": "Please input the",
     "input": "Input",
-    "select": "Select"
+    "select": "Select",
+    "serverError": "Server error, please try again later."
   },
   "knowledge": {
     "menu": "Knowledge",
@@ -32,7 +34,8 @@
     "form": {
       "name": "Name",
       "group": "Group",
-      "introduction": "Introduction"
+      "introduction": "Introduction",
+      "embedModel": "Embed Model"
     },
     "localFile": "Local File",
     "fileSubTitle": "Upload local files (such as PDF, DOCX, TXT) as a knowledge source.",

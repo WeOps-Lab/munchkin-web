@@ -52,7 +52,7 @@ const KnowledgePage = () => {
       if (editingCard) {
         await patch(`/knowledge_mgmt/knowledge_base/${editingCard.id}/`, values);
         setCards(cards.map(card => card.id === editingCard?.id ? { ...card, ...values } : card));
-        message.success(t('common.uodateSuccess'));
+        message.success(t('common.updateSuccess'));
       } else {
         const newCard = await post('/knowledge_mgmt/knowledge_base/', values);
         setCards([newCard, ...cards]);

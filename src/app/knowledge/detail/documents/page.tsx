@@ -183,6 +183,7 @@ const DocumentsPage: React.FC = () => {
       page: current,
       page_size: pageSize,
       knowledge_source_type: activeTabKey,
+      knowledge_base_id: id
     };
   }, [searchText, current, pageSize, activeTabKey]);
 

@@ -3,6 +3,7 @@ export interface KnowledgeValues {
   name: string;
   team: string[];
   introduction: string;
+  embed_model: number;
 }
 
 export interface Card {
@@ -12,6 +13,7 @@ export interface Card {
   created_by: string;
   team_name?: string;
   team: string[];
+  embed_model: number;
 }
   
 export interface ModifyKnowledgeModalProps {

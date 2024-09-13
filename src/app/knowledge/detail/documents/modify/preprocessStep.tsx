@@ -8,15 +8,15 @@ const { Option } = Select;
 
 const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowledgeSourceType, knowledgeDocumentIds, initialConfig }) => {
   const [formData, setFormData] = useState({
-    chunkParsing: initialConfig?.chunkParsing || false,
-    chunkSize: initialConfig?.chunkSize || 256,
-    chunkOverlap: initialConfig?.chunkOverlap || 32,
-    semanticChunkParsing: initialConfig?.semanticChunkParsing || false,
-    semanticModel: initialConfig?.semanticModel || null,
-    ocrEnhancement: initialConfig?.ocrEnhancement || false,
-    ocrModel: initialConfig?.ocrModel || null,
-    excelParsing: initialConfig?.excelParsing || false,
-    excelParseOption: initialConfig?.excelParseOption || 'headerRow',
+    chunkParsing: initialConfig?.chunkParsing ?? false,
+    chunkSize: initialConfig?.chunkSize ?? 256,
+    chunkOverlap: initialConfig?.chunkOverlap ?? 0,
+    semanticChunkParsing: initialConfig?.semanticChunkParsing ?? false,
+    semanticModel: initialConfig?.semanticModel ?? null,
+    ocrEnhancement: initialConfig?.ocrEnhancement ?? false,
+    ocrModel: initialConfig?.ocrModel ?? null,
+    excelParsing: initialConfig?.excelParsing ?? false,
+    excelParseOption: initialConfig?.excelParseOption ?? 'fullContent',
   });
 
   const [previewData, setPreviewData] = useState<PreviewData[]>([]);
@@ -52,7 +52,6 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   }, [formData, knowledgeSourceType, knowledgeDocumentIds]);
 
   useEffect(() => {
-    console.log('Fetching models...');
     const fetchModels = async () => {
       try {
         const [semanticData, ocrData] = await Promise.all([
@@ -74,8 +73,13 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   }, [get]);
 
   useEffect(() => {
-    if (!loadingSemanticModels && !loadingOcrModels && initialConfigRef.current && !isInitialConfigApplied) {
-      console.log('Setting initial config...');
+    if (
+      !loadingSemanticModels &&
+      !loadingOcrModels &&
+      initialConfigRef.current &&
+      Object.keys(initialConfigRef.current).length !== 0 &&
+      !isInitialConfigApplied
+    ) {
       setFormData({
         chunkParsing: initialConfigRef.current.chunkParsing,
         chunkSize: initialConfigRef.current.chunkSize,
@@ -93,13 +97,14 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   }, [loadingSemanticModels, loadingOcrModels, isInitialConfigApplied]);
 
   useEffect(() => {
-    console.log('changed:');
-    if (isInitialConfigApplied && initialConfig) {
+    console.log('changed:', isInitialConfigApplied, initialConfig);
+    const initConfigLen = Object.keys(initialConfigRef.current).length
+    if (isInitialConfigApplied && initialConfig && initConfigLen) {
       const config = generateConfigRef.current(false);
       console.log('Config changed:', config);
       onConfigChangeRef.current(config);
     }
-    if (!initialConfig) {
+    if (initialConfig && initConfigLen === 0) {
       const config = generateConfigRef.current(false);
       console.log('Config changed:+++', config);
       onConfigChangeRef.current(config);
@@ -160,7 +165,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             <Form.Item label="Chunk Size">
               <InputNumber
                 style={{ width: '100%' }}
-                min={1}
+                min={0}
                 value={formData.chunkSize}
                 onChange={(value) => handleChange('chunkSize', value)}
                 disabled={!formData.chunkParsing}
@@ -170,7 +175,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             <Form.Item label="Chunk Overlap">
               <InputNumber
                 style={{ width: '100%' }}
-                min={1}
+                min={0}
                 value={formData.chunkOverlap}
                 onChange={(value) => handleChange('chunkOverlap', value)}
                 disabled={!formData.chunkParsing}
@@ -219,7 +224,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             </Select>
           </Form.Item>
         </div>
-        <h2 className="text-lg font-semibold mb-3">Specific Config</h2>
+        <h2 className="text-lg font-semibold mb-3">Advance Settings</h2>
         <div className={`rounded-md p-4 mb-6 ${styles.configItem}`}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-base font-semibold">Excel Parsing</h3>

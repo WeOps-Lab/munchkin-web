@@ -29,8 +29,10 @@ const KnowledgeModifyPage = () => {
   const [preprocessConfig, setPreprocessConfig] = useState<any>(null);
   const [webLinkData, setWebLinkData] = useState<{ name: string, link: string, deep: number }>({ name: '', link: '', deep: 1 });
   const [manualData, setManualData] = useState<{ name: string, content: string }>({ name: '', content: '' });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleNext = async () => {
+    setLoading(true);
     if (currentStep === 0 && type === 'file') {
       try {
         const formData = new FormData();
@@ -45,6 +47,7 @@ const KnowledgeModifyPage = () => {
         message.success('Files uploaded successfully');
       } catch (error) {
         message.error('Failed to upload files');
+        setLoading(false);
         return;
       }
     } else if (currentStep === 0 && type === 'web_page') {
@@ -59,6 +62,7 @@ const KnowledgeModifyPage = () => {
         message.success('Web link data saved successfully');
       } catch (error) {
         message.error('Failed to save web link data');
+        setLoading(false);
         return;
       }
     } else if (currentStep === 0 && type === 'manual') {
@@ -72,15 +76,18 @@ const KnowledgeModifyPage = () => {
         message.success('Manual data saved successfully');
       } catch (error) {
         message.error('Failed to save manual data');
+        setLoading(false);
         return;
       }
     } else if (currentStep === 1) {
       const success = await saveConfig(preprocessConfig);
       if (!success) {
+        setLoading(false);
         return;
       }
     }
     setCurrentStep(currentStep + 1);
+    setLoading(false);
   };
 
   const handlePrevious = () => {
@@ -174,7 +181,7 @@ const KnowledgeModifyPage = () => {
             </Button>
           )}
           {currentStep < steps.length - 1 && (
-            <Button type="primary" onClick={handleNext} disabled={!isStepValid}>
+            <Button type="primary" onClick={handleNext} disabled={!isStepValid} loading={loading}>
               Next
             </Button>
           )}

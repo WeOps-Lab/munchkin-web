@@ -3,6 +3,7 @@ import { useEffect, useCallback, useState, useRef } from 'react';
 import { useAuth } from '@/context/auth';
 import { message } from 'antd';
 import { signIn } from 'next-auth/react';
+import { useTranslation } from '@/utils/i18n';
 
 const apiClient = axios.create({
   baseURL: '/reqApi',
@@ -25,6 +26,7 @@ const handleResponse = (response: AxiosResponse, onError?: () => void) => {
 };
 
 const useApiClient = () => {
+  const { t } = useTranslation();
   const authContext = useAuth();
   const token = authContext?.token || null;
   const tokenRef = useRef(token);
@@ -68,8 +70,8 @@ const useApiClient = () => {
             message.error(messageText);
           } else if (status === 500) {
             // 处理 500 错误，例如显示错误消息
-            console.error('Server error:', messageText);
-            message.error('服务器错误，请稍后再试');
+            message.error(t('common.serverError'));
+            return Promise.reject(new Error(t('common.serverError')));
           }
         }
         return Promise.reject(error);

@@ -52,6 +52,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
         <Select
           className="flex-1"
           placeholder="Select model"
+          disabled
           loading={loadingModels}
           value={configData.selectedEmbedModel}
           onChange={(value) => setConfigData(prevData => ({ ...prevData, selectedEmbedModel: value }))}
@@ -64,7 +65,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
         </Select>
       </div>
       <div className={`mb-4 flex ${styles.configTxt}`}>
-        <label className="block text-sm font-medium mb-1 w-32">Retrieval setting</label>
+        <label className="block text-sm font-medium mb-1 w-32">Retrieval Setting</label>
         <div className="flex-1">
           <div className="p-4 border rounded-md mb-4">
             <div className="flex items-center mb-2 justify-between">

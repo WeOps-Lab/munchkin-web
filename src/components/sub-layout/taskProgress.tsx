@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import styles from './index.module.less';
 import { useTranslation } from '@/utils/i18n';
@@ -12,11 +13,18 @@ const TaskProgress: React.FC = () => {
   const { t } = useTranslation();
   const [tasks, setTasks] = useState<Task[]>([]);
   const { get } = useApiClient();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
 
   useEffect(() => {
+    console.log('knowledge_document');
+    const params = {
+      train_status: 0,
+      knowledge_base_id: id
+    }
     const fetchTasks = async () => {
       try {
-        const data = await get('/knowledge_mgmt/knowledge_document/', { params: { train_status: 0 } });
+        const data = await get('/knowledge_mgmt/knowledge_document/', { params });
         setTasks(data);
       } catch (error) {
         console.error(`${t('common.fetchFailed')}: ${error}`);
@@ -24,7 +32,7 @@ const TaskProgress: React.FC = () => {
     };
 
     fetchTasks();
-    const interval = setInterval(fetchTasks, 180000);
+    const interval = setInterval(fetchTasks, 120000);
     return () => clearInterval(interval);
   }, [get]);
 

@@ -2,19 +2,31 @@
 
 import React from 'react';
 import WithSideMenuLayout from '@/components/sub-layout';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/utils/i18n';
-
-const handleBackButtonClick = () => {
-  console.log('Back button clicked');
-};
 
 const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const router = useRouter();
   const name = searchParams.get('name');
   const desc = searchParams.get('desc');
+
+
+  const handleBackButtonClick = () => {
+    const pathSegments = pathname.split('/').filter(Boolean);
+    if (pathSegments.length >= 3) {
+      if (pathSegments.length === 3) {
+        router.push('/knowledge');
+      } else if (pathSegments.length > 3) {
+        router.push('/knowledge/detail');
+      }
+    } 
+    else {
+      router.back();
+    }
+  };
 
   const menuItems = [
     { label: t('knowledge.documents.title'), path: '/knowledge/detail/documents', icon: 'shiyongwendang' },

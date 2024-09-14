@@ -36,7 +36,6 @@ const SideMenu: React.FC<SideMenuProps> = ({
   };
 
   const isActive = (path: string): boolean => {
-    // 判断当前路径是否以菜单项的路径开头
     return pathname.startsWith(path);
   };
 

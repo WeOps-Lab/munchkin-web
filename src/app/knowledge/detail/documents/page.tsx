@@ -54,6 +54,15 @@ const DocumentsPage: React.FC = () => {
       title: t('knowledge.documents.name'),
       dataIndex: 'name',
       key: 'name',
+      render: (text, record) => (
+        <a
+          href="#"
+          style={{ color: '#155aef' }}
+          onClick={() => router.push(`/knowledge/detail/documents/result?id=${record.id}&name=${name}&desc=${desc}`)}
+        >
+          {text}
+        </a>
+      ),
     },
     {
       title: t('knowledge.documents.chunkSize'),
@@ -128,7 +137,8 @@ const DocumentsPage: React.FC = () => {
       excelParseOption: record.excel_header_row_parse ? 'headerRow' : 'fullContent',
     };
     const queryParams = new URLSearchParams({
-      id: record.id?.toString() || '',
+      id: id,
+      documentId: record.id?.toString() || '',
       name: name || '',
       desc: desc || '',
       sourceType: activeTabKey,
@@ -237,7 +247,7 @@ const DocumentsPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{marginTop: '-10px'}}>
       <Tabs defaultActiveKey='local' onChange={handleTabChange}>
         <TabPane tab={t('knowledge.localFile')} key='file' />
         <TabPane tab={t('knowledge.webLink')} key='web_page' />

@@ -6,6 +6,7 @@ import { Input, Button, message, Spin, Empty } from 'antd';
 import ConfigComponent from '@/components/knowledge/config';
 import { ResultItem } from '@/types/knowledge';
 import useApiClient from '@/utils/request';
+import Icon from '@/components/icon';
 import useFetchConfigData from '@/hooks/useFetchConfigData';
 import styles from './index.module.less';
 
@@ -52,6 +53,7 @@ const TestingPage: React.FC = () => {
     setLoading(true);
     try {
       const data = await post('/knowledge_mgmt/knowledge_document/testing', params);
+      console.log('data', data);
       message.success('Testing completed successfully!');
       setResults(data);
     } catch (error) {
@@ -82,6 +84,15 @@ const TestingPage: React.FC = () => {
       handleTesting();
     }
   };
+
+  const getIconByType = (type: string) => {
+    const iconMap = {
+      manual: 'wenben',
+      file: 'wendang',
+      web_page: 'icon-wangzhantuiguang'
+    }
+    return iconMap[type] || 'wendang'
+  }
 
   return (
     <Spin spinning={configLoading}>
@@ -139,7 +150,7 @@ const TestingPage: React.FC = () => {
                     </div>
                   </div>
                   <p className={`text-sm ${styles.content} mb-2`}>{result.content}</p>
-                  <p className={`text-sm ${styles.activeTxt}`}>{result.name}</p>
+                  <p className={`flex items-center text-sm ${styles.activeTxt}`}><Icon type={getIconByType(result.knowledge_source_type)} className="text-xl pr-1" />{result.name}</p>
                 </div>
               ))
             ) : (

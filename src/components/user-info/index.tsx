@@ -9,7 +9,7 @@ import { useTranslation } from '@/utils/i18n';
 const UserInfo = () => {
   const { data: session } = useSession();
   const { t } = useTranslation();
-  const username = session?.user?.name || 'Qiu-Jia';
+  const username = session?.username || 'Qiu-Jia';
   const [visible, setVisible] = useState<boolean>(false);
   const [configurationsVisible, setConfigurationsVisible] = useState<boolean>(false);
 

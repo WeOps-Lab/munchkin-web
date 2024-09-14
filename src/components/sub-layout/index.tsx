@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import SideMenu, { MenuItem } from './side-menu';
 import sideMenuStyle from './index.module.less';
@@ -20,7 +22,7 @@ const WithSideMenuLayout: React.FC<WithSideMenuLayoutProps> = ({
   topSection
 }) => {
   return (
-    <div className={`flex grow w-full ${sideMenuStyle.sideMenuLayout}`}>
+    <div className={`flex grow w-full h-full ${sideMenuStyle.sideMenuLayout}`}>
       <SideMenu 
         menuItems={menuItems}
         showBackButton={showBackButton}
@@ -34,7 +36,7 @@ const WithSideMenuLayout: React.FC<WithSideMenuLayoutProps> = ({
             {topSection}
           </div>
         )} 
-        <div className={`p-4 flex-1 rounded-md overflow-auto ${sideMenuStyle.sectionContainer}`}>
+        <div className={`p-4 flex-1 rounded-md overflow-auto ${sideMenuStyle.sectionContainer} ${sideMenuStyle.sectionContext}`}>
           {children}
         </div>
       </section>

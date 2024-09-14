@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Switch, InputNumber, Select, Form, message, Radio, Button } from 'antd';
+import { Switch, InputNumber, Select, Form, message, Radio, Button, Spin, Empty } from 'antd';
 import styles from './modify.module.less';
 import useApiClient from '@/utils/request';
+import Icon from '@/components/icon';
 import { PreviewData, ModelOption, PreprocessStepProps } from '@/types/knowledge';
 
 const { Option } = Select;
 
 const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowledgeSourceType, knowledgeDocumentIds, initialConfig }) => {
   const [formData, setFormData] = useState({
-    chunkParsing: initialConfig?.chunkParsing ?? false,
+    chunkParsing: initialConfig?.chunkParsing ?? true,
     chunkSize: initialConfig?.chunkSize ?? 256,
     chunkOverlap: initialConfig?.chunkOverlap ?? 0,
     semanticChunkParsing: initialConfig?.semanticChunkParsing ?? false,
@@ -24,6 +25,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   const [ocrModels, setOcrModels] = useState<ModelOption[]>([]);
   const [loadingSemanticModels, setLoadingSemanticModels] = useState<boolean>(true);
   const [loadingOcrModels, setLoadingOcrModels] = useState<boolean>(true);
+  const [loadingPreview, setLoadingPreview] = useState<boolean>(false);
   const { get, post } = useApiClient();
   const initialConfigRef = useRef(initialConfig);
   const onConfigChangeRef = useRef(onConfigChange);
@@ -97,8 +99,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   }, [loadingSemanticModels, loadingOcrModels, isInitialConfigApplied]);
 
   useEffect(() => {
-    console.log('changed:', isInitialConfigApplied, initialConfig);
-    const initConfigLen = Object.keys(initialConfigRef.current).length
+    const initConfigLen = initialConfigRef.current ? Object.keys(initialConfigRef.current).length : 0;
     if (isInitialConfigApplied && initialConfig && initConfigLen) {
       const config = generateConfigRef.current(false);
       console.log('Config changed:', config);
@@ -128,7 +129,9 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
       message.error('Please select an OCR model when OCR Enhancement is enabled.');
       return;
     }
+    setLoadingPreview(true);
     await fetchPreviewData();
+    setLoadingPreview(false);
   };
 
   const fetchPreviewData = useCallback(async () => {
@@ -244,19 +247,25 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
       <div className="flex-1 px-4">
         <div className="flex justify-between">
           <h2 className="text-lg font-semibold mb-3">Preview</h2>
-          <Button type="primary" size="small" onClick={handlePreviewClick}>View Chunk</Button>
+          <Button type="primary" size="small" onClick={handlePreviewClick} loading={loadingPreview}>View Chunk</Button>
         </div>
-        {previewData.map((item) => (
-          <div key={item.id} className={`rounded-md p-4 mb-3 ${styles.previewItem}`}>
-            <div className="flex justify-between mb-2">
-              <span className={`text-xs ${styles.number}`}>#{item.id.toString().padStart(3, '0')}</span>
-              <span className="text-sm">{item.characters} characters</span>
+        {loadingPreview ? (
+          <Spin className="w-full flex justify-center mt-4" />
+        ) : previewData.length > 0 ? (
+          previewData.map((item) => (
+            <div key={item.id} className={`rounded-md p-4 mb-3 ${styles.previewItem}`}>
+              <div className="flex justify-between mb-2">
+                <span className={`text-xs ${styles.number}`}>#{item.id.toString().padStart(3, '0')}</span>
+                <span className="flex items-center stext-sm"><Icon type="zifu" className="text-xl pr-1" />{item.characters} characters</span>
+              </div>
+              <div>
+                <p>{item.content}</p>
+              </div>
             </div>
-            <div>
-              <p>{item.content}</p>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <Empty description="No Results" />
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Button } from 'antd';
+import { Button, Breadcrumb } from 'antd';
 import PreprocessStep from '../modify/preprocessStep';
 import useSaveConfig from '@/hooks/useSaveConfig';
 
@@ -11,13 +11,13 @@ const DocsConfigPage: React.FC = () => {
   const router = useRouter();
   const [config, setConfig] = useState(null);
   const [sourceType, setSourceType] = useState<string | null>(null);
-  const [id, setId] = useState<string | null>(null);
+  const [documentId, setDocumentId] = useState<string | null>(null);
   const { saveConfig } = useSaveConfig();
 
   useEffect(() => {
     const configParam = searchParams.get('config');
     const sourceTypeParam = searchParams.get('sourceType');
-    const idParam = searchParams.get('id');
+    const idParam = searchParams.get('documentId');
     if (configParam) {
       setConfig(JSON.parse(configParam));
     }
@@ -25,12 +25,11 @@ const DocsConfigPage: React.FC = () => {
       setSourceType(sourceTypeParam);
     }
     if (idParam) {
-      setId(idParam);
+      setDocumentId(idParam);
     }
   }, [searchParams]);
 
   const handleConfigChange = (newConfig: any) => {
-    console.log('changed~~~~~', newConfig);
     setConfig(newConfig);
   };
 
@@ -43,15 +42,20 @@ const DocsConfigPage: React.FC = () => {
 
   return (
     <div>
-      {config && sourceType && id && (
+      <Breadcrumb className="mb-5">
+        <Breadcrumb.Item>Knowledge</Breadcrumb.Item>
+        <Breadcrumb.Item>{sourceType}</Breadcrumb.Item>
+        <Breadcrumb.Item>Config</Breadcrumb.Item>
+      </Breadcrumb>
+      {config && sourceType && documentId && (
         <>
           <PreprocessStep
             onConfigChange={handleConfigChange}
             knowledgeSourceType={sourceType}
-            knowledgeDocumentIds={[Number(id)]}
+            knowledgeDocumentIds={[Number(documentId)]}
             initialConfig={config}
           />
-          <div className="text-right mt-4">
+          <div className="fixed bottom-10 right-20 z-50 flex space-x-2">
             <Button type="primary" onClick={handleSaveClick}>
               Save
             </Button>

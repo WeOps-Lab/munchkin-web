@@ -7,29 +7,38 @@ import styles from './index.module.less';
 
 const { Search } = Input;
 
-const DocsResultPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [paragraphsState, setParagraphsState] = useState([]);
-  const [loading, setLoading] = useState(false);
+interface Paragraph {
+  id: string;
+  content: string;
+}
+
+const DocsResultPage: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [paragraphsState, setParagraphsState] = useState<Paragraph[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
   const { get } = useApiClient();
 
-  useEffect(async () => {
-    if (id) {
-      setLoading(true);
-      try {
-        const data = await get(`/knowledge_mgmt/knowledge_document/${id}/get_detail/`)
-        setParagraphsState(data);
-      } catch (error) {
-        console.error('Error fetching document detail:', error);
-      } finally {
-        setLoading(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        setLoading(true);
+        try {
+          const data = await get(`/knowledge_mgmt/knowledge_document/${id}/get_detail/`);
+          setParagraphsState(data);
+        } catch (error) {
+          console.error('Error fetching document detail:', error);
+        } finally {
+          setLoading(false);
+        }
       }
-    }
+    };
+
+    fetchData();
   }, [id, get]);
 
-  const handleSearch = (value) => {
+  const handleSearch = (value: string) => {
     setSearchTerm(value.toLowerCase());
   };
 
@@ -41,10 +50,10 @@ const DocsResultPage = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-end items-center mb-4">
         <Input
-          placeholder='search...'
+          placeholder="search..."
           allowClear
           onChange={(e) => handleSearch(e.target.value)}
-          onPressEnter={handleSearch}
+          onPressEnter={() => handleSearch(searchTerm)}
           style={{ width: '240px' }}
         />
       </div>
@@ -61,7 +70,9 @@ const DocsResultPage = () => {
                 className={`rounded-lg h-full flex flex-col justify-between ${styles.resultCard}`}
                 title={
                   <div className="flex justify-between items-center">
-                    <span className={`text-xs ${styles.number}`}>#{index.toString().padStart(3, '0')}</span>
+                    <span className={`text-xs ${styles.number}`}>
+                      #{index.toString().padStart(3, '0')}
+                    </span>
                   </div>
                 }
               >

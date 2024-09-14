@@ -86,13 +86,13 @@ const TestingPage: React.FC = () => {
   };
 
   const getIconByType = (type: string) => {
-    const iconMap = {
+    const iconMap: { [key: string]: string } = {
       manual: 'wenben',
       file: 'wendang',
       web_page: 'icon-wangzhantuiguang'
-    }
-    return iconMap[type] || 'wendang'
-  }
+    };
+    return iconMap[type] || 'wendang';
+  };  
 
   return (
     <Spin spinning={configLoading}>

@@ -1,3 +1,5 @@
+'use client';
+
 import KeycloakProvider from "next-auth/providers/keycloak";
 import { AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";

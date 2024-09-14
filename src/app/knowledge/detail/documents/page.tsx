@@ -137,7 +137,7 @@ const DocumentsPage: React.FC = () => {
       excelParseOption: record.excel_header_row_parse ? 'headerRow' : 'fullContent',
     };
     const queryParams = new URLSearchParams({
-      id: id,
+      id: id || '',
       documentId: record.id?.toString() || '',
       name: name || '',
       desc: desc || '',

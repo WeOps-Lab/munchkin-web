@@ -32,7 +32,7 @@ const TaskProgress: React.FC = () => {
     };
 
     fetchTasks();
-    const interval = setInterval(fetchTasks, 120000);
+    const interval = setInterval(fetchTasks, 10000);
     return () => clearInterval(interval);
   }, [get]);
 

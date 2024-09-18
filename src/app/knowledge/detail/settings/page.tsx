@@ -9,7 +9,6 @@ import useGroups from '@/hooks/useGroups';
 import { useSearchParams } from 'next/navigation';
 import useFetchConfigData from '@/hooks/useFetchConfigData';
 
-const { TextArea } = Input;
 const { Option } = Select;
 
 const SettingsPage: React.FC = () => {
@@ -59,7 +58,7 @@ const SettingsPage: React.FC = () => {
         }
       })
       .catch(errorInfo => {
-        console.log(`${t('common.valFailed')}: errorInfo`);
+        console.log(`${t('common.valFailed')}: ${errorInfo}`);
       });
   };
 

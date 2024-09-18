@@ -5,8 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import styles from './index.module.less';
 
-const { Search } = Input;
-
 interface Paragraph {
   id: string;
   content: string;

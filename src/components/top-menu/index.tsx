@@ -21,7 +21,6 @@ const TopMenu = () => {
   const pathname = usePathname();
 
   const menuItems = [
-    { label: t('home'), icon: 'HomeFilled', path: '/' },
     { label: t('knowledge.menu'), icon: 'BookOutlined', path: '/knowledge' },
   ];
 

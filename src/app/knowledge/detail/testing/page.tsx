@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Input, Button, message, Spin, Empty } from 'antd';
+import { Input, Button, message, Spin, Empty, Skeleton, List } from 'antd';
 import ConfigComponent from '@/components/knowledge/config';
 import { ResultItem } from '@/types/knowledge';
 import useApiClient from '@/utils/request';
@@ -92,7 +92,7 @@ const TestingPage: React.FC = () => {
       web_page: 'icon-wangzhantuiguang'
     };
     return iconMap[type] || 'wendang';
-  };  
+  };
 
   return (
     <Spin spinning={configLoading}>
@@ -137,7 +137,19 @@ const TestingPage: React.FC = () => {
         <div className="w-1/2 pl-4">
           <h2 className="text-lg font-semibold mb-2">Results</h2>
           <div className="space-y-4">
-            {results.length > 0 ? (
+            {loading ? (
+              <>
+                <List
+                  itemLayout="vertical"
+                  dataSource={[1, 2, 3]}
+                  renderItem={() => (
+                    <List.Item>
+                      <Skeleton active />
+                    </List.Item>
+                  )}
+                />
+              </>
+            ) : results.length > 0 ? (
               results.map((result, index) => (
                 <div key={result.id} className={`p-4 border rounded-md ${styles.resultsItem}`}>
                   <div className="flex justify-between mb-2">

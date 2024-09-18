@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Switch, InputNumber, Select, Form, message, Radio, Button, Spin, Empty } from 'antd';
+import { Switch, InputNumber, Select, Form, message, Radio, Button, Spin, Empty, Skeleton, List } from 'antd';
 import styles from './modify.module.less';
 import useApiClient from '@/utils/request';
 import Icon from '@/components/icon';
@@ -250,12 +250,20 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
           <Button type="primary" size="small" onClick={handlePreviewClick} loading={loadingPreview}>View Chunk</Button>
         </div>
         {loadingPreview ? (
-          <Spin className="w-full flex justify-center mt-4" />
+          <List
+            itemLayout="vertical"
+            dataSource={[1, 2, 3]}
+            renderItem={() => (
+              <List.Item>
+                <Skeleton active />
+              </List.Item>
+            )}
+          />
         ) : previewData.length > 0 ? (
           previewData.map((item) => (
             <div key={item.id} className={`rounded-md p-4 mb-3 ${styles.previewItem}`}>
-              <div className="flex justify-between mb-2">
-                <span className={`text-xs ${styles.number}`}>#{item.id.toString().padStart(3, '0')}</span>
+              <div className="flex justify-between items-center mb-2">
+                <span className={`text-xs flex items-center ${styles.number}`}>#{item.id.toString().padStart(3, '0')}</span>
                 <span className="flex items-center stext-sm"><Icon type="zifu" className="text-xl pr-1" />{item.characters} characters</span>
               </div>
               <div>

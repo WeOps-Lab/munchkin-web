@@ -58,7 +58,7 @@ const DocumentsPage: React.FC = () => {
         <a
           href="#"
           style={{ color: '#155aef' }}
-          onClick={() => router.push(`/knowledge/detail/documents/result?id=${record.id}&name=${name}&desc=${desc}`)}
+          onClick={() => router.push(`/knowledge/detail/documents/result?id=${id}&name=${name}&desc=${desc}&knowledgeId=${record.id}`)}
         >
           {text}
         </a>

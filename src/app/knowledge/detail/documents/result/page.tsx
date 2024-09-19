@@ -15,7 +15,7 @@ const DocsResultPage: React.FC = () => {
   const [paragraphsState, setParagraphsState] = useState<Paragraph[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const searchParams = useSearchParams();
-  const id = searchParams.get('id');
+  const id = searchParams.get('knowledgeId');
   const { get } = useApiClient();
 
   useEffect(() => {

@@ -59,7 +59,7 @@ const DocsConfigPage: React.FC = () => {
           />
           <div className="fixed bottom-10 right-20 z-50 flex space-x-2">
             <Button type="primary" onClick={handleSaveClick}>
-              {t('common.savess')}
+              {t('common.save')}
             </Button>
           </div>
         </>

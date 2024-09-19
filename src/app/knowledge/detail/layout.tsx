@@ -10,6 +10,7 @@ const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+  const id = searchParams.get('id');
   const name = searchParams.get('name');
   const desc = searchParams.get('desc');
 
@@ -20,7 +21,7 @@ const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
       if (pathSegments.length === 3) {
         router.push('/knowledge');
       } else if (pathSegments.length > 3) {
-        router.push('/knowledge/detail');
+        router.push(`/knowledge/detail?id=${id}&name=${name}&desc=${desc}`);
       }
     } 
     else {

@@ -3,11 +3,13 @@ import { Switch, InputNumber, Select, Form, message, Radio, Button, Empty, Skele
 import styles from './modify.module.less';
 import useApiClient from '@/utils/request';
 import Icon from '@/components/icon';
+import { useTranslation } from '@/utils/i18n';
 import { PreviewData, ModelOption, PreprocessStepProps } from '@/types/knowledge';
 
 const { Option } = Select;
 
 const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowledgeSourceType, knowledgeDocumentIds, initialConfig }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     chunkParsing: initialConfig?.chunkParsing ?? true,
     chunkSize: initialConfig?.chunkSize ?? 256,
@@ -122,11 +124,11 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
 
   const handlePreviewClick = async () => {
     if (formData.semanticChunkParsing && !formData.semanticModel) {
-      message.error('Please select a semantic model when Semantic Chunk Parsing is enabled.');
+      message.error(t('knowledge.documents.selectSemanticError'));
       return;
     }
     if (formData.ocrEnhancement && !formData.ocrModel) {
-      message.error('Please select an OCR model when OCR Enhancement is enabled.');
+      message.error(t('knowledge.documents.selectOcrError'));
       return;
     }
     setLoadingPreview(true);
@@ -145,27 +147,26 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
           content: contxt,
           characters: contxt.length
         })));
-        message.success('Preview data fetched successfully');
       } else {
-        throw new Error('Invalid data format');
+        throw new Error(t('common.invalidData'));
       }
     } catch (error) {
-      message.error('Failed to fetch preview data');
+      message.error(t('common.fetchFailed'));
     }
   }, [post]);
 
   return (
     <div className="flex justify-between">
       <div className={`flex-1 px-4 ${styles.config}`}>
-        <h2 className="text-lg font-semibold mb-3">General Config</h2>
+        <h2 className="text-lg font-semibold mb-3">{t('knowledge.documents.general')}</h2>
         <div className={`rounded-md p-4 mb-6 ${styles.configItem}`}>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-semibold">Chunk Parsing</h3>
+            <h3 className="text-base font-semibold">{t('knowledge.documents.chunkParsing')}</h3>
             <Switch size="small" checked={formData.chunkParsing} onChange={(checked) => handleChange('chunkParsing', checked)} />
           </div>
-          <p className="mb-4 text-sm">The process of dividing large documents into smaller parts or chunks to facilitate more efficient processing, analysis, or storage. This method is applicable to various document formats, including text and images.</p>
+          <p className="mb-4 text-sm">{t('knowledge.documents.chunkParsingDesc')}</p>
           <Form layout="vertical">
-            <Form.Item label="Chunk Size">
+            <Form.Item label={t('knowledge.documents.chunkSizeLabel')}>
               <InputNumber
                 style={{ width: '100%' }}
                 min={0}
@@ -175,7 +176,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
                 changeOnWheel
               />
             </Form.Item>
-            <Form.Item label="Chunk Overlap">
+            <Form.Item label={t('knowledge.documents.chunkOverlap')}>
               <InputNumber
                 style={{ width: '100%' }}
                 min={0}
@@ -189,10 +190,10 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
         </div>
         <div className={`rounded-md p-4 mb-6 ${styles.configItem}`}>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-semibold">Semantic Chunk Parsing</h3>
+            <h3 className="text-base font-semibold">{t('knowledge.documents.semChunkParsing')}</h3>
             <Switch size="small" checked={formData.semanticChunkParsing} onChange={(checked) => handleChange('semanticChunkParsing', checked)} />
           </div>
-          <p className="mb-4 text-sm">When performing document chunking, this method divides content based on semantic relationships, ensuring that each chunk contains content with complete contextual meaning and logical structure.</p>
+          <p className="mb-4 text-sm">{t('knowledge.documents.semChunkParsingDesc')}</p>
           <Form.Item label="Model">
             <Select
               style={{ width: '100%' }}
@@ -209,10 +210,10 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
         </div>
         <div className={`rounded-md p-4 mb-6 ${styles.configItem}`}>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-semibold">OCR Enhancement</h3>
+            <h3 className="text-base font-semibold">{t('knowledge.documents.ocrEnhancement')}</h3>
             <Switch size="small" checked={formData.ocrEnhancement} onChange={(checked) => handleChange('ocrEnhancement', checked)} />
           </div>
-          <p className="mb-4 text-sm">OCR (Optical Character Recognition) technology is used to recognize and convert characters from images into editable text, improving the accuracy and effectiveness of text recognition.</p>
+          <p className="mb-4 text-sm">{t('knowledge.documents.ocrEnhancementDesc')}</p>
           <Form.Item label="OCR Model">
             <Select
               style={{ width: '100%' }}
@@ -227,26 +228,26 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             </Select>
           </Form.Item>
         </div>
-        <h2 className="text-lg font-semibold mb-3">Advance Settings</h2>
+        <h2 className="text-lg font-semibold mb-3">{t('knowledge.documents.advanceSettings')}</h2>
         <div className={`rounded-md p-4 mb-6 ${styles.configItem}`}>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-semibold">Excel Parsing</h3>
+            <h3 className="text-base font-semibold">{t('knowledge.documents.excelParsing')}</h3>
             <Switch size="small" checked={formData.excelParsing} onChange={(checked) => handleChange('excelParsing', checked)} />
           </div>
-          <p className="mb-4 text-sm">This is specialized in handling data from Excel files, enabling the extraction, transformation, and utilization of both structured and unstructured data from Excel, thereby facilitating data analysis and processing.</p>
+          <p className="mb-4 text-sm">{t('knowledge.documents.excelParsingDesc')}</p>
           <Radio.Group
             onChange={(e) => handleChange('excelParseOption', e.target.value)}
             value={formData.excelParseOption}
             disabled={!formData.excelParsing}
           >
-            <Radio value="headerRow">Excel Header + Row Combination Parsing</Radio>
-            <Radio value="fullContent">Full Excel Content Parsing</Radio>
+            <Radio value="headerRow">{t('knowledge.documents.headerRow')}</Radio>
+            <Radio value="fullContent">{t('knowledge.documents.fullContent')}s</Radio>
           </Radio.Group>
         </div>
       </div>
       <div className="flex-1 px-4">
         <div className="flex justify-between">
-          <h2 className="text-lg font-semibold mb-3">Preview</h2>
+          <h2 className="text-lg font-semibold mb-3">{t('knowledge.documents.preview')}</h2>
           <Button type="primary" size="small" onClick={handlePreviewClick} loading={loadingPreview}>View Chunk</Button>
         </div>
         {loadingPreview ? (
@@ -272,7 +273,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             </div>
           ))
         ) : (
-          <Empty description="No Results" />
+          <Empty description={t('common.noResult')} />
         )}
       </div>
     </div>

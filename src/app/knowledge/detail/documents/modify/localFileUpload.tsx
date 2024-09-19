@@ -21,7 +21,7 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange }) => {
   }, [fileList, onFileChange]);
 
   const handleBeforeUpload = (file: File) => {
-    const allowedTypes = ['application/zip', 'application/x-rar-compressed', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/plain', 'text/csv'];
+    const allowedTypes = ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/plain', 'text/csv'];
     const isAllowedType = allowedTypes.includes(file.type);
     if (!isAllowedType) {
       message.error(`${file.name} ${t('common.fileType')}`);
@@ -45,7 +45,7 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange }) => {
         </p>
         <p className="ant-upload-text">{t('common.uploadText')}</p>
         <p className="ant-upload-hint">
-          {t('common.supports')}: .rar .zip .doc .docx .pdf .xlsx .txt .csv...
+          {t('common.supports')}: .doc .docx .pdf .xlsx .txt .csv...
         </p>
       </Dragger>
     </div>

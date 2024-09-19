@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Form, InputNumber } from 'antd';
+import { useTranslation } from '@/utils/i18n';
 
 const { TextArea } = Input;
 
@@ -9,6 +10,7 @@ interface WebLinkFormProps {
 }
 
 const WebLinkForm: React.FC<WebLinkFormProps> = ({ onFormChange, onFormDataChange }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<{ name: string; link: string; deep: number }>({
     name: '',
@@ -41,22 +43,22 @@ const WebLinkForm: React.FC<WebLinkFormProps> = ({ onFormChange, onFormDataChang
           onFormDataChange(formData);
         }}
       >
-        <Form.Item label="Name">
+        <Form.Item label={t('knowledge.form.name')}>
           <Input
-            placeholder="Name"
+            placeholder={`Please ${t('common.input')} ${t('knowledge.form.name')}`}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
           />
         </Form.Item>
-        <Form.Item label="Link">
+        <Form.Item label={t('knowledge.documents.link')}>
           <TextArea
-            placeholder="Link"
+            placeholder={`Please ${t('common.input')} ${t('knowledge.documents.link')}`}
             value={formData.link}
             onChange={(e) => handleInputChange('link', e.target.value)}
             rows={3}
           />
         </Form.Item>
-        <Form.Item label="Deep">
+        <Form.Item label={t('knowledge.documents.deep')}>
           <InputNumber
             min={1}
             value={formData.deep}

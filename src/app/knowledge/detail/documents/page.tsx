@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input, Button, Modal, message, Tag, Tabs } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, TrademarkOutlined } from '@ant-design/icons';
 import CustomTable from '@/components/custom-table';
 import SelectSourceModal from './selectSourceModal';
 import useApiClient from '@/utils/request';
@@ -39,7 +39,9 @@ const DocumentsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isTrainLoading, setIsTrainLoading] = useState(false);
+  const [singleTrainLoading, setSingleTrainLoading] = useState<{ [key: string]: boolean }>({});
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
   const name = searchParams.get('name');
@@ -80,10 +82,10 @@ const DocumentsPage: React.FC = () => {
       key: 'created_by',
       dataIndex: 'created_by',
       render: (_, { created_by }) => (
-        <div className='flex items-center'>
+        <div>
           <div
-            className='flex items-center justify-center rounded-full text-white mr-2'
-            style={{ width: 24, height: 24, backgroundColor: getRandomColor() }}
+            className='inline-block text-center rounded-full text-white mr-2'
+            style={{ width: 20, height: 20, backgroundColor: getRandomColor() }}
           >
             {created_by.charAt(0).toUpperCase()}
           </div>
@@ -115,6 +117,14 @@ const DocumentsPage: React.FC = () => {
         <>
           <Button type='link' className='mr-[10px]' onClick={() => handleSetClick(record)}>
             {t('common.set')}
+          </Button>
+          <Button
+            type='link'
+            className='mr-[10px]'
+            onClick={() => handleSingleTrain(record.id)}
+            loading={singleTrainLoading[record.id.toString()]}
+          >
+            {t('common.train')}
           </Button>
           <Button type='link' onClick={() => handleDelete([record.id])}>
             {t('common.delete')}
@@ -167,6 +177,34 @@ const DocumentsPage: React.FC = () => {
         }
       },
     });
+  };
+
+  const handleSingleTrain = async (recordId: React.Key) => {
+    setSingleTrainLoading((prev) => ({ ...prev, [recordId.toString()]: true }));
+    try {
+      await post('/knowledge_mgmt/knowledge_document/batch_train/', {
+        knowledge_document_ids: [recordId], 
+      });
+      message.success(t('common.trainSuccess'));
+    } catch (error) {
+      message.error(t('common.trainFailed'));
+    } finally {
+      setSingleTrainLoading((prev) => ({ ...prev, [recordId.toString()]: false }));
+    }
+  };
+
+  const handleBatchTrain = async (keys: React.Key[]) => {
+    setIsTrainLoading(true);
+    try {
+      await post('/knowledge_mgmt/knowledge_document/batch_train/', {
+        knowledge_document_ids: keys, 
+      });
+      message.success(t('common.trainSuccess'));
+    } catch (error) {
+      message.error(t('common.trainFailed'));
+    } finally {
+      setIsTrainLoading(false);
+    }
   };
 
   const onSearchTxtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -272,6 +310,16 @@ const DocumentsPage: React.FC = () => {
             onClick={handleAddClick}
           >
             {t('common.add')}
+          </Button>
+          <Button
+            type='primary'
+            className='mr-[8px]'
+            icon={<TrademarkOutlined />}
+            onClick={() => handleBatchTrain(selectedRowKeys)}
+            disabled={!selectedRowKeys.length}
+            loading={isTrainLoading}
+          >
+            {t('common.batchTrain')}
           </Button>
           <Button
             type='primary'

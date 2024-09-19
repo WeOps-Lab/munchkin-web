@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Tooltip } from 'antd';
 import WithSideMenuLayout from '@/components/sub-layout';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/utils/i18n';
@@ -48,28 +49,36 @@ const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
         return (
           <>
             <h2 className="text-lg font-semibold mb-2">{t('knowledge.documents.title')}</h2>
-            <p className="truncate max-w-full" title={t('knowledge.documents.description')}>{t('knowledge.documents.description')}</p>
+            <Tooltip title={t('knowledge.documents.description')}>
+              <p className="truncate max-w-full text-sm">{t('knowledge.documents.description')}</p>
+            </Tooltip>
           </>
         );
       case '/knowledge/detail/testing':
         return (
           <>
             <h2 className="text-lg font-semibold mb-2">{t('knowledge.testing.title')}</h2>
-            <p className="truncate max-w-full" title={t('knowledge.testing.description')}>{t('knowledge.testing.description')}</p>
+            <Tooltip title={t('knowledge.testing.description')}>
+              <p className="truncate max-w-full text-sm">{t('knowledge.testing.description')}</p>
+            </Tooltip>
           </>
         );
       case '/knowledge/detail/settings':
         return (
           <>
             <h2 className="text-lg font-semibold mb-2">{t('knowledge.settings.title')}</h2>
-            <p className="truncate max-w-full" title={t('knowledge.settings.description')}>{t('knowledge.settings.description')}</p>
+            <Tooltip title={t('knowledge.settings.description')}>
+              <p className="truncate max-w-full text-sm">{t('knowledge.settings.description')}</p>
+            </Tooltip>
           </>
         );
       default:
         return (
           <>
             <h2 className="text-lg font-semibold mb-2">{t('knowledge.documents.title')}</h2>
-            <p className="truncate max-w-full" title={t('knowledge.documents.description')}>{t('knowledge.documents.description')}</p>
+            <Tooltip title={t('knowledge.documents.description')}>
+              <p className="truncate max-w-full">{t('knowledge.documents.description')}</p>
+            </Tooltip>
           </>
         );
     }

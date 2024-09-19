@@ -10,10 +10,12 @@ import CustomTextForm from './customTextForm';
 import PreprocessStep from './preprocessStep';
 import useApiClient from '@/utils/request';
 import useSaveConfig from '@/hooks/useSaveConfig';
+import { useTranslation } from '@/utils/i18n';
 
 const { Step } = Steps;
 
 const KnowledgeModifyPage = () => {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
   const type = searchParams.get('type');
@@ -135,11 +137,11 @@ const KnowledgeModifyPage = () => {
 
   const steps = [
     {
-      title: 'Choose',
+      title: t('knowledge.choose'),
       content: renderStepContent(),
     },
     {
-      title: 'Preprocess',
+      title: t('knowledge.preprocess'),
       content: <PreprocessStep 
         knowledgeSourceType={type} 
         knowledgeDocumentIds={documentIds}
@@ -147,11 +149,11 @@ const KnowledgeModifyPage = () => {
         initialConfig={{}} />,
     },
     {
-      title: 'Finish',
+      title: t('knowledge.finish'),
       content: (
         <div className="flex flex-col items-center">
           <Image src="/finish.png" alt="Finish" width={150} height={40} />
-          <p>All files uploaded will be added to the training queue. Please check the training progress on the left side.</p>
+          <p>{t('knowledge.finishTip')}</p>
         </div>
       ),
     },
@@ -176,17 +178,17 @@ const KnowledgeModifyPage = () => {
         <div className="fixed bottom-10 right-20 z-50 flex space-x-2">
           {currentStep > 0 && currentStep < steps.length - 1 && (
             <Button onClick={handlePrevious}>
-              Previous
+              {t('common.pre')}
             </Button>
           )}
           {currentStep < steps.length - 1 && (
             <Button type="primary" onClick={handleNext} disabled={!isStepValid} loading={loading}>
-              Next
+              {t('common.next')}
             </Button>
           )}
           {currentStep === steps.length - 1 && (
             <Button type="primary" onClick={handleDone}>
-              Done
+              {t('common.done')}
             </Button>
           )}
         </div>

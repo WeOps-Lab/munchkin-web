@@ -35,9 +35,12 @@ const DocsConfigPage: React.FC = () => {
     setConfig(newConfig);
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = async (isSaveOnly = true) => {
     if (config) {
-      const success = await saveConfig(config);
+      const success = await saveConfig({
+        ...(config as object),
+        is_save_only: isSaveOnly,
+      });
       success && router.back();
     }
   };
@@ -58,8 +61,11 @@ const DocsConfigPage: React.FC = () => {
             initialConfig={config}
           />
           <div className="fixed bottom-10 right-20 z-50 flex space-x-2">
-            <Button type="primary" onClick={handleSaveClick}>
-              {t('common.save')}
+            <Button type="primary" onClick={() => handleSaveClick(false)}>
+              {t('common.confirm')}
+            </Button>
+            <Button type="primary" onClick={() => handleSaveClick(true)}>
+              {`${t('common.save')} & ${t('common.train')}`}
             </Button>
           </div>
         </>

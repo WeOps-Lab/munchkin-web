@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Card, Input, Spin } from 'antd';
+import { Card, Input, Spin, Pagination, Tooltip } from 'antd';
 import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import styles from './index.module.less';
@@ -14,30 +14,45 @@ const DocsResultPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [paragraphsState, setParagraphsState] = useState<Paragraph[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(20);
+  const [totalItems, setTotalItems] = useState<number>(0);
   const searchParams = useSearchParams();
   const id = searchParams.get('knowledgeId');
   const { get } = useApiClient();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        setLoading(true);
-        try {
-          const data = await get(`/knowledge_mgmt/knowledge_document/${id}/get_detail/`);
-          setParagraphsState(data);
-        } catch (error) {
-          console.error('Error fetching document detail:', error);
-        } finally {
-          setLoading(false);
-        }
+  const fetchData = async (page: number, pageSize: number) => {
+    if (id) {
+      setLoading(true);
+      const params = {
+        page,
+        page_size: pageSize
       }
-    };
+      try {
+        const { count, items } = await get(`/knowledge_mgmt/knowledge_document/${id}/get_detail/`, { params });
+        setParagraphsState(items);
+        setTotalItems(count);
+      } catch (error) {
+        console.error('Error fetching document detail:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
-    fetchData();
-  }, [id, get]);
+  useEffect(() => {
+    fetchData(currentPage, pageSize);
+  }, [id, get, currentPage, pageSize]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value.toLowerCase());
+  };
+
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setCurrentPage(page);
+    if (pageSize) {
+      setPageSize(pageSize);
+    }
   };
 
   const filteredParagraphs = paragraphsState.filter(paragraph =>
@@ -45,7 +60,7 @@ const DocsResultPage: React.FC = () => {
   );
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="w-full h-full">
       <div className="flex justify-end items-center mb-4">
         <Input
           placeholder="search..."
@@ -60,27 +75,41 @@ const DocsResultPage: React.FC = () => {
           <Spin size="large" />
         </div>
       ) : (
-        <div className="flex flex-wrap -mx-2">
-          {filteredParagraphs.map((paragraph, index) => (
-            <div key={paragraph.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
-              <Card
-                size="small"
-                className={`rounded-lg h-full flex flex-col justify-between ${styles.resultCard}`}
-                title={
-                  <div className="flex justify-between items-center">
-                    <span className={`text-xs ${styles.number}`}>
-                      #{index.toString().padStart(3, '0')}
-                    </span>
-                  </div>
-                }
-              >
-                <p className={`${styles.truncateLines}`} title={paragraph.content || '--'}>
-                  {paragraph.content || '--'}
-                </p>
-              </Card>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className={`flex flex-wrap -mx-2 ${styles.resultWrap}`}>
+            {filteredParagraphs.map((paragraph, index) => (
+              <div key={paragraph.id} className="sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
+                <Card
+                  size="small"
+                  className={`rounded-lg flex flex-col justify-between ${styles.resultCard}`}
+                  title={
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs ${styles.number}`}>
+                        #{index.toString().padStart(3, '0')}
+                      </span>
+                    </div>
+                  }
+                >
+                  <Tooltip title={paragraph.content}>
+                    <p className={`${styles.truncateLines}`}>
+                      {paragraph.content || '--'}
+                    </p>
+                  </Tooltip>
+                </Card>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end mt-4">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={totalItems}
+              onChange={handlePageChange}
+              showSizeChanger
+              pageSizeOptions={['10', '20', '50', '100']}
+            />
+          </div>
+        </>
       )}
     </div>
   );

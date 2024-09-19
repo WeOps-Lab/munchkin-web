@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Form } from 'antd';
 import dynamic from 'next/dynamic';
+import { useTranslation } from '@/utils/i18n';
 import 'aieditor/dist/style.css';
 
 // 动态加载 AIEditor 组件，并禁用服务器端渲染
@@ -12,6 +13,7 @@ interface CustomTextFormProps {
 }
 
 const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDataChange }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<{ name: string; content: string }>({
     name: '',
@@ -43,19 +45,19 @@ const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDat
           onFormDataChange(formData);
         }}
       >
-        <Form.Item label="Name">
+        <Form.Item label={t('knowledge.form.name')}>
           <Input
-            placeholder="Name"
             value={formData.name}
+            placeholder={`Please ${t('common.input')} ${t('knowledge.form.name')}`}
             onChange={(e) => handleInputChange('name', e.target.value)}
           />
         </Form.Item>
-        <Form.Item label="Content">
+        <Form.Item label={t('knowledge.form.content')}>
           <div style={{ height: '500px' }}>
             <AIEditor
               value={formData.content}
               onChange={(value) => handleInputChange('content', value)}
-              placeholder="Content"
+              placeholder={`Please ${t('common.input')} ${t('knowledge.form.content')}`}
               style={{ height: '100%' }}
             />
           </div>

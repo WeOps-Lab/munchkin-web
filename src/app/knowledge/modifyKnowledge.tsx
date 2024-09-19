@@ -100,14 +100,14 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
               label={t('knowledge.form.name')}
               rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.name')}!` }]}
             >
-              <Input placeholder={t('common.input')} />
+              <Input placeholder={`Please ${t('common.input')} ${t('knowledge.form.name')}`} />
             </Form.Item>
             <Form.Item
               name="team"
               label={t('knowledge.form.group')}
-              rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.introduction')}!` }]}
+              rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.group')}!` }]}
             >
-              <Select mode="multiple" placeholder={t('common.select')}>
+              <Select mode="multiple" placeholder={`Please ${t('common.select')} ${t('knowledge.form.group')}`}>
                 {groups.map(group => (
                   <Option key={group.id} value={group.id}>{group.name}</Option>
                 ))}
@@ -118,7 +118,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
               label={t('knowledge.form.embedModel')}
               rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.embedModel')}!` }]}
             >
-              <Select placeholder={t('common.select')}>
+              <Select placeholder={`Please ${t('common.select')} ${t('knowledge.form.embedModel')}`}>
                 {modelOptions.map((model) => (
                   <Option key={model.id} value={model.id} disabled={!model.enabled}>
                     {model.name}
@@ -131,7 +131,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
               label={t('knowledge.form.introduction')}
               rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.introduction')}!` }]}
             >
-              <Input.TextArea rows={4} placeholder={t('common.input')} />
+              <Input.TextArea rows={4} placeholder={`Please ${t('common.input')} ${t('knowledge.form.introduction')}`} />
             </Form.Item>
           </Form>
         </Spin>

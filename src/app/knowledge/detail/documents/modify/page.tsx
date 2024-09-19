@@ -104,7 +104,6 @@ const KnowledgeModifyPage = () => {
   }, []);
 
   const handlePreprocessConfigChange = useCallback((config: any) => {
-    console.log('configconfig~~~', config);
     setPreprocessConfig(config);
     setIsStepValid(true);
   }, []);

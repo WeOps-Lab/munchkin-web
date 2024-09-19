@@ -4,6 +4,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "add": "Add",
+    "save": "Save",
     "batchDelete": "Batch Delete",
     "cancel": "Cancel",
     "confirm": "Confirm",
@@ -25,12 +26,14 @@
     "inputMsg": "Please input the",
     "input": "Input",
     "select": "Select",
-    "serverError": "Server error, please try again later."
+    "serverError": "Server error, please try again later.",
+    "fileType": "is not a supported file type."
   },
   "knowledge": {
     "menu": "Knowledge",
     "add": "Add New Knowledge",
     "edit": "Edit Knowledge",
+    "config": "Config",
     "form": {
       "name": "Name",
       "group": "Group",
@@ -69,5 +72,8 @@
     "title": "API Secret Keys",
     "subTitle": "To prevent API abuse, protect your API Key.",
     "create": "Create new Secret key"
+  },
+  "skill": {
+    "menu": "Skill"
   }
 }

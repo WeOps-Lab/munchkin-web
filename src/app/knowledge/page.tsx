@@ -147,7 +147,7 @@ const KnowledgePage = () => {
               <p className={`my-5 text-sm line-clamp-3 ${knowledgeStyle.desc}`}>{card.introduction}</p>
               <div className={`absolute bottom-4 right-4 text-xs ${knowledgeStyle.desc}`}>
                 <span className="pr-5">Owner: {card.created_by}</span>
-                <span>Team: {Array.isArray(card.team_name) ? card.team_name.join(',') : '--'}</span>
+                <span>Group: {Array.isArray(card.team_name) ? card.team_name.join(',') : '--'}</span>
               </div>
             </div>
           ))}

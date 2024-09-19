@@ -5,8 +5,10 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Button, Breadcrumb } from 'antd';
 import PreprocessStep from '../modify/preprocessStep';
 import useSaveConfig from '@/hooks/useSaveConfig';
+import { useTranslation } from '@/utils/i18n';
 
 const DocsConfigPage: React.FC = () => {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [config, setConfig] = useState(null);
@@ -43,9 +45,9 @@ const DocsConfigPage: React.FC = () => {
   return (
     <div>
       <Breadcrumb className="mb-5">
-        <Breadcrumb.Item>Knowledge</Breadcrumb.Item>
+        <Breadcrumb.Item>{t('knowledge.menu')}</Breadcrumb.Item>
         <Breadcrumb.Item>{sourceType}</Breadcrumb.Item>
-        <Breadcrumb.Item>Config</Breadcrumb.Item>
+        <Breadcrumb.Item>{t('knowledge.config')}</Breadcrumb.Item>
       </Breadcrumb>
       {config && sourceType && documentId && (
         <>
@@ -57,7 +59,7 @@ const DocsConfigPage: React.FC = () => {
           />
           <div className="fixed bottom-10 right-20 z-50 flex space-x-2">
             <Button type="primary" onClick={handleSaveClick}>
-              Save
+              {t('common.savess')}
             </Button>
           </div>
         </>

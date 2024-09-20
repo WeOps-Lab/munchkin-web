@@ -13,6 +13,7 @@ const DocsConfigPage: React.FC = () => {
   const router = useRouter();
   const [config, setConfig] = useState(null);
   const [sourceType, setSourceType] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [documentId, setDocumentId] = useState<string | null>(null);
   const { saveConfig } = useSaveConfig();
 
@@ -20,6 +21,7 @@ const DocsConfigPage: React.FC = () => {
     const configParam = searchParams.get('config');
     const sourceTypeParam = searchParams.get('sourceType');
     const idParam = searchParams.get('documentId');
+    const statusParam = searchParams.get('status');
     if (configParam) {
       setConfig(JSON.parse(configParam));
     }
@@ -28,6 +30,9 @@ const DocsConfigPage: React.FC = () => {
     }
     if (idParam) {
       setDocumentId(idParam);
+    }
+    if (statusParam) {
+      setStatus(statusParam);
     }
   }, [searchParams]);
 
@@ -64,9 +69,9 @@ const DocsConfigPage: React.FC = () => {
             <Button type="primary" onClick={() => handleSaveClick(false)}>
               {t('common.confirm')}
             </Button>
-            <Button type="primary" onClick={() => handleSaveClick(true)}>
+            {status !== 'Training' && <Button type="primary" onClick={() => handleSaveClick(true)}>
               {`${t('common.save')} & ${t('common.train')}`}
-            </Button>
+            </Button>}
           </div>
         </>
       )}

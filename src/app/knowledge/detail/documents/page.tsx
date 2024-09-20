@@ -109,7 +109,7 @@ const DocumentsPage: React.FC = () => {
     
         return <Tag color={color}>{text}</Tag>;
       },
-    },   
+    },    
     {
       title: t('knowledge.documents.actions'),
       key: 'action',
@@ -121,8 +121,9 @@ const DocumentsPage: React.FC = () => {
           <Button
             type='link'
             className='mr-[10px]'
-            onClick={() => handleSingleTrain(record.id)}
+            onClick={() => handleTrain([record.id])}
             loading={singleTrainLoading[record.id.toString()]}
+            disabled={record.train_status_display === 'Training'}
           >
             {t('common.train')}
           </Button>
@@ -152,6 +153,7 @@ const DocumentsPage: React.FC = () => {
       name: name || '',
       desc: desc || '',
       sourceType: activeTabKey,
+      status: record.train_status_display,
       config: JSON.stringify(config),
     });
     router.push(`/knowledge/detail/documents/config?${queryParams.toString()}`);
@@ -179,31 +181,26 @@ const DocumentsPage: React.FC = () => {
     });
   };
 
-  const handleSingleTrain = async (recordId: React.Key) => {
-    setSingleTrainLoading((prev) => ({ ...prev, [recordId.toString()]: true }));
-    try {
-      await post('/knowledge_mgmt/knowledge_document/batch_train/', {
-        knowledge_document_ids: [recordId], 
-      });
-      message.success(t('common.trainSuccess'));
-    } catch (error) {
-      message.error(t('common.trainFailed'));
-    } finally {
-      setSingleTrainLoading((prev) => ({ ...prev, [recordId.toString()]: false }));
+  const handleTrain = async (keys: React.Key[]) => {
+    if (keys.length === 1) {
+      setSingleTrainLoading((prev) => ({ ...prev, [keys[0].toString()]: true }));
+    } else {
+      setIsTrainLoading(true);
     }
-  };
-
-  const handleBatchTrain = async (keys: React.Key[]) => {
-    setIsTrainLoading(true);
     try {
       await post('/knowledge_mgmt/knowledge_document/batch_train/', {
         knowledge_document_ids: keys, 
       });
       message.success(t('common.trainSuccess'));
+      fetchData();
     } catch (error) {
       message.error(t('common.trainFailed'));
     } finally {
-      setIsTrainLoading(false);
+      if (keys.length === 1) {
+        setSingleTrainLoading((prev) => ({ ...prev, [keys[0].toString()]: false }));
+      } else {
+        setIsTrainLoading(false);
+      }
     }
   };
 
@@ -265,6 +262,9 @@ const DocumentsPage: React.FC = () => {
     onChange: (newSelectedRowKeys: React.Key[]) => {
       setSelectedRowKeys(newSelectedRowKeys);
     },
+    getCheckboxProps: (record: TableData) => ({
+      disabled: record.train_status_display === 'Training',
+    }),
   };
 
   const handleTabChange = (key: string) => {
@@ -315,7 +315,7 @@ const DocumentsPage: React.FC = () => {
             type='primary'
             className='mr-[8px]'
             icon={<TrademarkOutlined />}
-            onClick={() => handleBatchTrain(selectedRowKeys)}
+            onClick={() => handleTrain(selectedRowKeys)}
             disabled={!selectedRowKeys.length}
             loading={isTrainLoading}
           >

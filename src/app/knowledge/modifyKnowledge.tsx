@@ -44,8 +44,11 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
       if (groups.length > 0) {
         form.setFieldsValue({ team: [groups[0].id] });
       }
+      if (modelOptions.length > 0) {
+        form.setFieldsValue({ embed_model: modelOptions[0].id });
+      }
     }
-  }, [initialValues, form, groups]);
+  }, [initialValues, form, groups, modelOptions]);
 
   const handleConfirm = async () => {
     try {
@@ -142,6 +145,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         onOk={handleModalOk}
         onCancel={handleModalCancel}
         confirmLoading={modalLoading}
+        centered
       >
         <p>{modalContent}</p>
       </Modal>

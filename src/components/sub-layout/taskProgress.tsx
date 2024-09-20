@@ -7,6 +7,7 @@ import { useTranslation } from '@/utils/i18n';
 interface Task {
   id: number;
   name: string;
+  train_progress: number;
 }
 
 const TaskProgress: React.FC = () => {
@@ -17,7 +18,6 @@ const TaskProgress: React.FC = () => {
   const id = searchParams.get('id');
 
   useEffect(() => {
-    console.log('knowledge_document');
     const params = {
       train_status: 0,
       knowledge_base_id: id
@@ -40,7 +40,10 @@ const TaskProgress: React.FC = () => {
     <div className="p-4 absolute bottom-10 left-0 w-full">
       {tasks.map((task) => (
         <div key={task.id} className="mb-2">
-          <div className="text-sm mb-1">{task.name}</div>
+          <div className="flex justify-between items-center text-sm mb-1">
+            <span>{task.name}</span>
+            <span>{task.train_progress}%</span>
+          </div>
           <div className={`w-full h-2 rounded relative overflow-hidden ${styles.progressContainer}`}>
             <div className={`${styles.progressBar} h-full w-full`}></div>
           </div>

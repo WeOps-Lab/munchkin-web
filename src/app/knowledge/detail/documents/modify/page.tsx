@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Breadcrumb, Button, Steps, message } from 'antd';
@@ -33,53 +33,59 @@ const KnowledgeModifyPage = () => {
   const [manualData, setManualData] = useState<{ name: string, content: string }>({ name: '', content: '' });
   const [loading, setLoading] = useState<boolean>(false);
 
+  const formRef = useRef<any>(null);
+
   const handleNext = async () => {
     setLoading(true);
-    if (currentStep === 0 && type === 'file') {
-      try {
-        const formData = new FormData();
-        formData.append('knowledge_base_id', id as string);
-        fileList.forEach(file => formData.append('files', file));
-        const data = await post('/knowledge_mgmt/file_knowledge/create_file_knowledge/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        setDocumentIds(data);
-        message.success('Files uploaded successfully');
-      } catch (error) {
-        message.error('Failed to upload files');
-        setLoading(false);
-        return;
-      }
-    } else if (currentStep === 0 && type === 'web_page') {
-      try {
-        const data = await post('/knowledge_mgmt/web_page_knowledge/create_web_page_knowledge/', {
-          knowledge_base_id: id,
-          name: webLinkData.name,
-          url: webLinkData.link,
-          max_depth: webLinkData.deep,
-        });
-        setDocumentIds([data]);
-        message.success('Web link data saved successfully');
-      } catch (error) {
-        message.error('Failed to save web link data');
-        setLoading(false);
-        return;
-      }
-    } else if (currentStep === 0 && type === 'manual') {
-      try {
-        const data = await post('/knowledge_mgmt/manual_knowledge/create_manual_knowledge/', {
-          knowledge_base_id: id,
-          name: manualData.name,
-          content: manualData.content,
-        });
-        setDocumentIds([data]);
-        message.success('Manual data saved successfully');
-      } catch (error) {
-        message.error('Failed to save manual data');
-        setLoading(false);
-        return;
+
+    if (currentStep === 0) {
+      if (type === 'web_page') {
+        try {
+          await formRef.current?.validateFields();
+          const data = await post('/knowledge_mgmt/web_page_knowledge/create_web_page_knowledge/', {
+            knowledge_base_id: id,
+            name: webLinkData.name,
+            url: webLinkData.link,
+            max_depth: webLinkData.deep,
+          });
+          setDocumentIds([data]);
+          message.success('Web link data saved successfully');
+        } catch (error) {
+          message.error('Please correct the errors in the form or failed to save web link data');
+          setLoading(false);
+          return;
+        }
+      } else if (type === 'file') {
+        try {
+          const formData = new FormData();
+          formData.append('knowledge_base_id', id as string);
+          fileList.forEach(file => formData.append('files', file));
+          const data = await post('/knowledge_mgmt/file_knowledge/create_file_knowledge/', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          setDocumentIds(data);
+          message.success('Files uploaded successfully');
+        } catch (error) {
+          message.error('Failed to upload files');
+          setLoading(false);
+          return;
+        }
+      } else if (type === 'manual') {
+        try {
+          const data = await post('/knowledge_mgmt/manual_knowledge/create_manual_knowledge/', {
+            knowledge_base_id: id,
+            name: manualData.name,
+            content: manualData.content,
+          });
+          setDocumentIds([data]);
+          message.success('Manual data saved successfully');
+        } catch (error) {
+          message.error('Failed to save manual data');
+          setLoading(false);
+          return;
+        }
       }
     } else if (currentStep === 1) {
       const success = await saveConfig(preprocessConfig);
@@ -127,7 +133,7 @@ const KnowledgeModifyPage = () => {
       case 'file':
         return <LocalFileUpload onFileChange={handleFileChange} />;
       case 'web_page':
-        return <WebLinkForm onFormChange={handleValidationChange} onFormDataChange={handleWebLinkDataChange} />;
+        return <WebLinkForm ref={formRef} onFormChange={handleValidationChange} onFormDataChange={handleWebLinkDataChange} />;
       case 'manual':
         return <CustomTextForm onFormChange={handleValidationChange} onFormDataChange={handleManualDataChange} />;
       default:

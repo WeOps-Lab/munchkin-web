@@ -1,27 +1,18 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { HomeFilled, BookOutlined } from '@ant-design/icons';
-import { ComponentType } from 'react';
 import Image from 'next/image';
 import UserInfo from '../user-info';
+import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
 import menuStyle from './index.module.less';
-
-interface IconComponentProps {
-  className?: string;
-}
-
-const iconMap: { [key: string]: ComponentType } = {
-  HomeFilled,
-  BookOutlined,
-};
 
 const TopMenu = () => {
   const { t } = useTranslation();
   const pathname = usePathname();
 
   const menuItems = [
-    { label: t('knowledge.menu'), icon: 'BookOutlined', path: '/knowledge' },
+    { label: t('knowledge.menu'), icon: 'zhishiku1', path: '/knowledge' },
+    { label: t('skill.menu'), icon: 'weibiaoti3', path: '/skill' },
   ];
 
   return (
@@ -33,12 +24,11 @@ const TopMenu = () => {
         </div>
         <div className="flex items-center space-x-4">
           {menuItems.map((item) => {
-            const IconComponent: React.ComponentType<IconComponentProps> = iconMap[item.icon];
             const isActive = item.path === '/' ? pathname === '/' : pathname.startsWith(item.path);
             return (
               <Link key={item.path} prefetch={false} href={item.path} legacyBehavior>
                 <a className={`px-3 py-2 rounded-[10px] flex items-center ${menuStyle.menuCol} ${isActive ? menuStyle.active : ''}`}>
-                  {IconComponent && <IconComponent className="mr-2 w-4 h-4" />}
+                  <Icon type={item.icon} className="mr-2 w-4 h-4" />
                   {item.label}
                 </a>
               </Link>

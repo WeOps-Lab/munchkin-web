@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Modal, message, Spin, Button } from 'antd';
+import { Input, Modal, message, Spin } from 'antd';
 import { Skill } from '@/types/skill';
 import useApiClient from '@/utils/request';
-import ModifySkillModal from './ModifySkillModal';
+import ModifySkillModal from './modifySkillModal';
 import SkillCard from '@/components/skill/skillCard';
 import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less'

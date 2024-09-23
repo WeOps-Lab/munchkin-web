@@ -15,8 +15,8 @@ interface SkillCardProps extends Skill {
 }
 
 const SkillCard: React.FC<SkillCardProps> = ({ id, skillName, description, owner, group, avatar, onMenuClick }) => {
-    const { t } = useTranslation();
-    const menu = (
+  const { t } = useTranslation();
+  const menu = (
     <Menu>
       <Menu.Item key={`edit-${id}`} onClick={() => onMenuClick('edit', { id, skillName, description, owner, group, avatar })}>
         Edit

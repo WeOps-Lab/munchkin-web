@@ -102,4 +102,6 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
   );
 });
 
+WebLinkForm.displayName = 'WebLinkForm';
+
 export default WebLinkForm;

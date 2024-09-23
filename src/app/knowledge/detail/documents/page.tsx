@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Input, Button, Modal, message, Tag, Tabs } from 'antd';
-import { PlusOutlined, DeleteOutlined, TrademarkOutlined } from '@ant-design/icons';
+import { Input, Button, Modal, message, Tag, Tabs, Tooltip } from 'antd';
+import { PlusOutlined, DeleteOutlined, TrademarkOutlined, SyncOutlined } from '@ant-design/icons';
 import CustomTable from '@/components/custom-table';
 import SelectSourceModal from './selectSourceModal';
 import useApiClient from '@/utils/request';
@@ -306,6 +306,9 @@ const DocumentsPage: React.FC = () => {
           />
         </div>
         <div className='right-side flex'>
+          <Tooltip className='mr-[8px]' title={t('common.synch')}>
+            <Button icon={<SyncOutlined />} onClick={fetchData} />
+          </Tooltip>
           <Button
             type='primary'
             className='mr-[8px]'

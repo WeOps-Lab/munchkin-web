@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Spin, Modal } from 'antd';
+import { Form, Input, Select, Spin } from 'antd';
 import useGroups from '@/hooks/useGroups';
-import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
 import { ModifySkillModalProps } from '@/types/skill';
@@ -14,7 +13,6 @@ const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, 
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const { groups, loading } = useGroups();
-  const { get } = useApiClient();
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {

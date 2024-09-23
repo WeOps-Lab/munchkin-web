@@ -16,7 +16,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
     chunkOverlap: initialConfig?.chunkOverlap ?? 0,
     semanticChunkParsing: initialConfig?.semanticChunkParsing ?? false,
     semanticModel: initialConfig?.semanticModel ?? null,
-    ocrEnhancement: initialConfig?.ocrEnhancement ?? false,
+    ocrEnhancement: initialConfig?.ocrEnhancement ?? true,
     ocrModel: initialConfig?.ocrModel ?? null,
     excelParsing: initialConfig?.excelParsing ?? false,
     excelParseOption: initialConfig?.excelParseOption ?? 'fullContent',
@@ -65,6 +65,12 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
 
         setSemanticModels(semanticData);
         setOcrModels(ocrData);
+        if (!isInitialConfigApplied && ocrData.length > 0) {
+          setFormData((prevState) => ({
+            ...prevState,
+            ocrModel: ocrData[0].id,
+          }));
+        }
       } catch (error) {
         message.error('Failed to fetch models');
       } finally {

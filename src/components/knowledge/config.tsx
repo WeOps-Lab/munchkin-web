@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Select, Checkbox, Switch, Slider, InputNumber, Input, message } from 'antd';
 import { ModelOption, TestConfigData } from '@/types/knowledge';
 import useApiClient from '@/utils/request';
+import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
 
 const { Option } = Select;
@@ -12,6 +13,7 @@ interface ConfigProps {
 }
 
 const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) => {
+  const { t } = useTranslation();
   const { get } = useApiClient();
   const [loadingModels, setLoadingModels] = useState<boolean>(true);
   const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
@@ -27,7 +29,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
         setModelOptions(embedData);
         setRerankModelOptions(rerankData);
       } catch (error) {
-        message.error('Failed to fetch models');
+        message.error(t('common.fetchFailed'));
       } finally {
         setLoadingModels(false);
       }
@@ -48,10 +50,10 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
   return (
     <>
       <div className="mb-4 flex items-center">
-        <label className="block text-sm font-medium mb-1 w-32">Embedding Model</label>
+        <label className="block text-sm font-medium mb-1 w-32">{t('knowledge.embeddingModel')}</label>
         <Select
           className="flex-1"
-          placeholder="Select model"
+          placeholder={`Please ${t('common.input')} ${t('knowledge.embeddingModel')}`}
           disabled
           loading={loadingModels}
           value={configData.selectedEmbedModel}
@@ -65,23 +67,23 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
         </Select>
       </div>
       <div className={`mb-4 flex ${styles.configTxt}`}>
-        <label className="block text-sm font-medium mb-1 w-32">Retrieval Setting</label>
+        <label className="block text-sm font-medium mb-1 w-32">{t('knowledge.retrievalSetting')}</label>
         <div className="flex-1">
           <div className="p-4 border rounded-md mb-4">
             <div className="flex items-center mb-2 justify-between">
-              <h3 className="text-base font-semibold">Text Search</h3>
+              <h3 className="text-base font-semibold">{t('knowledge.textSearch')}</h3>
               <Checkbox
                 checked={configData.selectedSearchTypes.includes('textSearch')}
                 onChange={() => handleSearchTypeChange('textSearch')}
               />
             </div>
             <p className="text-sm mb-4">
-              Based on keyword search technology, it searches and extracts relevant documents from large volumes of text data.
+              {t('knowledge.textSearchDesc')}
             </p>
             {configData.selectedSearchTypes.includes('textSearch') && (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">Weight</label>
+                  <label className="text-sm w-32">{t('knowledge.weight')}</label>
                   <Slider
                     className="flex-1 mx-2"
                     min={0}
@@ -97,19 +99,19 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
           </div>
           <div className="p-4 border rounded-md mb-4">
             <div className="flex items-center mb-2 justify-between">
-              <h3 className="text-base font-semibold">Vector Search</h3>
+              <h3 className="text-base font-semibold">{t('knowledge.vectorSearch')}</h3>
               <Checkbox
                 checked={configData.selectedSearchTypes.includes('vectorSearch')}
                 onChange={() => handleSearchTypeChange('vectorSearch')}
               />
             </div>
             <p className="text-sm mb-4">
-              Utilizing vector space models, it finds the best-matching data by calculating the similarity between vectors in high-dimensional space.
+              {t('knowledge.vectorSearchDesc')}
             </p>
             {configData.selectedSearchTypes.includes('vectorSearch') && (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">Weight</label>
+                  <label className="text-sm w-32">{t('knowledge.weight')}</label>
                   <Slider
                     className="flex-1 mx-2"
                     min={0}
@@ -121,7 +123,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
                   <Input className="w-14" value={configData.vectorSearchWeight.toFixed(2)} readOnly />
                 </div>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">Return Quantity</label>
+                  <label className="text-sm w-32">{t('knowledge.returnQuantity')}</label>
                   <InputNumber
                     min={1}
                     value={configData.quantity}
@@ -130,7 +132,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
                   />
                 </div>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">Candidate Quantity</label>
+                  <label className="text-sm w-32">{t('knowledge.candidateQuantity')}</label>
                   <InputNumber
                     min={1}
                     value={configData.candidate}
@@ -142,7 +144,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
             )}
           </div>
           <div className="flex items-center justify-between mb-4">
-            <label className="text-sm w-32">Rerank Model</label>
+            <label className="text-sm w-32">{t('knowledge.rerankModel')}</label>
             <Switch
               size="small"
               checked={configData.rerankModel}
@@ -153,7 +155,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
             <div className="flex items-center justify-between mb-4">
               <Select
                 className="flex-1"
-                placeholder="Select rerank model"
+                placeholder={`Please ${t('common.select')} ${t('knowledge.rerankModel')}`}
                 loading={loadingModels}
                 value={configData.selectedRerankModel}
                 onChange={(value) => setConfigData(prevData => ({ ...prevData, selectedRerankModel: value }))}

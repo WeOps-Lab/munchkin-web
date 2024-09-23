@@ -72,9 +72,9 @@ const KnowledgePage = () => {
         try {
           await del(`/knowledge_mgmt/knowledge_base/${cardId}/`);
           setCards(cards.filter(card => card.id !== cardId));
-          message.success('Knowledge deleted successfully');
+          message.success(t('common.delSuccess'));
         } catch (error) {
-          message.error('Failed to delete knowledge');
+          message.error(t('common.delFailed'));
         }
       },
     });
@@ -109,7 +109,7 @@ const KnowledgePage = () => {
       <div className="flex justify-end mb-4">
         <Input 
           size="large"
-          placeholder="Search..."
+          placeholder={`${t('common.search')}...`}
           style={{ width: '350px' }}
           onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
         />
@@ -121,7 +121,7 @@ const KnowledgePage = () => {
             onClick={() => { setIsModalVisible(true); setEditingCard(null); }}
           >
             <Icon type="tianjia" className="text-2xl" />
-            <span className="ml-2">Add New</span>
+            <span className="ml-2">{t('common.addNew')}</span>
           </div>
           {filteredCards.map((card) => (
             <div
@@ -146,8 +146,8 @@ const KnowledgePage = () => {
               </div>
               <p className={`my-5 text-sm line-clamp-3 ${knowledgeStyle.desc}`}>{card.introduction}</p>
               <div className={`absolute bottom-4 right-4 text-xs ${knowledgeStyle.desc}`}>
-                <span className="pr-5">Owner: {card.created_by}</span>
-                <span>Group: {Array.isArray(card.team_name) ? card.team_name.join(',') : '--'}</span>
+                <span className="pr-5">{t('knowledge.form.owner')}: {card.created_by}</span>
+                <span>{t('knowledge.form.group')}: {Array.isArray(card.team_name) ? card.team_name.join(',') : '--'}</span>
               </div>
             </div>
           ))}

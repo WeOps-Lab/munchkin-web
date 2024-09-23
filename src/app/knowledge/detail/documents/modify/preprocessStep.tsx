@@ -115,7 +115,6 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   }, [formData, isInitialConfigApplied]);
 
   const handleChange = (field: string, value: any) => {
-    console.log(`Field changed: ${field}, Value: ${value}`);
     setFormData((prevState) => ({
       ...prevState,
       [field]: value,
@@ -194,7 +193,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             <Switch size="small" checked={formData.semanticChunkParsing} onChange={(checked) => handleChange('semanticChunkParsing', checked)} />
           </div>
           <p className="mb-4 text-sm">{t('knowledge.documents.semChunkParsingDesc')}</p>
-          <Form.Item label="Model">
+          <Form.Item label={t('common.model')}>
             <Select
               style={{ width: '100%' }}
               disabled={!formData.semanticChunkParsing}
@@ -214,7 +213,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             <Switch size="small" checked={formData.ocrEnhancement} onChange={(checked) => handleChange('ocrEnhancement', checked)} />
           </div>
           <p className="mb-4 text-sm">{t('knowledge.documents.ocrEnhancementDesc')}</p>
-          <Form.Item label="OCR Model">
+          <Form.Item label={`OCR ${t('common.model')}`}>
             <Select
               style={{ width: '100%' }}
               disabled={!formData.ocrEnhancement}
@@ -248,7 +247,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
       <div className="flex-1 px-4">
         <div className="flex justify-between">
           <h2 className="text-lg font-semibold mb-3">{t('knowledge.documents.preview')}</h2>
-          <Button type="primary" size="small" onClick={handlePreviewClick} loading={loadingPreview}>View Chunk</Button>
+          <Button type="primary" size="small" onClick={handlePreviewClick} loading={loadingPreview}>{t('knowledge.documents.viewChunk')}</Button>
         </div>
         {loadingPreview ? (
           <List

@@ -35,7 +35,7 @@ const UserInfo = () => {
       type: 'divider',
     },
     {
-      label: <a onClick={handleSettings}>Settings</a>,
+      label: <a onClick={handleSettings}>{t('common.settings')}</a>,
       key: '1',
     },
     {

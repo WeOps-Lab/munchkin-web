@@ -17,6 +17,12 @@ const DocsConfigPage: React.FC = () => {
   const [documentId, setDocumentId] = useState<string | null>(null);
   const { saveConfig } = useSaveConfig();
 
+  const sourceTypeToDisplayText: { [key: string]: string } = {
+    file: t('knowledge.localFile'),
+    web_page: t('knowledge.webLink'),
+    manual: t('knowledge.cusText'),
+  };
+
   useEffect(() => {
     const configParam = searchParams.get('config');
     const sourceTypeParam = searchParams.get('sourceType');
@@ -54,7 +60,7 @@ const DocsConfigPage: React.FC = () => {
     <div>
       <Breadcrumb className="mb-5">
         <Breadcrumb.Item>{t('knowledge.menu')}</Breadcrumb.Item>
-        <Breadcrumb.Item>{sourceType}</Breadcrumb.Item>
+        <Breadcrumb.Item>{sourceType && sourceTypeToDisplayText[sourceType]}</Breadcrumb.Item>
         <Breadcrumb.Item>{t('knowledge.config')}</Breadcrumb.Item>
       </Breadcrumb>
       {config && sourceType && documentId && (

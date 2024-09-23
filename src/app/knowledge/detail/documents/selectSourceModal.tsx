@@ -43,7 +43,7 @@ const SelectSourceModal: React.FC<SelectSourceModalProps> = ({ defaultSelected, 
 
   return (
     <OperateModal
-      title="Select Source"
+      title={`${t('common.select')}${t('knowledge.source')}`}
       visible={visible}
       onCancel={onCancel}
       footer={[

@@ -6,83 +6,38 @@ import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
-import { ModifyKnowledgeModalProps, ModelOption } from '@/types/knowledge';
+import { ModifySkillModalProps } from '@/types/skill';
 
 const { Option } = Select;
 
-const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, onCancel, onConfirm, initialValues }) => {
+const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, onConfirm, initialValues }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const { groups, loading } = useGroups();
   const { get } = useApiClient();
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
-  const [originalEmbedModel, setOriginalEmbedModel] = useState<number | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState('');
-  const [modalLoading, setModalLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchModels = async () => {
-      try {
-        const data = await get('/model_provider_mgmt/embed_provider/');
-        setModelOptions(data);
-      } catch (error) {
-        console.error('Failed to fetch models:', error);
-      }
-    };
-
-    fetchModels();
-  }, [get]);
 
   useEffect(() => {
     if (initialValues) {
       form.setFieldsValue(initialValues);
-      setOriginalEmbedModel(initialValues.embed_model);
     } else {
       form.resetFields();
       if (groups.length > 0) {
         form.setFieldsValue({ team: [groups[0].id] });
       }
-      if (modelOptions.length > 0) {
-        form.setFieldsValue({ embed_model: modelOptions[0].id });
-      }
     }
-  }, [initialValues, form, groups, modelOptions]);
+  }, [initialValues, form, groups]);
 
   const handleConfirm = async () => {
     try {
       setConfirmLoading(true);
       const values = await form.validateFields();
-      if (initialValues && values.embed_model !== originalEmbedModel) {
-        setModalContent(t('knowledge.embeddingModelTip'));
-        setIsModalVisible(true);
-      } else {
-        await onConfirm(values);
-        form.resetFields();
-        setConfirmLoading(false);
-      }
+      await onConfirm(values);
+      form.resetFields();
+      setConfirmLoading(false);
     } catch (info) {
       setConfirmLoading(false);
     }
-  };
-
-  const handleModalOk = async () => {
-    try {
-      setModalLoading(true);
-      const values = await form.validateFields();
-      await onConfirm(values);
-      form.resetFields();
-    } finally {
-      setModalLoading(false);
-      setConfirmLoading(false);
-      setIsModalVisible(false);
-    }
-  };
-
-  const handleModalCancel = () => {
-    setConfirmLoading(false);
-    setIsModalVisible(false);
   };
 
   return (
@@ -117,19 +72,6 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
               </Select>
             </Form.Item>
             <Form.Item
-              name="embed_model"
-              label={t('knowledge.form.embedModel')}
-              rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.embedModel')}!` }]}
-            >
-              <Select placeholder={`Please ${t('common.select')} ${t('knowledge.form.embedModel')}`}>
-                {modelOptions.map((model) => (
-                  <Option key={model.id} value={model.id} disabled={!model.enabled}>
-                    {model.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
               name="introduction"
               label={t('knowledge.form.introduction')}
               rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.introduction')}!` }]}
@@ -139,18 +81,8 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
           </Form>
         </Spin>
       </OperateModal>
-      <Modal
-        title={t('common.confirm')}
-        visible={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={handleModalCancel}
-        confirmLoading={modalLoading}
-        centered
-      >
-        <p>{modalContent}</p>
-      </Modal>
     </>
   );
 };
 
-export default ModifyKnowledgeModal;
+export default ModifySkillModal;

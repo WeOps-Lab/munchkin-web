@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Input, Spin, Pagination, Tooltip } from 'antd';
 import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
+import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
 
 interface Paragraph {
@@ -11,6 +12,7 @@ interface Paragraph {
 }
 
 const DocsResultPage: React.FC = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [paragraphsState, setParagraphsState] = useState<Paragraph[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,7 +35,7 @@ const DocsResultPage: React.FC = () => {
         setParagraphsState(items);
         setTotalItems(count);
       } catch (error) {
-        console.error('Error fetching document detail:', error);
+        console.error(`${t('common.errorFetch')}: ${error}`);
       } finally {
         setLoading(false);
       }
@@ -63,7 +65,7 @@ const DocsResultPage: React.FC = () => {
     <div className="w-full h-full">
       <div className="flex justify-end items-center mb-4">
         <Input
-          placeholder="search..."
+          placeholder={`${t('common.search')}...`}
           allowClear
           onChange={(e) => handleSearch(e.target.value)}
           onPressEnter={() => handleSearch(searchTerm)}

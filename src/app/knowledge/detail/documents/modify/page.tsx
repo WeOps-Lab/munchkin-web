@@ -35,6 +35,12 @@ const KnowledgeModifyPage = () => {
 
   const formRef = useRef<any>(null);
 
+  const sourceTypeToDisplayText: { [key: string]: string } = {
+    file: t('knowledge.localFile'),
+    web_page: t('knowledge.webLink'),
+    manual: t('knowledge.cusText'),
+  };
+
   const handleNext = async () => {
     setLoading(true);
 
@@ -168,9 +174,9 @@ const KnowledgeModifyPage = () => {
   return (
     <div>
       <Breadcrumb>
-        <Breadcrumb.Item>Knowledge</Breadcrumb.Item>
-        <Breadcrumb.Item>{type}</Breadcrumb.Item>
-        <Breadcrumb.Item>Create</Breadcrumb.Item>
+        <Breadcrumb.Item>{t('knowledge.menu')}</Breadcrumb.Item>
+        <Breadcrumb.Item>{type && sourceTypeToDisplayText[type]}</Breadcrumb.Item>
+        <Breadcrumb.Item>{t('common.create')}</Breadcrumb.Item>
       </Breadcrumb>
       <div className="px-7 py-5">
         <Steps className="px-16 py-8" current={currentStep}>

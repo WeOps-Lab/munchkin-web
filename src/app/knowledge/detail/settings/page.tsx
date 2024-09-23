@@ -119,12 +119,12 @@ const SettingsPage: React.FC = () => {
               <Row justify="end" gutter={16}>
                 <Col>
                   <Button onClick={handleCancel}>
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                 </Col>
                 <Col>
                   <Button type="primary" onClick={handleConfirm} loading={confirmLoading}>
-                    Confirm
+                    {t('common.confirm')}
                   </Button>
                 </Col>
               </Row>

@@ -62,7 +62,7 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
           rules={[{ required: true, message: t('common.inputRequired') }]}
         >
           <Input
-            placeholder={`请输入${t('knowledge.form.name')}`}
+            placeholder={`Please ${t('common.input')} ${t('knowledge.form.name')}`}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
           />
@@ -76,7 +76,7 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
           ]}
         >
           <TextArea
-            placeholder={`请输入${t('knowledge.documents.link')}`}
+            placeholder={`Please ${t('common.input')} ${t('knowledge.documents.link')}`}
             value={formData.link}
             onChange={(e) => handleInputChange('link', e.target.value)}
             rows={3}

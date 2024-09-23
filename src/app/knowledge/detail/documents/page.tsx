@@ -127,7 +127,10 @@ const DocumentsPage: React.FC = () => {
           >
             {t('common.train')}
           </Button>
-          <Button type='link' onClick={() => handleDelete([record.id])}>
+          <Button 
+            type='link' 
+            onClick={() => handleDelete([record.id])}
+            disabled={record.train_status_display === 'Training'}>
             {t('common.delete')}
           </Button>
         </>
@@ -191,7 +194,7 @@ const DocumentsPage: React.FC = () => {
       await post('/knowledge_mgmt/knowledge_document/batch_train/', {
         knowledge_document_ids: keys, 
       });
-      message.success(t('common.trainSuccess'));
+      message.success(t('common.training'));
       fetchData();
     } catch (error) {
       message.error(t('common.trainFailed'));
@@ -244,7 +247,7 @@ const DocumentsPage: React.FC = () => {
         total: res.count,
       }));
     } catch (error) {
-      message.error('Failed to fetch data');
+      message.error(t('common.fetchFailed'));
     } finally {
       setLoading(false);
     }
@@ -294,7 +297,7 @@ const DocumentsPage: React.FC = () => {
       <div className='nav-box flex justify-end mb-[10px]'>
         <div className='left-side w-[240px] mr-[8px]'>
           <Input
-            placeholder='search...'
+            placeholder={`${t('common.search')}...`}
             value={searchText}
             allowClear
             onChange={onSearchTxtChange}

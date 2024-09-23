@@ -8,11 +8,13 @@ import { ResultItem } from '@/types/knowledge';
 import useApiClient from '@/utils/request';
 import Icon from '@/components/icon';
 import useFetchConfigData from '@/hooks/useFetchConfigData';
+import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
 
 const { TextArea } = Input;
 
 const TestingPage: React.FC = () => {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
   const { post } = useApiClient();
@@ -43,21 +45,20 @@ const TestingPage: React.FC = () => {
       ...getConfigParams(),
     };
     if (!searchText.trim()) {
-      message.error('Text cannot be empty. This field is required.');
+      message.error(t('common.fieldRequired'));
       return false;
     }
     if (configData.candidate < configData.quantity) {
-      message.error('Please input Candidate Quantity must be greater than Return Quantity');
+      message.error(t('knowledge.returnQuanityTip'));
       return false;
     }
     setLoading(true);
     try {
       const data = await post('/knowledge_mgmt/knowledge_document/testing', params);
-      console.log('data', data);
-      message.success('Testing completed successfully!');
+      message.success(t('knowledge.testingSuccess'));
       setResults(data);
     } catch (error) {
-      message.error('Failed to complete testing.');
+      message.error(t('knowledge.testingFailed'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -71,7 +72,7 @@ const TestingPage: React.FC = () => {
       await post(`/knowledge_mgmt/knowledge_base/${id}/update_settings/`, params);
       message.success('Configuration applied successfully!');
     } catch (error) {
-      message.error('Failed to apply configuration.');
+      message.error(t('knowledge.applyFailed'));
       console.error(error);
     } finally {
       setApplyLoading(false);
@@ -115,7 +116,7 @@ const TestingPage: React.FC = () => {
                 onClick={handleTesting}
                 loading={loading}
               >
-                Testing
+                {t('knowledge.testing.title')}
               </Button>
             </div>
           </div>
@@ -128,14 +129,14 @@ const TestingPage: React.FC = () => {
               />
               <div className="flex justify-end mt-4">
                 <Button type="primary" onClick={handleApplyConfig} loading={applyLoading}>
-                  Apply Config
+                  {t('knowledge.applyConfig')}
                 </Button>
               </div>
             </div>
           </div>
         </div>
         <div className="w-1/2 pl-4">
-          <h2 className="text-lg font-semibold mb-2">Results</h2>
+          <h2 className="text-lg font-semibold mb-2">{t('knowledge.results')}</h2>
           <div className="space-y-4">
             {loading ? (
               <>
@@ -155,10 +156,10 @@ const TestingPage: React.FC = () => {
                   <div className="flex justify-between mb-2">
                     <div className="border px-2 rounded-md">
                       <span className={`text-xs ${styles.activeTxt}`}># {index + 1}</span>
-                      <span className="ml-2 text-xs">| Ranking</span>
+                      <span className="ml-2 text-xs">| {t('knowledge.ranking')}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span>Score: {result.score.toFixed(4)}</span>
+                      <span>{t('knowledge.score')}: {result.score.toFixed(4)}</span>
                     </div>
                   </div>
                   <p className={`text-sm ${styles.content} mb-2`}>{result.content}</p>
@@ -166,7 +167,7 @@ const TestingPage: React.FC = () => {
                 </div>
               ))
             ) : (
-              <Empty description="No Results" />
+              <Empty description={t('common.noResult')} />
             )}
           </div>
         </div>

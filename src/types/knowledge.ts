@@ -4,6 +4,7 @@ export interface KnowledgeValues {
   team: string[];
   introduction: string;
   embed_model: number;
+  is_training?: boolean;
 }
 
 export interface Card {
@@ -21,6 +22,7 @@ export interface ModifyKnowledgeModalProps {
   onCancel: () => void;
   onConfirm: (values: KnowledgeValues) => void;
   initialValues?: KnowledgeValues | null;
+  isTraining?: boolean;
 }
 
 export interface groupProps {
@@ -54,6 +56,7 @@ export interface TestConfigData {
   selectedRerankModel: string | null;
   textSearchWeight: number;
   vectorSearchWeight: number;
+  textSearchMode: string;
   quantity: number;
   candidate: number;
   selectedEmbedModel: string | null;

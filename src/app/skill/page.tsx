@@ -150,8 +150,8 @@ const SkillPage: React.FC = () => {
               <div className="mt-2">{t('common.addNew')}</div>
             </div>
           </div>
-          {filteredSkills.map((skill) => (
-            <SkillCard key={skill.id} {...skill} onMenuClick={handleMenuClick} />
+          {filteredSkills.map((skill, index) => (
+            <SkillCard key={skill.id} {...skill} index={index} onMenuClick={handleMenuClick} />
           ))}
         </div>
       </Spin>

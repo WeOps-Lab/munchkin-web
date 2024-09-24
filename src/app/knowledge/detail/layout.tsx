@@ -96,6 +96,7 @@ const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
       topSection={<TopSection />}
       intro={intro}
       showBackButton={true}
+      showProgress={true}
       onBackButtonClick={handleBackButtonClick}
     >
       {children}

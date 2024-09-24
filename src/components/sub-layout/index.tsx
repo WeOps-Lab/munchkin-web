@@ -11,21 +11,24 @@ interface WithSideMenuLayoutProps {
   onBackButtonClick?: () => void;
   children: React.ReactNode;
   topSection?: React.ReactNode;
+  showProgress?: boolean;
 }
 
 const WithSideMenuLayout: React.FC<WithSideMenuLayoutProps> = ({ 
   menuItems, 
   intro, 
-  showBackButton, 
+  showBackButton,
   onBackButtonClick, 
   children,
-  topSection
+  topSection,
+  showProgress
 }) => {
   return (
     <div className={`flex grow w-full h-full ${sideMenuStyle.sideMenuLayout}`}>
       <SideMenu 
         menuItems={menuItems}
         showBackButton={showBackButton}
+        showProgress={showProgress}
         onBackButtonClick={onBackButtonClick}
       >
         {intro}

@@ -10,7 +10,7 @@ import { ModifyKnowledgeModalProps, ModelOption } from '@/types/knowledge';
 
 const { Option } = Select;
 
-const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, onCancel, onConfirm, initialValues }) => {
+const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, onCancel, onConfirm, initialValues, isTraining }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const { groups, loading } = useGroups();
@@ -121,7 +121,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
               label={t('knowledge.form.embedModel')}
               rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.embedModel')}!` }]}
             >
-              <Select placeholder={`Please ${t('common.select')} ${t('knowledge.form.embedModel')}`}>
+              <Select placeholder={`Please ${t('common.select')} ${t('knowledge.form.embedModel')}`} disabled={isTraining}>
                 {modelOptions.map((model) => (
                   <Option key={model.id} value={model.id} disabled={!model.enabled}>
                     {model.name}

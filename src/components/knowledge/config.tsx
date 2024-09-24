@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Select, Checkbox, Switch, Slider, InputNumber, Input, message } from 'antd';
+import { Select, Checkbox, Switch, Slider, InputNumber, Input, Radio, message } from 'antd';
 import { ModelOption, TestConfigData } from '@/types/knowledge';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
@@ -47,6 +47,13 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
     }));
   };
 
+  const handlePatternChange = (e: any) => {
+    setConfigData(prevData => ({
+      ...prevData,
+      textSearchMode: e.target.value
+    }));
+  };
+
   return (
     <>
       <div className="mb-4 flex items-center">
@@ -82,6 +89,17 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
             </p>
             {configData.selectedSearchTypes.includes('textSearch') && (
               <>
+                <div className="flex items-center justify-between mb-4">
+                  <label className="text-sm w-32">{t('knowledge.pattern')}</label>
+                  <Radio.Group
+                    onChange={handlePatternChange}
+                    value={configData.textSearchMode}
+                    className="flex-1"
+                  >
+                    <Radio value="match">{t('knowledge.match')}</Radio>
+                    <Radio value="match_phrase">{t('knowledge.matchPhrase')}</Radio>
+                  </Radio.Group>
+                </div>
                 <div className="flex items-center justify-between mb-4">
                   <label className="text-sm w-32">{t('knowledge.weight')}</label>
                   <Slider

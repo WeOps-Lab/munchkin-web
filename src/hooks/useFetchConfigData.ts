@@ -8,6 +8,7 @@ interface ConfigData {
   selectedRerankModel: string | null;
   textSearchWeight: number;
   vectorSearchWeight: number;
+  textSearchMode: string,
   quantity: number;
   candidate: number;
   selectedEmbedModel: string | null;
@@ -30,6 +31,7 @@ const useFetchConfigData = (id: string | null) => {
     vectorSearchWeight: 0.5,
     quantity: 10,
     candidate: 10,
+    textSearchMode: 'match',
     selectedEmbedModel: null,
   });
   const [loading, setLoading] = useState(true);
@@ -56,6 +58,7 @@ const useFetchConfigData = (id: string | null) => {
           vectorSearchWeight: data.vector_search_weight || 0.5,
           quantity: data.rag_k || 10,
           candidate: data.rag_num_candidates || 10,
+          textSearchMode: data.text_search_mode,
           selectedEmbedModel: data.embed_model || null,
         });
       } catch (error) {

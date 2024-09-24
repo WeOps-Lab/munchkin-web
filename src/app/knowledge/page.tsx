@@ -158,6 +158,7 @@ const KnowledgePage = () => {
         onCancel={() => setIsModalVisible(false)}
         onConfirm={handleAddKnowledge}
         initialValues={editingCard}
+        isTraining={editingCard?.is_training || false}
       />
     </div>
   );

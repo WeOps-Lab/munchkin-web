@@ -41,6 +41,7 @@ const SettingsPage: React.FC = () => {
           rerank_model: configData.selectedRerankModel,
           enable_text_search: configData.selectedSearchTypes.includes('textSearch'),
           text_search_weight: configData.textSearchWeight,
+          text_search_mode: configData.textSearchMode,
           enable_vector_search: configData.selectedSearchTypes.includes('vectorSearch'),
           vector_search_weight: configData.vectorSearchWeight,
           rag_k: configData.quantity,

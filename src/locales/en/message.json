@@ -84,6 +84,9 @@
     "embeddingModel": "Embedding Model",
     "retrievalSetting": "Retrieval Setting",
     "weight": "Weight",
+    "pattern": "pattern",
+    "match": "match",
+    "matchPhrase": "match_phrase",
     "textSearch": "Text Search",
     "textSearchDesc": "Based on keyword search technology, it searches and extracts relevant documents from large volumes of text data.",
     "vectorSearch": "Vector Search",
@@ -139,6 +142,17 @@
     "create": "Create new Secret key"
   },
   "skill": {
-    "menu": "Skill"
+    "menu": "Skill",
+    "form": {
+      "name": "Name",
+      "group": "Group",
+      "introduction": "Introduction",
+      "owner": "Owner"
+    },
+    "settings": {
+      "menu": "Setting",
+      "title": "LLM Skill",
+      "description": "LLM skills include the selection of LLM models and knowledge bases to optimize language understanding and generation processes. Users can also enable RAG (Retrieval-Augmented Generation) and conversation enhancement features to improve dialogue quality and accuracy."
+    }
   }
 }

@@ -1,13 +1,10 @@
-'use client';
-
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Spin } from 'antd';
+import { Form } from 'antd';
 import useGroups from '@/hooks/useGroups';
 import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
+import CommonForm from '@/components/knowledge/commonForm';
 import { ModifySkillModalProps } from '@/types/skill';
-
-const { Option } = Select;
 
 const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, onConfirm, initialValues }) => {
   const { t } = useTranslation();
@@ -16,6 +13,8 @@ const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, 
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {
+    if (!visible) return;
+
     if (initialValues) {
       form.setFieldsValue(initialValues);
     } else {
@@ -24,7 +23,7 @@ const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, 
         form.setFieldsValue({ team: [groups[0].id] });
       }
     }
-  }, [initialValues, form, groups]);
+  }, [initialValues, form, groups, visible]);
 
   const handleConfirm = async () => {
     try {
@@ -39,47 +38,17 @@ const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, 
   };
 
   return (
-    <>
-      <OperateModal
-        visible={visible}
-        title={initialValues ? t('knowledge.edit') : t('knowledge.add')}
-        okText={t('common.confirm')}
-        cancelText={t('common.cancel')}
-        onCancel={onCancel}
-        onOk={handleConfirm}
-        confirmLoading={confirmLoading}
-      >
-        <Spin spinning={loading}>
-          <Form form={form} layout="vertical" name="knowledge_form">
-            <Form.Item
-              name="name"
-              label={t('skill.form.name')}
-              rules={[{ required: true, message: `${t('common.inputMsg')} ${t('skill.form.name')}!` }]}
-            >
-              <Input placeholder={`Please ${t('common.input')} ${t('skill.form.name')}`} />
-            </Form.Item>
-            <Form.Item
-              name="team"
-              label={t('skill.form.group')}
-              rules={[{ required: true, message: `${t('common.selectMsg')} ${t('skill.form.group')}!` }]}
-            >
-              <Select mode="multiple" placeholder={`Please ${t('common.select')} ${t('skill.form.group')}`}>
-                {groups.map(group => (
-                  <Option key={group.id} value={group.id}>{group.name}</Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="introduction"
-              label={t('skill.form.introduction')}
-              rules={[{ required: true, message: `${t('common.inputMsg')} ${t('skill.form.introduction')}!` }]}
-            >
-              <Input.TextArea rows={4} placeholder={`Please ${t('common.input')} ${t('skill.form.introduction')}`} />
-            </Form.Item>
-          </Form>
-        </Spin>
-      </OperateModal>
-    </>
+    <OperateModal
+      visible={visible}
+      title={initialValues ? t('skill.edit') : t('skill.add')}
+      okText={t('common.confirm')}
+      cancelText={t('common.cancel')}
+      onCancel={onCancel}
+      onOk={handleConfirm}
+      confirmLoading={confirmLoading}
+    >
+      <CommonForm form={form} loading={loading} groups={groups} formType="skill" visible={visible} />
+    </OperateModal>
   );
 };
 

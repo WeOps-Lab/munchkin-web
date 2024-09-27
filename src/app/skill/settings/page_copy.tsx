@@ -4,21 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Switch, Button, InputNumber, Slider, Spin, message } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from '@/utils/i18n';
-import { ProChat, ChatMessage } from '@ant-design/pro-chat';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
-import Icon from '@/components/icon';
 import styles from './index.module.less';
 import { useSearchParams } from 'next/navigation';
-import OperateModal from '@/components/operate-modal';
-import { RagScoreThresholdItem, KnowledgeBase, ProChatMessage } from '@/types/skill' 
+import { RagScoreThresholdItem, KnowledgeBase, ProChatMessage } from '@/types/skill';
+import OperateModal from '@/components/skill/operateModal';
+import ChatComponent from '@/components/skill/proChat';
 
 const { Option } = Select;
 const { TextArea } = Input;
-
-const iconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
-
-const getIconTypeByIndex = (index: number) => iconTypes[index % iconTypes.length];
 
 const SkillSettingsPage: React.FC = () => {
   const [form] = Form.useForm();
@@ -88,10 +83,7 @@ const SkillSettingsPage: React.FC = () => {
             score: item.score
           })).filter(Boolean) as { name: string, score: number }[];
           setRagSources(initialRagSources);
-          setQuantity(data.conversation_window_size !== undefined ? data.conversation_window_size : 10);
-
-          const initialSelectedKnowledgeBases = data.rag_score_threshold.map((item: RagScoreThresholdItem) => Number(item.knowledge_base));
-          setSelectedKnowledgeBases(initialSelectedKnowledgeBases);
+          setSelectedKnowledgeBases(data.rag_score_threshold.map((item: RagScoreThresholdItem) => Number(item.knowledge_base)));
         } catch (error) {
           console.error(t('common.fetchFailed'), error);
         }
@@ -169,7 +161,6 @@ const SkillSettingsPage: React.FC = () => {
 
   const handleSendMessage = async (newMessage: ProChatMessage[]) => {
     const message = newMessage[newMessage.length - 1];
-    setMessages(prevMessages => [...prevMessages, { ...message, sender: 'user' }]);
     try {
       const values = await form.validateFields();
       const ragScoreThreshold = ragSources.map((source) => ({
@@ -192,7 +183,7 @@ const SkillSettingsPage: React.FC = () => {
       const botMessage: ProChatMessage = {
         id: new Date().getTime(),
         content: reply,
-        sender: 'bot'
+        role: 'bot'
       };
 
       setMessages(prevMessages => [...prevMessages, botMessage]);
@@ -214,7 +205,7 @@ const SkillSettingsPage: React.FC = () => {
           <div className={`border rounded-md ${styles.llmContainer}`}>
             <h2 className="text-lg font-semibold mb-3">{t('skill.information')}</h2>
             <div className="px-4">
-              <Form 
+              <Form
                 form={form}
                 labelCol={{ flex: '0 0 128px' }}
                 wrapperCol={{ flex: '1' }}
@@ -244,9 +235,9 @@ const SkillSettingsPage: React.FC = () => {
                   <div className="flex">
                     <Slider
                       className="flex-1"
-                      min={0} 
-                      max={1} 
-                      step={0.01} 
+                      min={0}
+                      max={1}
+                      step={0.01}
                       onChange={(value) => form.setFieldsValue({ temperature: value })}
                       value={form.getFieldValue('temperature')}
                     />
@@ -276,7 +267,7 @@ const SkillSettingsPage: React.FC = () => {
                 {chatHistoryEnabled && (
                   <div className="pb-4">
                     <Form.Item label={t('skill.quantity')}>
-                      <InputNumber min={1} max={100} className="w-full" value={quantity} onChange={(value) => setQuantity(value ?? 1)} />
+                      <InputNumber min={1} max={100} className="w-full" value={10} onChange={(value) => setQuantity(value ?? 1)} />
                     </Form.Item>
                   </div>
                 )}
@@ -332,59 +323,19 @@ const SkillSettingsPage: React.FC = () => {
           </div>
         </div>
         <div className="w-1/2 space-y-4">
-          <div className="rounded-lg h-full">
-            <h2 className="text-lg font-semibold mb-3">Test</h2>
-            <div style={{ height: 'calc(100vh - 270px)' }} className={`rounded-lg ${styles.chatContainer}`}>
-              <ProChat
-                request={async (messages: ChatMessage<Record<string, any>>[]) => {
-                  const transformedMessages: ProChatMessage[] = messages.map(msg => ({
-                    id: Number(msg.id),
-                    content: String(msg.content),
-                    role: msg.role === 'user' ? 'user' : 'bot',
-                  }));
-                  try {
-                    const replyContent = await handleSendMessage(transformedMessages);
-                    return {
-                      content: new Response(replyContent)
-                    };
-                  } catch (error) {
-                    console.error('Failed to send message', error);
-                    return {
-                      content: new Response('Error: Failed to send message')
-                    };
-                  }
-                }}
-              />
-            </div>
-          </div>
+          <ChatComponent handleSendMessage={handleSendMessage} />
         </div>
       </div>
       <OperateModal
-        title={t('skill.selectKnowledgeBase')}
         visible={modalVisible}
         okText={t('common.confirm')}
         cancelText={t('common.cancel')}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
-      >
-        <Spin spinning={false}>
-          <div className="grid grid-cols-3 gap-4 py-4">
-            {knowledgeBases.map((base, index) => (
-              <div
-                key={base.id}
-                className={`flex p-4 border rounded-md cursor-pointer ${selectedKnowledgeBases.includes(base.id) ? styles.selectedKnowledge : ''}`}
-                onClick={() => handleKnowledgeBaseSelect(base.id)}
-              >
-                <Icon type={getIconTypeByIndex(index)} className="text-2xl mr-[8px]" />
-                {base.name}
-              </div>
-            ))}
-          </div>
-          <div className="pt-4">
-            {t('skill.selectedCount')}: {selectedKnowledgeBases.length}
-          </div>
-        </Spin>
-      </OperateModal>
+        knowledgeBases={knowledgeBases}
+        selectedKnowledgeBases={selectedKnowledgeBases}
+        handleKnowledgeBaseSelect={handleKnowledgeBaseSelect}
+      />
     </div>
   );
 };

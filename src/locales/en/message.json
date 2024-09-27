@@ -32,6 +32,7 @@
     "updateSuccess": "Updated successfully",
     "updateFailed": "Failed to update",
     "addSuccess": "Added successfully",
+    "saveSuccess": "save successfully",
     "saveFailed": "Failed to save them(s)",
     "selectMsg": "Please select the",
     "inputMsg": "Please input the",
@@ -143,16 +144,40 @@
   },
   "skill": {
     "menu": "Skill",
+    "add": "Add New Skill",
+    "edit": "Edit Skill",
+    "information": "Information",
     "form": {
       "name": "Name",
       "group": "Group",
       "introduction": "Introduction",
-      "owner": "Owner"
+      "owner": "Owner",
+      "llmModel": "LLM Model",
+      "temperature": "Temperature",
+      "prompt": "Prompt"
     },
+    "chatEnhancement": "Chat Enhancement",
+    "chatHistory": "Chat History",
+    "quantity": "Quantity",
+    "rag": "RAG",
+    "ragSource": "RAG Source",
+    "knowledgeBase": "Knowledge Base",
+    "selectKnowledgeBase": "Select KnowledgeBase",
+    "selectedCount": "Selected Count",
     "settings": {
       "menu": "Setting",
       "title": "LLM Skill",
       "description": "LLM skills include the selection of LLM models and knowledge bases to optimize language understanding and generation processes. Users can also enable RAG (Retrieval-Augmented Generation) and conversation enhancement features to improve dialogue quality and accuracy."
+    }
+  },
+  "provider": {
+    "menu": "Provider",
+    "setting": "Model Setting",
+    "form": {
+      "key": "API Key",
+      "url": "URL",
+      "enabled": "Enabled",
+      "baseUrl": "base_url"
     }
   }
 }

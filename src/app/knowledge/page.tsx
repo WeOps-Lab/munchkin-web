@@ -12,9 +12,8 @@ import { useTranslation } from '@/utils/i18n';
 
 const iconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
 
-const getRandomIconType = () => {
-  const randomIndex = Math.floor(Math.random() * iconTypes.length);
-  return iconTypes[randomIndex];
+const getIconTypeByIndex = (index: number) => {
+  return iconTypes[index % iconTypes.length];
 };
 
 const KnowledgePage = () => {
@@ -123,7 +122,7 @@ const KnowledgePage = () => {
             <Icon type="tianjia" className="text-2xl" />
             <span className="ml-2">{t('common.addNew')}</span>
           </div>
-          {filteredCards.map((card) => (
+          {filteredCards.map((card, index) => (
             <div
               key={card.id}
               className={`p-4 rounded-xl relative shadow-md cursor-pointer ${knowledgeStyle.card}`}
@@ -138,7 +137,7 @@ const KnowledgePage = () => {
               </div>
               <div className="flex items-center mb-2">
                 <div className="rounded-full">
-                  <Icon type={getRandomIconType()} className="text-4xl" />
+                  <Icon type={getIconTypeByIndex(index)} className="text-4xl" />
                 </div>
                 <h3 className="ml-2 text-base font-semibold truncate" title={card.name}>
                   {card.name}

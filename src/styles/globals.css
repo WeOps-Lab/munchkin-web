@@ -56,6 +56,8 @@
   --color-bg-5: #F4F5F8;
   --color-bg-6: rgba(255,255,255, 0.16);
   --color-bg-7: rgba(255,255,255, 0.12);
+  --color-success: #27C274;
+  --color-fail: #F43B2C;
 
   --color-background-body: var(--color-secondary);
   --color-components-nav-button-text: var(--color-text-2);

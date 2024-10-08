@@ -1,83 +1,38 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 import { Input, Modal, message, Spin } from 'antd';
 import { Skill } from '@/types/skill';
 import useApiClient from '@/utils/request';
 import ModifySkillModal from './modifySkillModal';
 import SkillCard from '@/components/skill/skillCard';
 import { useTranslation } from '@/utils/i18n';
-import styles from './index.module.less'
-
-const dummyData: Skill[] = [
-  {
-    id: 1,
-    skillName: 'Skill Name',
-    description: '这里是Skill的描述....',
-    owner: 'kayla',
-    group: 'WeOps',
-    avatar: '/banner_bg_1.jpg',
-  },
-  {
-    id: 2,
-    skillName: 'Skill Name',
-    description: '这里是Skill的描述....',
-    owner: 'kayla',
-    group: 'WeOps',
-    avatar: '/banner_bg_2.jpg',
-  },
-  {
-    id: 3,
-    skillName: 'Skill Name',
-    description: '这里是Skill的描述....',
-    owner: 'kayla',
-    group: 'WeOps',
-    avatar: '/banner_bg_1.jpg',
-  },
-  {
-    id: 4,
-    skillName: 'Skill Name',
-    description: '这里是Skill的描述....',
-    owner: 'kayla',
-    group: 'WeOps',
-    avatar: '/banner_bg_2.jpg',
-  },
-  {
-    id: 5,
-    skillName: 'Skill Name',
-    description: '这里是Skill的描述....',
-    owner: 'kayla',
-    group: 'WeOps',
-    avatar: '/banner_bg_1.jpg',
-  },
-];
+import styles from './index.module.less';
 
 const SkillPage: React.FC = () => {
-  const router = useRouter();
   const { t } = useTranslation();
   const { get, post, patch, del } = useApiClient();
   const [searchTerm, setSearchTerm] = useState('');
-  const [skills, setSkills] = useState<Skill[]>(dummyData);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingSkill, setEditingSkill] = useState<null | Skill>(null);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchSkills = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const data = await get('/skill_mgmt/skills/');
-  //       setSkills(Array.isArray(data) ? data : []);
-  //     } catch (error) {
-  //       message.error(t('common.fetchFailed'));
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchSkills = async () => {
+      setLoading(true);
+      try {
+        const data = await get('/model_provider_mgmt/llm/');
+        setSkills(Array.isArray(data) ? data : []);
+      } catch (error) {
+        message.error(t('common.fetchFailed'));
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchSkills();
-  // }, [get]);
+    fetchSkills();
+  }, [get]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -86,11 +41,12 @@ const SkillPage: React.FC = () => {
   const handleAddSkill = async (values: Skill) => {
     try {
       if (editingSkill) {
-        await patch(`/skill_mgmt/skills/${editingSkill.id}/`, values);
+        await patch(`/model_provider_mgmt/llm/${editingSkill.id}/`, values);
         setSkills(skills.map(skill => skill.id === editingSkill?.id ? { ...skill, ...values } : skill));
         message.success(t('common.updateSuccess'));
       } else {
-        const newSkill = await post('/skill_mgmt/skills/', values);
+        const newSkill = await post('/model_provider_mgmt/llm/', values);
+        console.log('newSkill', newSkill);
         setSkills([newSkill, ...skills]);
         message.success(t('common.addSuccess'));
       }
@@ -106,7 +62,7 @@ const SkillPage: React.FC = () => {
       title: 'Are you sure you want to delete this skill?',
       onOk: async () => {
         try {
-          await del(`/skill_mgmt/skills/${skillId}/`);
+          await del(`/model_provider_mgmt/llm/${skillId}/`);
           setSkills(skills.filter(skill => skill.id !== skillId));
           message.success(t('common.delSuccess'));
         } catch (error) {
@@ -126,7 +82,7 @@ const SkillPage: React.FC = () => {
   };
 
   const filteredSkills = skills.filter((skill) =>
-    skill.skillName?.toLowerCase().includes(searchTerm.toLowerCase())
+    skill.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

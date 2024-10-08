@@ -1,10 +1,10 @@
 export interface Skill {
   id: number;
-  skillName: string;
-  description: string;
-  owner: string;
-  group: string;
-  avatar: string;
+  name: string;
+  introduction: string;
+  created_by: string;
+  team: string[];
+  team_name: string;
 }
 
 export interface ModifySkillModalProps {
@@ -13,4 +13,30 @@ export interface ModifySkillModalProps {
   onConfirm: (values: Skill) => void;
   initialValues?: Skill | null;
 }
-  
+
+export interface RagScoreThresholdItem {
+  knowledge_base: number;
+  score: number;
+}
+
+export interface KnowledgeBase {
+  id: number;
+  name: string;
+}
+
+export interface ChatMessage<T extends Record<string, any> = Record<string, any>> {
+  id: string;
+  role: 'user' | 'bot';
+  content: string;
+  createAt?: Date;
+  updateAt?: Date;
+  [key: string]: any;
+}
+
+export interface ProChatMessage extends ChatMessage {
+  id: string;
+  role: 'user' | 'bot';
+  content: string;
+  createAt: Date;
+  updateAt: Date;
+}

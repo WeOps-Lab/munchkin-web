@@ -1,14 +1,11 @@
-'use client';
-
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Spin, Modal } from 'antd';
+import { Form, Modal } from 'antd';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
+import CommonForm from '@/components/knowledge/commonForm';
 import { ModifyKnowledgeModalProps, ModelOption } from '@/types/knowledge';
-
-const { Option } = Select;
 
 const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, onCancel, onConfirm, initialValues, isTraining }) => {
   const { t } = useTranslation();
@@ -28,7 +25,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         const data = await get('/model_provider_mgmt/embed_provider/');
         setModelOptions(data);
       } catch (error) {
-        console.error('Failed to fetch models:', error);
+        console.error(`${t('common.fetchFailed')}:`, error);
       }
     };
 
@@ -36,19 +33,23 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
   }, [get]);
 
   useEffect(() => {
+    if (!visible) return;
+
     if (initialValues) {
       form.setFieldsValue(initialValues);
       setOriginalEmbedModel(initialValues.embed_model);
     } else {
       form.resetFields();
+      const defaultValues: any = {};
       if (groups.length > 0) {
-        form.setFieldsValue({ team: [groups[0].id] });
+        defaultValues.team = [groups[0].id];
       }
       if (modelOptions.length > 0) {
-        form.setFieldsValue({ embed_model: modelOptions[0].id });
+        defaultValues.embed_model = modelOptions[0].id;
       }
+      form.setFieldsValue(defaultValues);
     }
-  }, [initialValues, form, groups, modelOptions]);
+  }, [initialValues, form, groups, modelOptions, visible]);
 
   const handleConfirm = async () => {
     try {
@@ -96,48 +97,15 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         onOk={handleConfirm}
         confirmLoading={confirmLoading}
       >
-        <Spin spinning={loading}>
-          <Form form={form} layout="vertical" name="knowledge_form">
-            <Form.Item
-              name="name"
-              label={t('knowledge.form.name')}
-              rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.name')}!` }]}
-            >
-              <Input placeholder={`Please ${t('common.input')} ${t('knowledge.form.name')}`} />
-            </Form.Item>
-            <Form.Item
-              name="team"
-              label={t('knowledge.form.group')}
-              rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.group')}!` }]}
-            >
-              <Select mode="multiple" placeholder={`Please ${t('common.select')} ${t('knowledge.form.group')}`}>
-                {groups.map(group => (
-                  <Option key={group.id} value={group.id}>{group.name}</Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="embed_model"
-              label={t('knowledge.form.embedModel')}
-              rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.embedModel')}!` }]}
-            >
-              <Select placeholder={`Please ${t('common.select')} ${t('knowledge.form.embedModel')}`} disabled={isTraining}>
-                {modelOptions.map((model) => (
-                  <Option key={model.id} value={model.id} disabled={!model.enabled}>
-                    {model.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="introduction"
-              label={t('knowledge.form.introduction')}
-              rules={[{ required: true, message: `${t('common.inputMsg')} ${t('knowledge.form.introduction')}!` }]}
-            >
-              <Input.TextArea rows={4} placeholder={`Please ${t('common.input')} ${t('knowledge.form.introduction')}`} />
-            </Form.Item>
-          </Form>
-        </Spin>
+        <CommonForm 
+          form={form} 
+          loading={loading} 
+          groups={groups} 
+          modelOptions={modelOptions} 
+          isTraining={isTraining} 
+          formType="knowledge" 
+          visible={visible} 
+        />
       </OperateModal>
       <Modal
         title={t('common.confirm')}

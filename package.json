@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.0",
+    "@ant-design/pro-chat": "^1.15.2",
     "aieditor": "^1.1.0",
     "antd": "^5.19.3",
     "axios": "^1.7.3",

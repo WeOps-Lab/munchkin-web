@@ -1,50 +1,48 @@
-import React from 'react';
-import dynamic from 'next/dynamic';
-import { ProChatMessage } from '@/types/skill';
+import React, { useEffect, useState } from 'react';
+import { ProChatMessage, ChatMessage } from '@/types/skill';
 import styles from './index.module.less';
-
-interface ProChatProps {
-  request: (messages: ProChatMessage[]) => Promise<{ content: Response; [key: string]: any }>;
-}
-
-// @ts-ignore
-const ProChat = dynamic<React.ComponentType<ProChatProps>>(async () => {
-  const mod = await import('@ant-design/pro-chat');
-  console.log('Module:', mod);
-  return mod.default || mod;
-}, { 
-  ssr: false,
-  loading: () => <div>Loading...</div>,
-});
 
 interface ChatComponentProps {
   handleSendMessage: (newMessage: ProChatMessage[]) => Promise<any>;
 }
 
-const ProChatComponent: React.FC<ChatComponentProps> = ({ handleSendMessage }) => {
+const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ handleSendMessage }) => {
+  const [ProChat, setProChat] = useState<React.ComponentType<any> | null>(null);
+  
+  useEffect(() => {
+    const loadProChat = async () => {
+      const { ProChat } = await import('@ant-design/pro-chat');
+      setProChat(() => ProChat);
+    };
+    loadProChat();
+  }, []);
+
+  if (!ProChat) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="rounded-lg h-full">
       <h2 className="text-lg font-semibold mb-3">Test</h2>
       <div style={{ height: 'calc(100vh - 270px)' }} className={`rounded-lg ${styles.chatContainer}`}>
         <ProChat
-          request={async (messages: ProChatMessage[]) => {
-            const transformedMessages: ProChatMessage[] = messages.map(msg => ({
-              id: Number(msg.id),
-              content: String(msg.content),
-              role: msg.role === 'user' ? 'user' : 'bot',
+          request={async (messages: ChatMessage<Record<string, any>>[]) => {
+            const transformedMessages: ProChatMessage[] = messages.map((msg) => ({
+              id: msg.id.toString(), // 确保 id 是字符串类型
+              content: String(msg.content), // 确保 content 是字符串
+              role: msg.role as 'user' | 'bot', // 明确设置类型
+              createAt: new Date(), // 添加 createAt 属性
+              updateAt: new Date(), // 添加 updateAt 属性
             }));
             try {
               const replyContent = await handleSendMessage(transformedMessages);
               return {
                 content: new Response(replyContent),
-                id: 'only-you-love-me',
-                role: 'user-King',
-                keys: ['Ovo']
               };
             } catch (error) {
               console.error('Failed to send message', error);
               return {
-                content: new Response('Error: Failed to send message')
+                content: new Response('Error: Failed to send message'),
               };
             }
           }}
@@ -54,4 +52,4 @@ const ProChatComponent: React.FC<ChatComponentProps> = ({ handleSendMessage }) =
   );
 };
 
-export default ProChatComponent;
+export default ProChatComponentWrapper;

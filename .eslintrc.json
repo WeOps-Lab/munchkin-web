@@ -26,7 +26,7 @@
     "react-hooks/exhaustive-deps": "off",
     "react/display-name": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "plugins": ["@typescript-eslint", "react-hooks"]
 }

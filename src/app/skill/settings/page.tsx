@@ -2,25 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Switch, Button, InputNumber, Slider, Spin, message } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from '@/utils/i18n';
-import { ProChat, ChatMessage } from '@ant-design/pro-chat';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
-import Icon from '@/components/icon';
 import styles from './index.module.less';
 import { useSearchParams } from 'next/navigation';
-import OperateModal from '@/components/operate-modal';
-import { RagScoreThresholdItem, KnowledgeBase, ProChatMessage } from '@/types/skill' 
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { ProChatMessage, ChatMessage, KnowledgeBase, RagScoreThresholdItem } from '@/types/skill';
+import OperateModal from '@/components/skill/operateModal';
+import ProChatComponent from '@/components/skill/proChat';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const iconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
-
-const getIconTypeByIndex = (index: number) => iconTypes[index % iconTypes.length];
-
 const SkillSettingsPage: React.FC = () => {
+  // 你的状态和效果
   const [form] = Form.useForm();
   const { groups, loading: groupsLoading } = useGroups();
   const { t } = useTranslation();
@@ -169,7 +165,7 @@ const SkillSettingsPage: React.FC = () => {
 
   const handleSendMessage = async (newMessage: ProChatMessage[]) => {
     const message = newMessage[newMessage.length - 1];
-    setMessages(prevMessages => [...prevMessages, { ...message, sender: 'user' }]);
+    setMessages(prevMessages => [...prevMessages, { ...message, role: 'user' }]);
     try {
       const values = await form.validateFields();
       const ragScoreThreshold = ragSources.map((source) => ({
@@ -190,9 +186,11 @@ const SkillSettingsPage: React.FC = () => {
 
       const reply = await post('/model_provider_mgmt/llm/execute/', payload);
       const botMessage: ProChatMessage = {
-        id: new Date().getTime(),
+        id: new Date().getTime().toString(), // 确保 id 是字符串类型
         content: reply,
-        sender: 'bot'
+        role: 'bot',
+        createAt: new Date(), // 添加 createAt 属性
+        updateAt: new Date(), // 添加 updateAt 属性
       };
 
       setMessages(prevMessages => [...prevMessages, botMessage]);
@@ -332,59 +330,19 @@ const SkillSettingsPage: React.FC = () => {
           </div>
         </div>
         <div className="w-1/2 space-y-4">
-          <div className="rounded-lg h-full">
-            <h2 className="text-lg font-semibold mb-3">Test</h2>
-            <div style={{ height: 'calc(100vh - 270px)' }} className={`rounded-lg ${styles.chatContainer}`}>
-              <ProChat
-                request={async (messages: ChatMessage<Record<string, any>>[]) => {
-                  const transformedMessages: ProChatMessage[] = messages.map(msg => ({
-                    id: Number(msg.id),
-                    content: String(msg.content),
-                    role: msg.role === 'user' ? 'user' : 'bot',
-                  }));
-                  try {
-                    const replyContent = await handleSendMessage(transformedMessages);
-                    return {
-                      content: new Response(replyContent)
-                    };
-                  } catch (error) {
-                    console.error('Failed to send message', error);
-                    return {
-                      content: new Response('Error: Failed to send message')
-                    };
-                  }
-                }}
-              />
-            </div>
-          </div>
+          <ProChatComponent handleSendMessage={handleSendMessage} />
         </div>
       </div>
       <OperateModal
-        title={t('skill.selectKnowledgeBase')}
         visible={modalVisible}
         okText={t('common.confirm')}
         cancelText={t('common.cancel')}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
-      >
-        <Spin spinning={false}>
-          <div className="grid grid-cols-3 gap-4 py-4">
-            {knowledgeBases.map((base, index) => (
-              <div
-                key={base.id}
-                className={`flex p-4 border rounded-md cursor-pointer ${selectedKnowledgeBases.includes(base.id) ? styles.selectedKnowledge : ''}`}
-                onClick={() => handleKnowledgeBaseSelect(base.id)}
-              >
-                <Icon type={getIconTypeByIndex(index)} className="text-2xl mr-[8px]" />
-                {base.name}
-              </div>
-            ))}
-          </div>
-          <div className="pt-4">
-            {t('skill.selectedCount')}: {selectedKnowledgeBases.length}
-          </div>
-        </Spin>
-      </OperateModal>
+        knowledgeBases={knowledgeBases}
+        selectedKnowledgeBases={selectedKnowledgeBases}
+        handleKnowledgeBaseSelect={handleKnowledgeBaseSelect}
+      />
     </div>
   );
 };

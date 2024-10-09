@@ -8,7 +8,7 @@ import useApiClient from '@/utils/request';
 import styles from './index.module.less';
 import { useSearchParams } from 'next/navigation';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { ProChatMessage, ChatMessage, KnowledgeBase, RagScoreThresholdItem } from '@/types/skill';
+import { ProChatMessage, KnowledgeBase, RagScoreThresholdItem } from '@/types/skill';
 import OperateModal from '@/components/skill/operateModal';
 import ProChatComponent from '@/components/skill/proChat';
 
@@ -16,7 +16,6 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const SkillSettingsPage: React.FC = () => {
-  // 你的状态和效果
   const [form] = Form.useForm();
   const { groups, loading: groupsLoading } = useGroups();
   const { t } = useTranslation();

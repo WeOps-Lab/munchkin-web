@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next",
-    "prepare": "husky install",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@ant-design/icons": "^5.4.0",

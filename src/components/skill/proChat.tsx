@@ -35,9 +35,9 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ handleSendMessa
               updateAt: new Date(), // 添加 updateAt 属性
             }));
             try {
-              const replyContent = await handleSendMessage(transformedMessages);
+              const reply = await handleSendMessage(transformedMessages);
               return {
-                content: new Response(replyContent),
+                content: new Response(reply.content),
               };
             } catch (error) {
               console.error('Failed to send message', error);

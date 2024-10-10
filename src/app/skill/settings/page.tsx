@@ -8,7 +8,7 @@ import useApiClient from '@/utils/request';
 import styles from './index.module.less';
 import { useSearchParams } from 'next/navigation';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { ProChatMessage, ChatMessage, KnowledgeBase, RagScoreThresholdItem } from '@/types/skill';
+import { ProChatMessage, KnowledgeBase, RagScoreThresholdItem } from '@/types/skill';
 import OperateModal from '@/components/skill/operateModal';
 import ProChatComponent from '@/components/skill/proChat';
 
@@ -16,7 +16,6 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const SkillSettingsPage: React.FC = () => {
-  // 你的状态和效果
   const [form] = Form.useForm();
   const { groups, loading: groupsLoading } = useGroups();
   const { t } = useTranslation();
@@ -30,7 +29,7 @@ const SkillSettingsPage: React.FC = () => {
   const [ragSources, setRagSources] = useState<{ name: string, score: number }[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKnowledgeBases, setSelectedKnowledgeBases] = useState<number[]>([]);
-  const [llmModels, setLlmModels] = useState<{ id: number, name: string }[]>([]);
+  const [llmModels, setLlmModels] = useState<{ id: number, name: string, enabled: boolean }[]>([]);
   const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -234,7 +233,7 @@ const SkillSettingsPage: React.FC = () => {
                 <Form.Item label={t('skill.form.llmModel')} name="llmModel" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.llmModel')}` }]}>
                   <Select>
                     {llmModels.map((model) => (
-                      <Option key={model.id} value={model.id}>{model.name}</Option>
+                      <Option key={model.id} value={model.id} disabled={!model.enabled}>{model.name}</Option>
                     ))}
                   </Select>
                 </Form.Item>

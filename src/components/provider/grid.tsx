@@ -126,10 +126,10 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
             <div className="rounded-lg shadow px-4 py-6 relative" key={model.id}>
               <div className="flex justify-between items-start">
                 <div style={{ flex: '0 0 auto' }}>
-                  <Icon type={getModelIcon()} className="text-4xl" />
+                  <Icon type={getModelIcon()} className="text-5xl" />
                 </div>
-                <div className="flex-1 ml-2">
-                  <h3 className="text-base font-semibold break-words">{model.name}</h3>
+                <div className={`flex-1 ml-2 ${styles.nameContainer}`}>
+                  <h3 className={`text-base font-semibold break-words mb-1 ${styles.name}`}>{model.name}</h3>
                   <span className="inline-block mt-1 px-2 py-1 text-xs rounded-xl border">
                     {filterType}
                   </span>
@@ -157,6 +157,13 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
         confirmLoading={modalLoading}
       >
         <Form form={form} layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+          <Form.Item
+            name="url"
+            label={t(`provider.form.${filterType === 'llm_model' ? 'url' : 'baseUrl'}`)}
+            rules={[{ required: true, message: `${t('common.input')} ${t(`provider.form.${filterType === 'llm_model' ? 'url' : 'baseUrl'}`)}` }]}
+          >
+            <AntdInput />
+          </Form.Item>
           {filterType === 'llm_model' && (
             <Form.Item
               name="apiKey"
@@ -170,13 +177,6 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
               />
             </Form.Item>
           )}
-          <Form.Item
-            name="url"
-            label={t(`provider.form.${filterType === 'llm_model' ? 'url' : 'base_url'}`)}
-            rules={[{ required: true, message: `${t('common.input')} ${t(`provider.form.${filterType === 'llm_model' ? 'url' : 'base_url'}`)}` }]}
-          >
-            <AntdInput />
-          </Form.Item>
           <Form.Item
             name="enabled"
             label={t('provider.form.enabled')}

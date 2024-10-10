@@ -24,6 +24,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     if (session?.accessToken) {
       setToken(session.accessToken);
+      const userLocale = session.locale || 'en';
+      localStorage.setItem('locale', userLocale);
     } else {
       console.warn('No accessToken found in session');
     }

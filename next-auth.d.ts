@@ -7,6 +7,7 @@ declare module "next-auth" {
     error?: string;
     locale?: string;
     username?: string;
+    roles?: string[];
   }
 }
 
@@ -19,5 +20,6 @@ declare module "next-auth/jwt" {
     locale?: string;
     error?: string;
     username?: string;
+    roles?: string[];
   }
 }

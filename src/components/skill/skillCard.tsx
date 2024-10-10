@@ -23,10 +23,10 @@ const SkillCard: React.FC<SkillCardProps> = ({ id, name, introduction, created_b
   const menu = (
     <Menu>
       <Menu.Item key={`edit-${id}`} onClick={() => onMenuClick('edit', { id, name, introduction, created_by, team_name, team })}>
-        Edit
+        { t('common.edit') }
       </Menu.Item>
       <Menu.Item key={`delete-${id}`} onClick={() => onMenuClick('delete', { id, name, introduction, created_by, team_name, team })}>
-        Delete
+        { t('common.delete') }
       </Menu.Item>
     </Menu>
   );

@@ -176,8 +176,7 @@
     "form": {
       "key": "API Key",
       "url": "URL",
-      "enabled": "Enabled",
-      "baseUrl": "base_url"
+      "enabled": "Enabled"
     }
   }
 }

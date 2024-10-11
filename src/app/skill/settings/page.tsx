@@ -207,7 +207,7 @@ const SkillSettingsPage: React.FC = () => {
         </div>
       )}
       <div className="flex justify-between space-x-4">
-        <div className="w-1/2 space-y-4">
+        <div className={`w-1/2 space-y-4 ${styles.llmSection}`}>
           <div className={`border rounded-md ${styles.llmContainer}`}>
             <h2 className="text-lg font-semibold mb-3">{t('skill.information')}</h2>
             <div className="px-4">

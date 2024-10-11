@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ProChatMessage, ChatMessage } from '@/types/skill';
+import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
 
 interface ChatComponentProps {
@@ -7,6 +8,7 @@ interface ChatComponentProps {
 }
 
 const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ handleSendMessage }) => {
+  const { t } = useTranslation();
   const [ProChat, setProChat] = useState<React.ComponentType<any> | null>(null);
   
   useEffect(() => {
@@ -28,21 +30,23 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ handleSendMessa
         <ProChat
           request={async (messages: ChatMessage<Record<string, any>>[]) => {
             const transformedMessages: ProChatMessage[] = messages.map((msg) => ({
-              id: msg.id.toString(), // 确保 id 是字符串类型
-              content: String(msg.content), // 确保 content 是字符串
-              role: msg.role as 'user' | 'bot', // 明确设置类型
-              createAt: new Date(), // 添加 createAt 属性
-              updateAt: new Date(), // 添加 updateAt 属性
+              id: msg.id.toString(),
+              content: String(msg.content),
+              role: msg.role as 'user' | 'bot',
+              createAt: new Date(),
+              updateAt: new Date(),
             }));
             try {
               const reply = await handleSendMessage(transformedMessages);
+              const { content, citing_knowledge } = reply;
+              const formattedCitingKnowledge = citing_knowledge.map((k: any) => `${k.knowledge_title}`).join(',');
               return {
-                content: new Response(reply.content),
+                content: new Response(`${content}\n\n来源: ${formattedCitingKnowledge}`),
               };
             } catch (error) {
-              console.error('Failed to send message', error);
+              console.error(t('common.sendFailed'), error);
               return {
-                content: new Response('Error: Failed to send message'),
+                content: new Response(`${t('common.error')}: ${t('common.sendFailed')}`),
               };
             }
           }}

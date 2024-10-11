@@ -22,6 +22,7 @@ export interface RagScoreThresholdItem {
 export interface KnowledgeBase {
   id: number;
   name: string;
+  introduction: string;
 }
 
 export interface ChatMessage<T extends Record<string, any> = Record<string, any>> {

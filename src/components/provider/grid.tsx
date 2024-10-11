@@ -159,8 +159,8 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
         <Form form={form} layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
           <Form.Item
             name="url"
-            label={t(`provider.form.${filterType === 'llm_model' ? 'url' : 'baseUrl'}`)}
-            rules={[{ required: true, message: `${t('common.input')} ${t(`provider.form.${filterType === 'llm_model' ? 'url' : 'baseUrl'}`)}` }]}
+            label={t('provider.form.url')}
+            rules={[{ required: true, message: `${t('common.input')} ${t('provider.form.url')}` }]}
           >
             <AntdInput />
           </Form.Item>

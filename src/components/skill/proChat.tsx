@@ -24,7 +24,7 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ handleSendMessa
   return (
     <div className="rounded-lg h-full">
       <h2 className="text-lg font-semibold mb-3">Test</h2>
-      <div style={{ height: 'calc(100vh - 270px)' }} className={`rounded-lg ${styles.chatContainer}`}>
+      <div style={{ height: 'calc(100vh - 280px)' }} className={`rounded-lg ${styles.chatContainer}`}>
         <ProChat
           request={async (messages: ChatMessage<Record<string, any>>[]) => {
             const transformedMessages: ProChatMessage[] = messages.map((msg) => ({

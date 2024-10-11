@@ -176,8 +176,7 @@
     "form": {
       "key": "API密钥",
       "url": "URL",
-      "enabled": "启用",
-      "baseUrl": "基础URL"
+      "enabled": "启用"
     }
   }
 }

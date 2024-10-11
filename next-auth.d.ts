@@ -1,4 +1,3 @@
-// next-auth.d.ts
 import { JWT } from "next-auth/jwt";
 
 declare module "next-auth" {

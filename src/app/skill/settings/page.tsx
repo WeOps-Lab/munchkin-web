@@ -6,7 +6,7 @@ import { useTranslation } from '@/utils/i18n';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
 import styles from './index.module.less';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ProChatMessage, KnowledgeBase, RagScoreThresholdItem } from '@/types/skill';
 import OperateModal from '@/components/skill/operateModal';
@@ -16,6 +16,7 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const SkillSettingsPage: React.FC = () => {
+  const router = useRouter();
   const [form] = Form.useForm();
   const { groups, loading: groupsLoading } = useGroups();
   const { t } = useTranslation();
@@ -26,7 +27,7 @@ const SkillSettingsPage: React.FC = () => {
   const [chatHistoryEnabled, setChatHistoryEnabled] = useState(true);
   const [ragEnabled, setRagEnabled] = useState(true);
   const [showRagSource, setRagSourceStatus] = useState(false);
-  const [ragSources, setRagSources] = useState<{ name: string, score: number }[]>([]);
+  const [ragSources, setRagSources] = useState<{ id: number, name: string, introduction: string, score: number }[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKnowledgeBases, setSelectedKnowledgeBases] = useState<number[]>([]);
   const [llmModels, setLlmModels] = useState<{ id: number, name: string, enabled: boolean }[]>([]);
@@ -78,10 +79,10 @@ const SkillSettingsPage: React.FC = () => {
           setRagEnabled(data.enable_rag);
           setRagSourceStatus(data.enable_rag_knowledge_source);
 
-          const initialRagSources = data.rag_score_threshold.map((item: RagScoreThresholdItem) => ({
-            name: knowledgeBases.find((base) => base.id === Number(item.knowledge_base))?.name,
-            score: item.score
-          })).filter(Boolean) as { name: string, score: number }[];
+          const initialRagSources = data.rag_score_threshold.map((item: RagScoreThresholdItem) => {
+            const base = knowledgeBases.find((base) => base.id === Number(item.knowledge_base));
+            return base ? { id: base.id, name: base.name, introduction: base.introduction || '', score: item.score } : null;
+          }).filter(Boolean) as { id: number, name: string, introduction: string, score: number }[];
           setRagSources(initialRagSources);
           setQuantity(data.conversation_window_size !== undefined ? data.conversation_window_size : 10);
 
@@ -103,8 +104,8 @@ const SkillSettingsPage: React.FC = () => {
   const handleModalOk = () => {
     setRagSources(selectedKnowledgeBases.map(id => {
       const base = knowledgeBases.find(base => base.id === id);
-      return base ? { name: base.name, score: 0.7 } : null;
-    }).filter(Boolean) as { name: string, score: number }[]);
+      return base ? { id: base.id, name: base.name, introduction: base.introduction || '', score: 0.7 } : null;
+    }).filter(Boolean) as { id: number, name: string, introduction: string, score: number }[]);
     setModalVisible(false);
   };
 
@@ -124,6 +125,13 @@ const SkillSettingsPage: React.FC = () => {
     if (source) {
       setSelectedKnowledgeBases(selectedKnowledgeBases.filter(id => id !== source.id));
     }
+  };
+
+  const handleEditKnowledge = (source: KnowledgeBase) => {
+    window.open(
+      `/knowledge/detail?id=${source.id}&name=${source.name}&desc=${source.introduction}`,
+      '_blank'
+    );
   };
 
   const handleScoreChange = (sourceName: string, newScore: number) => {
@@ -310,7 +318,10 @@ const SkillSettingsPage: React.FC = () => {
                               <Input className="w-14" value={source.score} readOnly />
                             </div>
                             <div>
-                              <EditOutlined className="mr-[8px] ml-[8px]" />
+                              <EditOutlined 
+                                className="mr-[8px] ml-[8px]"
+                                onClick={() => handleEditKnowledge(source)}
+                              />
                               <DeleteOutlined onClick={() => handleDeleteRagSource(source.name)} />
                             </div>
                           </div>

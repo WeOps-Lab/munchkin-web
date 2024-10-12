@@ -4,10 +4,11 @@ import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
 
 interface ChatComponentProps {
+  showSource: boolean;
   handleSendMessage: (newMessage: ProChatMessage[]) => Promise<any>;
 }
 
-const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ handleSendMessage }) => {
+const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ showSource = false, handleSendMessage }) => {
   const { t } = useTranslation();
   const [ProChat, setProChat] = useState<React.ComponentType<any> | null>(null);
   
@@ -39,9 +40,14 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ handleSendMessa
             try {
               const reply = await handleSendMessage(transformedMessages);
               const { content, citing_knowledge } = reply;
-              const formattedCitingKnowledge = citing_knowledge.map((k: any) => `${k.knowledge_title}`).join(',');
+              let responseContent = content;
+              if (showSource) {
+                const formattedCitingKnowledge = citing_knowledge.map((k: any) => `${k.knowledge_title}`).join(',');
+                responseContent += `\n\n${t('skill.source')}: ${formattedCitingKnowledge}`;
+              }
+              
               return {
-                content: new Response(`${content}\n\n来源: ${formattedCitingKnowledge}`),
+                content: new Response(responseContent),
               };
             } catch (error) {
               console.error(t('common.sendFailed'), error);

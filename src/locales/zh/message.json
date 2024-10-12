@@ -159,6 +159,7 @@
     "chatEnhancement": "聊天增强",
     "chatHistory": "聊天历史",
     "quantity": "数量",
+    "source": "来源",
     "rag": "RAG",
     "ragSource": "RAG来源",
     "knowledgeBase": "知识库",

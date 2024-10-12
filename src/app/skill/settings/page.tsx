@@ -340,7 +340,7 @@ const SkillSettingsPage: React.FC = () => {
           </div>
         </div>
         <div className="w-1/2 space-y-4">
-          <ProChatComponent handleSendMessage={handleSendMessage} />
+          <ProChatComponent showSource={ragEnabled && showRagSource} handleSendMessage={handleSendMessage} />
         </div>
       </div>
       <OperateModal

@@ -161,6 +161,7 @@
     "chatEnhancement": "Chat Enhancement",
     "chatHistory": "Chat History",
     "quantity": "Quantity",
+    "source": "Source",
     "rag": "RAG",
     "ragSource": "RAG Source",
     "knowledgeBase": "Knowledge Base",

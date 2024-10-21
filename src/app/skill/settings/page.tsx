@@ -5,8 +5,8 @@ import { Form, Input, Select, Switch, Button, InputNumber, Slider, Spin, message
 import { useTranslation } from '@/utils/i18n';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
-import styles from './index.module.less';
-import { useSearchParams, useRouter } from 'next/navigation';
+import styles from '@/styles/common.less';
+import { useSearchParams } from 'next/navigation';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ProChatMessage, KnowledgeBase, RagScoreThresholdItem } from '@/types/skill';
 import OperateModal from '@/components/skill/operateModal';
@@ -16,7 +16,6 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const SkillSettingsPage: React.FC = () => {
-  const router = useRouter();
   const [form] = Form.useForm();
   const { groups, loading: groupsLoading } = useGroups();
   const { t } = useTranslation();
@@ -193,11 +192,11 @@ const SkillSettingsPage: React.FC = () => {
 
       const reply = await post('/model_provider_mgmt/llm/execute/', payload);
       const botMessage: ProChatMessage = {
-        id: new Date().getTime().toString(), // 确保 id 是字符串类型
+        id: new Date().getTime().toString(),
         content: reply,
         role: 'bot',
-        createAt: new Date(), // 添加 createAt 属性
-        updateAt: new Date(), // 添加 updateAt 属性
+        createAt: new Date(),
+        updateAt: new Date(),
       };
 
       setMessages(prevMessages => [...prevMessages, botMessage]);

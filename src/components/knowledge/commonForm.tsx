@@ -11,7 +11,7 @@ interface CommonFormProps {
   modelOptions?: any[];
   initialValues?: any;
   isTraining?: boolean;
-  formType: 'knowledge' | 'skill';
+  formType: string;
   visible: boolean;
 }
 

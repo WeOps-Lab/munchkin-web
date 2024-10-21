@@ -6,13 +6,14 @@ import ConfigComponent from '@/components/knowledge/config';
 import { useTranslation } from '@/utils/i18n';
 import useApiClient from '@/utils/request';
 import useGroups from '@/hooks/useGroups';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import useFetchConfigData from '@/hooks/useFetchConfigData';
 
 const { Option } = Select;
 
 const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
+  const router = useRouter();
   const { post } = useApiClient();
   const [form] = Form.useForm();
   const { groups, loading: groupsLoading } = useGroups();
@@ -64,12 +65,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    form.resetFields();
-    setFormData({
-      name: '',
-      introduction: '',
-      team: []
-    });
+    router.back();
   };
 
   return (

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Icon from '@/components/icon';
 import Image from 'next/image';
 import { Skill } from '@/types/skill';
-import styles from './index.module.less';
+import styles from '@/styles/common.less';
 import { useTranslation } from '@/utils/i18n';
 
 const { Meta } = Card;
@@ -36,7 +36,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ id, name, introduction, created_b
 
   return (
     <Card 
-      className={`shadow-md cursor-pointer rounded-xl relative overflow-hidden ${styles.skillCard}`} 
+      className={`shadow-md cursor-pointer rounded-xl relative overflow-hidden ${styles.CommonCard}`} 
       onClick={() => router.push(`/skill/settings?id=${id}&name=${name}&desc=${introduction}`)}>
       <div className="absolute top-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
         <Dropdown overlay={menu} trigger={['click']} key={`dropdown-${id}`} placement="bottomRight">
@@ -48,8 +48,8 @@ const SkillCard: React.FC<SkillCardProps> = ({ id, name, introduction, created_b
       <div className="w-full h-[60px] relative">
         <Image alt="avatar" src={avatar} layout="fill" objectFit="cover" className="rounded-t-xl" />
       </div>
-      <div className={`w-[40px] h-[40px] rounded-full flex justify-center items-center ${styles.iconContainer}`}>
-        <Icon type={iconType} className="text-2xl" />
+      <div className={`w-[50px] h-[50px] rounded-full flex justify-center items-center ${styles.iconContainer}`}>
+        <Icon type={iconType} className="text-4xl" />
       </div>
       <div className="p-4">
         <Meta

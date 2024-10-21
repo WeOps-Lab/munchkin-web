@@ -52,7 +52,7 @@ const ProviderPage: React.FC = () => {
         value={activeTab}
         onChange={handleSegmentedChange}
         className="mb-4"
-      />
+      /> 
       {tabConfig.map(tab => (
         <div key={tab.key} style={{ display: activeTab === tab.key ? 'block' : 'none' }}>
           <ProviderGrid models={models} filterType={tab.type} loading={loading} setModels={setModels} />

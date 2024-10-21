@@ -1,0 +1,69 @@
+.CommonCard {
+  :global {
+    .ant-card-body {
+      padding: 0;
+      color: var(--color-text-1);
+      border: none;
+      background-color: var(--color-bg-1);
+    }
+  }
+  .iconContainer {
+    position: absolute;
+    top: 35px;
+    right: 35px;
+    background-color: var(--color-bg-1);
+  }
+  .desc {
+    color: var(--color-text-3);
+  }
+}
+
+.addNew {
+  background-color: var(--color-bg);
+  min-height: 200px;
+}
+
+.llmSection {
+  height: calc(100vh - 240px);
+  overflow-y: auto;
+  .llmContainer {
+    color: var(--color-text-2);
+    h2 {
+      padding: 10px;
+      background-color: var(--color-bg-active);
+    }
+    .contentWrapper {
+      margin: 10px 20px;
+      background: var(--color-fill-1);
+    }
+  }
+}
+.borderContainer {
+  border: 1px solid var(--color-border-2);
+  background: var(--color-bg-1);
+}
+
+.statusTag {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  border: none;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    margin-right: 5px;
+    width: 8px;
+    height: 8px;
+    background-color: currentColor;
+    border-radius: 50%;
+  }
+}
+  
+.online::before {
+  background-color: #389e0d;
+}
+  
+.offline::before {
+  background-color: #e4e4e4;
+}

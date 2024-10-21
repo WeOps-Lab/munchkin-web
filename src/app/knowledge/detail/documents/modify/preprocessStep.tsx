@@ -246,7 +246,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
             disabled={!formData.excelParsing}
           >
             <Radio value="headerRow">{t('knowledge.documents.headerRow')}</Radio>
-            <Radio value="fullContent">{t('knowledge.documents.fullContent')}s</Radio>
+            <Radio value="fullContent">{t('knowledge.documents.fullContent')}</Radio>
           </Radio.Group>
         </div>
       </div>

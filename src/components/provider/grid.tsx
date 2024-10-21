@@ -123,7 +123,7 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
       <Spin spinning={loading}>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {filteredModels.map((model) => (
-            <div className="rounded-lg shadow px-4 py-6 relative" key={model.id}>
+            <div className={`rounded-lg shadow px-4 py-6 relative ${styles.gridContainer}`} key={model.id}>
               <div className="flex justify-between items-start">
                 <div style={{ flex: '0 0 auto' }}>
                   <Icon type={getModelIcon()} className="text-5xl" />
@@ -138,7 +138,7 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
                   <Icon type="shezhi" className="text-base" />
                 </button>
               </div>
-              <div className="absolute bottom-0 right-0 rounded-lg">
+              <div className="absolute bottom-0 right-0 rounded-lg z-20">
                 <span className={`${styles.iconTriangle} ${model.enabled ? styles.enabled : styles.disabled}`}>
                   {model.enabled ? <Icon type="select-line" /> : <Icon type="guanbi" />}
                 </span>

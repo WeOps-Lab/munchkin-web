@@ -7,7 +7,7 @@ import useApiClient from '@/utils/request';
 import ModifySkillModal from './modifySkillModal';
 import SkillCard from '@/components/skill/skillCard';
 import { useTranslation } from '@/utils/i18n';
-import styles from './index.module.less';
+import styles from '@/styles/common.less';
 
 const SkillPage: React.FC = () => {
   const { t } = useTranslation();
@@ -59,7 +59,7 @@ const SkillPage: React.FC = () => {
 
   const handleDelete = (skillId: number) => {
     Modal.confirm({
-      title: 'Are you sure you want to delete this skill?',
+      title: t('skill.deleteConfirm'),
       onOk: async () => {
         try {
           await del(`/model_provider_mgmt/llm/${skillId}/`);

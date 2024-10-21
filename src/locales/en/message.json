@@ -8,6 +8,8 @@
     "search": "Search",
     "create": "Create",
     "save": "Save",
+    "publish": "Publish",
+    "saveOnly": "Save Only",
     "next": "Next",
     "pre": "Previous",
     "train": "Train",
@@ -167,6 +169,7 @@
     "knowledgeBase": "Knowledge Base",
     "selectKnowledgeBase": "Select KnowledgeBase",
     "selectedCount": "Selected Count",
+    "deleteConfirm": "Are you sure you want to delete this skill?",
     "settings": {
       "menu": "Setting",
       "title": "LLM Skill",
@@ -180,6 +183,57 @@
       "key": "API Key",
       "url": "URL",
       "enabled": "Enabled"
+    }
+  },
+  "studio": {
+    "menu": "Studio",
+    "deleteConfirm": "Are you sure you want to delete this studio?",
+    "offDeleteConfirm": "Please go offline before deleting the bot.",
+    "offAndDel": "Offline & Delete",
+    "add": "Add New Studio",
+    "edit": "Edit Studio",
+    "information": "Information",
+    "form": {
+      "name": "Name",
+      "group": "Group",
+      "introduction": "Introduction",
+      "owner": "Owner",
+      "model": "Model"
+    },
+    "off": "Offline",
+    "on": "Online",
+    "settings": {
+      "title": "Settings",
+      "selectSkills": "Select Skills",
+      "selectChannels": "Select Channels",
+      "noChannelHasBeenOpened": "No channel has been opened yet. Please configure the channel first before making a selection.",
+      "clickHere": "Click here ",
+      "toConfigureChannels": "to configure channels",
+      "domain": "Domain",
+      "enableSsl": "enable SSL",
+      "portMapping": "Port Mapping",
+      "description": "Select the corresponding skills for the bot, configure the relevant information, and then publish.",
+      "publishTip": "After the robot is published, it will be updated on the selected channels.",
+      "selectedParams": "Please ensure that the selected channels parameters are configured."
+    },
+    "channel": {
+      "title": "Channel",
+      "setting": "Setting",
+      "description": "Built-in with multiple messaging channels, allowing the bot to interact with users through these channels."
+    },
+    "logs": {
+      "title": "Conversation Logs",
+      "description": "You can view the log records of the conversation between the user and the robot, and restore the conversation scene.",
+      "table": {
+        "title": "TITLE",
+        "createdTime": "CREATED TIME",
+        "updatedTime": "UPDATED TIME",
+        "user": "USER",
+        "channel": "CHANNEL",
+        "count": "COUNT",
+        "actions": "ACTIONS",
+        "detail": "DETAIL"
+      }
     }
   }
 }

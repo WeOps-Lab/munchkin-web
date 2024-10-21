@@ -29,11 +29,11 @@ const OperateModal: React.FC<OperateModalProps> = ({
   const [tempSelectedItem, setTempSelectedItem] = useState<number | null>(null);
 
   useEffect(() => {
-    setTempSelectedItem(selectedItems[0] ?? null); // 仅支持单选
+    setTempSelectedItem(selectedItems[0] ?? null);
   }, [selectedItems, visible]);
 
   const handleItemSelect = (id: number) => {
-    setTempSelectedItem(id); // 设置为单选模式
+    setTempSelectedItem(id);
   };
 
   const renderFooter = () => {
@@ -54,7 +54,7 @@ const OperateModal: React.FC<OperateModalProps> = ({
   };
 
   const handleModalCancel = () => {
-    setTempSelectedItem(selectedItems[0] ?? null); // 重置为初始值
+    setTempSelectedItem(selectedItems[0] ?? null);
     onCancel();
   };
 

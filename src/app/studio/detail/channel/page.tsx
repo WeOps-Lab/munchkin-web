@@ -50,7 +50,7 @@ const ChannelPage: React.FC = () => {
 
     setFormLoading(true);
     const fetchedFields = { ...app.channel_config[Object.keys(app.channel_config)[0]] };
-    setFields(fetchedFields); // Ensure we keep the default values
+    setFields(fetchedFields);
     setFormLoading(false);
     setIsModalVisible(true);
   };
@@ -94,8 +94,7 @@ const ChannelPage: React.FC = () => {
         apps.map((app) => (
           <div key={app.id} className="w-full sm:w-1/3 p-4">
             <div
-              className='shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out rounded-lg p-4 relative cursor-pointer group'
-              style={{ background: "var(--color-fill-1)" }}
+              className='border shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out rounded-lg p-4 relative cursor-pointer group'
             >
               <div className="absolute top-2 right-2">
                 <Tag
@@ -112,7 +111,7 @@ const ChannelPage: React.FC = () => {
               <div className="w-full h-[32px] flex justify-center items-end">
                 <Button
                   type="primary"
-                  className="w-full rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="w-full rounded-md transition-opacity duration-300"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleOpenModal(app);

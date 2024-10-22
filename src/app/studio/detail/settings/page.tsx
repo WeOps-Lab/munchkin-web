@@ -6,7 +6,7 @@ import { useTranslation } from '@/utils/i18n';
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Skill } from '@/types/skill';
 import OperateModal from '@/components/studio/operateModal';
 import styles from '@/styles/common.less';
@@ -19,7 +19,7 @@ const StudioSettingsPage: React.FC = () => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const { get, patch } = useApiClient();
-  const { groups, loading: groupsLoading } = useGroups();
+  const { groups } = useGroups();
   const [pageLoading, setPageLoading] = useState(true);
   const [rasaModels, setRasaModels] = useState<{ id: number; name: string; enabled: boolean }[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -31,9 +31,8 @@ const StudioSettingsPage: React.FC = () => {
   const [isPortMappingEnabled, setIsPortMappingEnabled] = useState(false);
   const [botDomain, setBotDomain] = useState('');
   const [nodePort, setNodePort] = useState(5005);
-  const [enableSsl, setEnableSsl] = useState(false); // 新增 SSL 相关状态
+  const [enableSsl, setEnableSsl] = useState(false);
   const [online, setOnline] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const botId = searchParams.get('id');
 
@@ -113,6 +112,10 @@ const StudioSettingsPage: React.FC = () => {
     }
   };
 
+  const iconType = (index: number) => {
+    return index % 2 === 0 ? 'jishuqianyan' : 'theory'
+  };
+
   const handleSaveAndPublish = () => handleSave(true);
   
   const toggleOnlineStatus = async () => {
@@ -124,6 +127,10 @@ const StudioSettingsPage: React.FC = () => {
       message.error(t('common.saveFailed'));
     }
   };
+
+  const getTypeIcon = (name: string) => {
+    return name === 'enterprise_wechat' ? 'qiwei' : name === 'ding_talk' ? 'dingding1' : 'wangye'
+  }
 
   const menu = (
     <Menu style={{ width: 300 }}>
@@ -233,12 +240,15 @@ const StudioSettingsPage: React.FC = () => {
                     </Button>
                   </div>
                   <div className={`grid ${selectedSkills.length ? 'mb-4' : ''}`}>
-                    {selectedSkills.map((id) => {
+                    {selectedSkills.map((id, index) => {
                       const skill = skills.find((s) => s.id === id);
                       return skill ? (
-                        <div key={id} className="border rounded-md px-4 py-2 flex items-center justify-between">
-                          <span>{skill.name}</span>
-                          <div>
+                        <div key={id} className={`rounded-md px-4 py-2 flex items-center justify-between ${styles.cardFillColor}`}>
+                          <div className='flex items-center'>
+                            <Icon type={iconType(index)} className="text-xl mr-2" />
+                            <span>{skill.name}</span>
+                          </div>
+                          <div className='hover:text-blue-500 hover:bg-blue-100 p-1 rounded'>
                             <DeleteOutlined onClick={() => handleDeleteSkill(id)} />
                           </div>
                         </div>
@@ -252,11 +262,30 @@ const StudioSettingsPage: React.FC = () => {
               <h2 className="text-lg font-semibold mb-2">{t('studio.channel.title')}</h2>
               <div className="px-4 pt-4 border rounded-md shadow-sm">
                 <Form.Item className="mb-4">
-                  <Checkbox.Group
-                    options={channels.map((channel) => ({ label: channel.name, value: channel.id }))}
-                    value={selectedChannels}
-                    onChange={(checkedValues) => setSelectedChannels(checkedValues as number[])}
-                  />
+                  <div className="grid gap-3 grid-cols-3">
+                    {channels.map((channel) => {
+                      const isSelected = selectedChannels.includes(channel.id);
+                      return (
+                        <div
+                          key={channel.id}
+                          onClick={() => {
+                            setSelectedChannels((prev) => 
+                              isSelected 
+                                ? prev.filter(id => id !== channel.id)
+                                : [...prev, channel.id]
+                            );
+                          }}
+                          className={`flex items-center cursor-pointer rounded-md p-4 text-center ${isSelected 
+                            ? styles.selectedCommonItem
+                            : styles.cardFillColor}` 
+                          }
+                        >
+                          <Icon type={getTypeIcon(channel.name)} className="text-3xl mr-[5px]" />
+                          {channel.name}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </Form.Item>
               </div>
             </div>
@@ -276,17 +305,22 @@ const StudioSettingsPage: React.FC = () => {
                   </div>
                   {isDomainEnabled && (
                     <>
-                      <Form.Item className="mt-4 mb-0">
-                        <Input 
-                          placeholder={`${t('common.inputMsg')} ${t('studio.settings.domain')}`} 
-                          value={botDomain}
-                          onChange={(e) => setBotDomain(e.target.value)}
-                        />
+                      <Form.Item className='mt-4 mb-0'>
+                        <div className='w-full flex items-center'>
+                          <Input 
+                            className='flex-1 mr-3'
+                            placeholder={`${t('common.inputMsg')} ${t('studio.settings.domain')}`} 
+                            value={botDomain}
+                            onChange={(e) => setBotDomain(e.target.value)}
+                          />
+                          <Checkbox 
+                            checked={enableSsl} 
+                            onChange={(e) => setEnableSsl(e.target.checked)}
+                          >
+                            {t('studio.settings.enableSsl')}
+                          </Checkbox>
+                        </div>
                       </Form.Item>
-                      <div className="mt-4 mb-0 flex items-center justify-between">
-                        <span>{t('studio.settings.enableSsl')}</span>
-                        <Switch size="small" checked={enableSsl} onChange={(checked) => setEnableSsl(checked)} />
-                      </div>
                     </>
                   )}
                 </div>

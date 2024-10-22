@@ -6,6 +6,7 @@ import useApiClient from '@/utils/request';
 import ProviderGrid from '@/components/provider/grid';
 import { Model, TabConfig } from '@/types/provider';
 import styles from './index.module.less';
+import { useTranslation } from '@/utils/i18n';
 
 const tabConfig: TabConfig[] = [
   { key: '1', label: 'LLM Model', type: 'llm_model' },
@@ -15,6 +16,7 @@ const tabConfig: TabConfig[] = [
 ];
 
 const ProviderPage: React.FC = () => {
+  const { t } = useTranslation();
   const { get } = useApiClient();
   const [models, setModels] = useState<Model[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -27,7 +29,7 @@ const ProviderPage: React.FC = () => {
       const mappedData = Array.isArray(data) ? data.map(model => ({ ...model, id: Number(model.id) })) : [];
       setModels(mappedData);
     } catch (error) {
-      message.error('Failed to fetch models');
+      message.error(t('common.fetchFailed'));
     } finally {
       setLoading(false);
     }
@@ -38,6 +40,7 @@ const ProviderPage: React.FC = () => {
   }, []);
 
   const handleSegmentedChange = (key: string) => {
+    setModels([]);
     setActiveTab(key);
     const tab = tabConfig.find(t => t.key === key);
     if (tab) {

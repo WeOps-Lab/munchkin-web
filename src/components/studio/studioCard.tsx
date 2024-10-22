@@ -48,8 +48,8 @@ const StudioCard: React.FC<StudioCardProps> = ({ id, name, introduction, created
       <div className="w-full h-[60px] relative">
         <Image alt="avatar" src={avatar} layout="fill" objectFit="cover" className="rounded-t-xl" />
       </div>
-      <div className={`w-[50px] h-[50px] rounded-full flex justify-center items-center ${styles.iconContainer}`}>
-        <Icon type={iconType} className="text-4xl" />
+      <div className={`w-16 h-16 rounded-full flex justify-center items-center ${styles.iconContainer}`}>
+        <Icon type={iconType} className="text-5xl" />
       </div>
       <div className="p-4 relative">
         <Meta

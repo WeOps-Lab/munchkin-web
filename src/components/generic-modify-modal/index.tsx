@@ -1,15 +1,25 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
-import useGroups from '@/hooks/useGroups';
 import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
 import CommonForm from '@/components/knowledge/commonForm';
-import { ModifySkillModalProps } from '@/types/skill';
 
-const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, onConfirm, initialValues }) => {
+interface GenericModifyModalProps {
+  visible: boolean;
+  onCancel: () => void;
+  onConfirm: (values: any) => void;
+  initialValues: any;
+  formType: string;
+  initForm?: (form: any, groups: any) => void;
+  groups: any[];
+  loading: boolean;
+}
+
+const GenericModifyModal: React.FC<GenericModifyModalProps> = ({ visible, onCancel, onConfirm, initialValues, formType, initForm, groups = [], loading }) => { // 确保 groups 默认为 []
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const { groups, loading } = useGroups();
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {
@@ -19,11 +29,11 @@ const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, 
       form.setFieldsValue(initialValues);
     } else {
       form.resetFields();
-      if (groups.length > 0) {
-        form.setFieldsValue({ team: [groups[0].id] });
+      if (initForm) {
+        initForm(form, groups);
       }
     }
-  }, [initialValues, form, groups, visible]);
+  }, [initialValues, form, groups, visible, initForm]);
 
   const handleConfirm = async () => {
     try {
@@ -40,16 +50,16 @@ const ModifySkillModal: React.FC<ModifySkillModalProps> = ({ visible, onCancel, 
   return (
     <OperateModal
       visible={visible}
-      title={initialValues ? t('skill.edit') : t('skill.add')}
+      title={initialValues ? t(`${formType}.edit`) : t(`${formType}.add`)}
       okText={t('common.confirm')}
       cancelText={t('common.cancel')}
       onCancel={onCancel}
       onOk={handleConfirm}
       confirmLoading={confirmLoading}
     >
-      <CommonForm form={form} loading={loading} groups={groups} formType="skill" visible={visible} />
+      <CommonForm form={form} loading={loading} groups={groups} formType={formType} visible={visible} />
     </OperateModal>
   );
 };
 
-export default ModifySkillModal;
+export default GenericModifyModal;

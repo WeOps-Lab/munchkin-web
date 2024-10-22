@@ -6,7 +6,7 @@ import { useTranslation } from '@/utils/i18n';
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Skill } from '@/types/skill';
 import OperateModal from '@/components/studio/operateModal';
 import styles from '@/styles/common.less';
@@ -19,7 +19,7 @@ const StudioSettingsPage: React.FC = () => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const { get, patch } = useApiClient();
-  const { groups, loading: groupsLoading } = useGroups();
+  const { groups } = useGroups();
   const [pageLoading, setPageLoading] = useState(true);
   const [rasaModels, setRasaModels] = useState<{ id: number; name: string; enabled: boolean }[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -33,7 +33,6 @@ const StudioSettingsPage: React.FC = () => {
   const [nodePort, setNodePort] = useState(5005);
   const [enableSsl, setEnableSsl] = useState(false);
   const [online, setOnline] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const botId = searchParams.get('id');
 

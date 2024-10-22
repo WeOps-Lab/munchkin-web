@@ -14,6 +14,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -24,6 +25,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     if (session?.accessToken) {
       setToken(session.accessToken);
+      setIsAuthenticated(true);
       const userLocale = session.locale || 'en';
       localStorage.setItem('locale', userLocale);
     } else {
@@ -31,7 +33,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [session, status, router]);
 
-  if (status === 'loading') {
+  if (status === 'loading' || !isAuthenticated) {
     return (
       <div className='first-loader-wrapper'>
         <div className='loading-arc'></div>

@@ -51,7 +51,11 @@
     "invalidURL": "Please enter a valid URL",
     "errorFetch": "Error fetch",
     "fieldRequired": "Text cannot be empty. This field is required.",
-    "sendFailed": "Failed to send message"
+    "sendFailed": "Failed to send message",
+    "noAccessToken": "No accessToken found in session",
+    "usePermissionsContextError": "usePermissionsContext must be used within a PermissionsProvider",
+    "useLocaleError": "useLocale must be used within a LocaleProvider",
+    "useThemeError": "useTheme must be used within a ThemeProvider"
   },
   "knowledge": {
     "menu": "Knowledge",

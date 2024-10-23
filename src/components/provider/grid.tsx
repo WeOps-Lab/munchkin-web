@@ -6,6 +6,7 @@ import OperateModal from '@/components/operate-modal';
 import styles from './index.module.less';
 import { Model, ModelConfig } from '@/types/provider';
 import useApiClient from '@/utils/request';
+import PermissionWrapper from '@/components/permission';
 
 interface ProviderGridProps {
   models: Model[];
@@ -80,7 +81,6 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
           openai_base_url: values.url,
         };
       } else {
-        // 使用类型断言明确告诉 TypeScript configField 是 ModelConfig 类型的一部分
         (updatedModel[configField] as ModelConfig) = {
           ...(selectedModel[configField] as ModelConfig),
           base_url: values.url,
@@ -134,9 +134,16 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
                     {filterType}
                   </span>
                 </div>
-                <button onClick={() => handleSettingsClick(model)} className="absolute top-2 right-2">
-                  <Icon type="shezhi" className="text-base" />
-                </button>
+
+                <PermissionWrapper
+                  requiredPermissions={['write']}
+                  className="absolute top-2 right-2"
+                >
+                  <button onClick={() => handleSettingsClick(model)}>
+                    <Icon type="shezhi" className="text-base" />
+                  </button>
+                </PermissionWrapper>
+                
               </div>
               <div className="absolute bottom-0 right-0 rounded-lg z-20">
                 <span className={`${styles.iconTriangle} ${model.enabled ? styles.enabled : styles.disabled}`}>

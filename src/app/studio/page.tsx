@@ -12,36 +12,34 @@ import useGroups from '@/hooks/useGroups';
 
 const StudioPage: React.FC = () => {
   const { t } = useTranslation();
-  const { del } = useApiClient();
+  const { del, patch } = useApiClient();
   const { groups, loading } = useGroups();
 
   const beforeDelete = (studio: Studio, deleteCallback: () => void) => {
+    const onDelete = async () => {
+      try {
+        await del(`/bot_mgmt/bot/${studio.id}/`);
+        deleteCallback();
+        message.success(t('common.delSuccess'));
+      } catch (error) {
+        message.error(t('common.delFailed'));
+      }
+    };
+
     if (studio.online) {
       Modal.confirm({
         title: t('studio.offDeleteConfirm'),
         okText: t('studio.offAndDel'),
         onOk: async () => {
-          await deleteBot(studio);
-          deleteCallback();
+          await patch(`/bot_mgmt/bot/${studio.id}/`, { online: false });
+          onDelete();
         },
       });
     } else {
       Modal.confirm({
         title: t('studio.deleteConfirm'),
-        onOk: async () => {
-          await deleteBot(studio);
-          deleteCallback();
-        },
+        onOk: onDelete,
       });
-    }
-  };
-
-  const deleteBot = async (studio: Studio) => {
-    try {
-      await del(`/bot_mgmt/bot/${studio.id}/`);
-      message.success(t('common.delSuccess'));
-    } catch (error) {
-      message.error(t('common.delFailed'));
     }
   };
 

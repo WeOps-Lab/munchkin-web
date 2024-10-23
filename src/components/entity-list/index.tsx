@@ -62,9 +62,11 @@ const EntityList = <T,>({ endpoint, CardComponent, ModifyModalComponent, itemTyp
     }
   };
 
-  const handleDelete = (item: T) => {
+  const handleDelete = async (item: T) => {
     if (beforeDelete) {
-      beforeDelete(item, () => deleteItem(item));
+      beforeDelete(item, async () => {
+        fetchItems();
+      });
     } else {
       deleteItem(item);
     }
@@ -76,7 +78,7 @@ const EntityList = <T,>({ endpoint, CardComponent, ModifyModalComponent, itemTyp
       onOk: async () => {
         try {
           await del(`${endpoint}${(item as any).id}/`);
-          setItems(items.filter(i => (i as any).id !== (item as any).id));
+          fetchItems();
           message.success(t('common.delSuccess'));
         } catch (error) {
           message.error(t('common.delFailed'));

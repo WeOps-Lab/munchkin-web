@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Switch, Dropdown, Menu, Tag, Checkbox, message, Spin } from 'antd';
 import { useTranslation } from '@/utils/i18n';
-import { DeleteOutlined, DownOutlined, CheckOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
 import { useSearchParams } from 'next/navigation';
@@ -23,7 +23,7 @@ const StudioSettingsPage: React.FC = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [rasaModels, setRasaModels] = useState<{ id: number; name: string; enabled: boolean }[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [channels, setChannels] = useState<{ id: number; name: string }[]>([]);
+  const [channels, setChannels] = useState<{ id: number; name: string, enabled: boolean }[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
   const [selectedChannels, setSelectedChannels] = useState<number[]>([]);
   const [isSkillModalVisible, setIsSkillModalVisible] = useState(false);
@@ -269,20 +269,23 @@ const StudioSettingsPage: React.FC = () => {
                         <div
                           key={channel.id}
                           onClick={() => {
-                            setSelectedChannels((prev) => 
-                              isSelected 
-                                ? prev.filter(id => id !== channel.id)
-                                : [...prev, channel.id]
-                            );
+                            if (channel.enabled) {
+                              setSelectedChannels((prev) => 
+                                isSelected 
+                                  ? prev.filter(id => id !== channel.id)
+                                  : [...prev, channel.id]
+                              );
+                            }
                           }}
-                          className={`relative flex items-center cursor-pointer rounded-md p-4 text-center ${isSelected 
-                            ? styles.selectedCommonItem
-                            : styles.cardFillColor}` 
+                          className={`relative flex items-center cursor-pointer rounded-md p-4 text-center
+                            ${isSelected ? styles.selectedCommonItem : styles.cardFillColor}
+                            ${channel.enabled ? '' : styles.disabledCommonItem}`
                           }
                         >
                           <Icon type={getTypeIcon(channel.name)} className="text-3xl mr-[5px]" />
                           {channel.name}
                           {isSelected && <CheckOutlined className={`${styles.checkedIcon}`} />}
+                          {!channel.enabled && <StopOutlined className={`${styles.disabledIcon}`} />}
                         </div>
                       );
                     })}
@@ -295,7 +298,7 @@ const StudioSettingsPage: React.FC = () => {
               <div className="px-4 pt-4 border rounded-md shadow-sm">
                 <div className="mb-5">
                   <div className="flex items-center justify-between">
-                    <span>{t('studio.settings.domain')}</span>
+                    <span className='text-sm'>{t('studio.settings.domain')}</span>
                     <Switch size="small" checked={isDomainEnabled} onChange={(checked) => {
                       setIsDomainEnabled(checked);
                       if (!checked) {
@@ -327,7 +330,7 @@ const StudioSettingsPage: React.FC = () => {
                 </div>
                 <div className="border-t py-4">
                   <div className="flex items-center justify-between">
-                    <span>{t('studio.settings.portMapping')}</span>
+                    <span className='text-sm'>{t('studio.settings.portMapping')}</span>
                     <Switch size="small" checked={isPortMappingEnabled} onChange={(checked) => {
                       setIsPortMappingEnabled(checked);
                       if (!checked) {

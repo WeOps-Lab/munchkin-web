@@ -22,6 +22,12 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
   useImperativeHandle(ref, () => form);
 
   useEffect(() => {
+    form.setFieldsValue({
+      deep: formData.deep,
+    });
+  }, [form]);
+
+  useEffect(() => {
     const isValid = formData.name.trim() !== '' && formData.link.trim() !== '';
     onFormChange(isValid);
     onFormDataChange(formData);
@@ -62,7 +68,7 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
           rules={[{ required: true, message: t('common.inputRequired') }]}
         >
           <Input
-            placeholder={`Please ${t('common.input')} ${t('knowledge.form.name')}`}
+            placeholder={`${t('common.inputMsg')}${t('knowledge.form.name')}`}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
           />
@@ -76,7 +82,7 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
           ]}
         >
           <TextArea
-            placeholder={`Please ${t('common.input')} ${t('knowledge.documents.link')}`}
+            placeholder={`${t('common.inputMsg')}${t('knowledge.documents.link')}`}
             value={formData.link}
             onChange={(e) => handleInputChange('link', e.target.value)}
             rows={3}
@@ -85,6 +91,7 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
         <Form.Item
           label={t('knowledge.documents.deep')}
           name="deep"
+          tooltip={t('knowledge.documents.deepTip')}
         >
           <InputNumber
             min={1}

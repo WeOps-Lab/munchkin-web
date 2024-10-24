@@ -60,7 +60,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
         <label className="block text-sm font-medium mb-1 w-32">{t('knowledge.embeddingModel')}</label>
         <Select
           className="flex-1"
-          placeholder={`Please ${t('common.input')} ${t('knowledge.embeddingModel')}`}
+          placeholder={`${t('common.inputMsg')}${t('knowledge.embeddingModel')}`}
           disabled
           loading={loadingModels}
           value={configData.selectedEmbedModel}
@@ -163,28 +163,31 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
           </div>
           <div className="p-4 pb-0 border rounded-md mb-4">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-sm w-32">{t('knowledge.rerankModel')}</label>
+              <label className="text-base font-semibold">{t('knowledge.rerankModel')}</label>
               <Switch
                 size="small"
                 checked={configData.rerankModel}
                 onChange={(checked) => setConfigData(prevData => ({ ...prevData, rerankModel: checked, selectedRerankModel: checked ? prevData.selectedRerankModel : null }))}
               />
             </div>
+            <p className="text-sm mb-4" style={{ 'color': 'var(--color-text-4)' }}>{t('knowledge.rerankModelDesc')}</p>
             {configData.rerankModel && (
-              <div className="flex items-center justify-between mb-4">
-                <Select
-                  className="flex-1"
-                  placeholder={`Please ${t('common.select')} ${t('knowledge.rerankModel')}`}
-                  loading={loadingModels}
-                  value={configData.selectedRerankModel}
-                  onChange={(value) => setConfigData(prevData => ({ ...prevData, selectedRerankModel: value }))}
-                >
-                  {rerankModelOptions.map((model) => (
-                    <Option key={model.id} value={model.id} disabled={!model.enabled}>
-                      {model.name}
-                    </Option>
-                  ))}
-                </Select>
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <Select
+                    className="flex-1"
+                    placeholder={`${t('common.selectMsg')}${t('knowledge.rerankModel')}`}
+                    loading={loadingModels}
+                    value={configData.selectedRerankModel}
+                    onChange={(value) => setConfigData(prevData => ({ ...prevData, selectedRerankModel: value }))}
+                  >
+                    {rerankModelOptions.map((model) => (
+                      <Option key={model.id} value={model.id} disabled={!model.enabled}>
+                        {model.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
               </div>
             )}
           </div>

@@ -239,7 +239,7 @@ const DocumentsPage: React.FC = () => {
     setLoading(true);
     const params = getTableParams();
     try {
-      const res = await get('/knowledge_mgmt/knowledge_document/', { params });
+      const res = await get('/knowledge_mgmt/knowledge_document/', params);
       const { items: data } = res;
       setTableData(data);
       setPagination(prev => ({
@@ -306,7 +306,7 @@ const DocumentsPage: React.FC = () => {
           />
         </div>
         <div className='right-side flex'>
-          <Tooltip className='mr-[8px]' title={t('common.synch')}>
+          <Tooltip className='mr-[8px]' title={t('common.refresh')}>
             <Button icon={<SyncOutlined />} onClick={fetchData} />
           </Tooltip>
           <Button

@@ -61,6 +61,7 @@ const CommonForm: React.FC<CommonFormProps> = ({ form, loading, groups, modelOpt
           <Form.Item
             name="embed_model"
             label={t('knowledge.form.embedModel')}
+            tooltip={t('knowledge.form.embedModelTip')}
             rules={[{ required: true, message: `${t('common.selectMsg')} ${t('knowledge.form.embedModel')}!` }]}
           >
             <Select placeholder={`Please ${t('common.select')} ${t('knowledge.form.embedModel')}`} disabled={isTraining}>

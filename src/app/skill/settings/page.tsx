@@ -31,7 +31,11 @@ const SkillSettingsPage: React.FC = () => {
   const [selectedKnowledgeBases, setSelectedKnowledgeBases] = useState<number[]>([]);
   const [llmModels, setLlmModels] = useState<{ id: number, name: string, enabled: boolean }[]>([]);
   const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
-  const [pageLoading, setPageLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState({
+    llmModelsLoading: true,
+    knowledgeBasesLoading: true,
+    formDataLoading: true,
+  });
   const [saveLoading, setSaveLoading] = useState(false);
   const [messages, setMessages] = useState<ProChatMessage[]>([]);
   const [quantity, setQuantity] = useState<number>(10);
@@ -48,7 +52,7 @@ const SkillSettingsPage: React.FC = () => {
       } catch (error) {
         console.error(t('common.fetchFailed'), error);
       } finally {
-        setPageLoading(false);
+        setPageLoading(prev => ({ ...prev, llmModelsLoading: false, knowledgeBasesLoading: false }));
       }
     };
 
@@ -56,14 +60,8 @@ const SkillSettingsPage: React.FC = () => {
   }, [get]);
 
   useEffect(() => {
-    if (!groupsLoading) {
-      setPageLoading(false);
-    }
-  }, [groupsLoading]);
-
-  useEffect(() => {
     const fetchFormData = async () => {
-      if (id && knowledgeBases.length) {
+      if (id) {
         try {
           const data = await get(`/model_provider_mgmt/llm/${id}/`);
           form.setFieldsValue({
@@ -89,12 +87,16 @@ const SkillSettingsPage: React.FC = () => {
           setSelectedKnowledgeBases(initialSelectedKnowledgeBases);
         } catch (error) {
           console.error(t('common.fetchFailed'), error);
+        } finally {
+          setPageLoading(prev => ({ ...prev, formDataLoading: false }));
         }
       }
     };
 
     fetchFormData();
-  }, [get, knowledgeBases]);
+  }, [get, id, knowledgeBases]);
+
+  const allLoading = Object.values(pageLoading).some(loading => loading) || groupsLoading;
 
   const handleAddRagSource = () => {
     setModalVisible(true);
@@ -119,10 +121,10 @@ const SkillSettingsPage: React.FC = () => {
   };
 
   const handleDeleteRagSource = (sourceName: string) => {
-    setRagSources(ragSources.filter((item) => item.name !== sourceName));
+    setRagSources(prevRagSources => prevRagSources.filter((item) => item.name !== sourceName));
     const source = knowledgeBases.find(base => base.name === sourceName);
     if (source) {
-      setSelectedKnowledgeBases(selectedKnowledgeBases.filter(id => id !== source.id));
+      setSelectedKnowledgeBases(prev => prev.filter(id => id !== source.id));
     }
   };
 
@@ -134,7 +136,7 @@ const SkillSettingsPage: React.FC = () => {
   };
 
   const handleScoreChange = (sourceName: string, newScore: number) => {
-    setRagSources(ragSources.map((source) =>
+    setRagSources(prevRagSources => prevRagSources.map((source) =>
       source.name === sourceName ? { ...source, score: newScore } : source
     ));
   };
@@ -208,140 +210,152 @@ const SkillSettingsPage: React.FC = () => {
 
   return (
     <div className="relative">
-      {(pageLoading || groupsLoading) && (
-        <div className="absolute inset-0 bg-white bg-opacity-50 z-50 flex items-center justify-center">
-          <Spin spinning={pageLoading || groupsLoading} />
+      {allLoading && (
+        <div className="absolute inset-0 min-h-[500px] bg-opacity-50 z-50 flex items-center justify-center">
+          <Spin spinning={allLoading} />
         </div>
       )}
-      <div className="flex justify-between space-x-4">
-        <div className={`w-1/2 space-y-4 ${styles.llmSection}`}>
-          <div className={`border rounded-md ${styles.llmContainer}`}>
-            <h2 className="text-lg font-semibold mb-3">{t('skill.information')}</h2>
-            <div className="px-4">
-              <Form 
-                form={form}
-                labelCol={{ flex: '0 0 128px' }}
-                wrapperCol={{ flex: '1' }}
-                initialValues={{ temperature: 0.7 }}
-              >
-                <Form.Item label={t('skill.form.name')} name="name" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.name')}` }]}>
-                  <Input />
-                </Form.Item>
-                <Form.Item label={t('skill.form.group')} name="group" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.group')}` }]}>
-                  <Select mode="multiple">
-                    {groups.map(group => (
-                      <Option key={group.id} value={group.id}>{group.name}</Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <Form.Item label={t('skill.form.introduction')} name="introduction" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.introduction')}` }]}>
-                  <TextArea rows={4} />
-                </Form.Item>
-                <Form.Item label={t('skill.form.llmModel')} name="llmModel" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.llmModel')}` }]}>
-                  <Select>
-                    {llmModels.map((model) => (
-                      <Option key={model.id} value={model.id} disabled={!model.enabled}>{model.name}</Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <Form.Item label={t('skill.form.temperature')} name="temperature">
-                  <div className="flex">
-                    <Slider
-                      className="flex-1"
-                      min={0} 
-                      max={1} 
-                      step={0.01} 
-                      onChange={(value) => form.setFieldsValue({ temperature: value })}
-                      value={form.getFieldValue('temperature')}
-                    />
-                    <InputNumber
-                      min={0}
-                      max={1}
-                      step={0.01}
-                      value={form.getFieldValue('temperature')}
-                      onChange={(value) => form.setFieldsValue({ temperature: value })}
-                    />
-                  </div>
-                </Form.Item>
-                <Form.Item label={t('skill.form.prompt')} name="prompt" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.prompt')}` }]}>
-                  <TextArea rows={4} />
-                </Form.Item>
-              </Form>
+      {!allLoading && (
+        <div className="flex justify-between space-x-4">
+          <div className={`w-1/2 space-y-4 ${styles.llmSection}`}>
+            <div className={`border rounded-md ${styles.llmContainer}`}>
+              <h2 className="text-lg font-semibold mb-3">{t('skill.information')}</h2>
+              <div className="px-4">
+                <Form 
+                  form={form}
+                  labelCol={{ flex: '0 0 128px' }}
+                  wrapperCol={{ flex: '1' }}
+                  initialValues={{ temperature: 0.7 }}
+                >
+                  <Form.Item label={t('skill.form.name')} name="name" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.name')}` }]}>
+                    <Input />
+                  </Form.Item>
+                  <Form.Item label={t('skill.form.group')} name="group" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.group')}` }]}>
+                    <Select mode="multiple">
+                      {groups.map(group => (
+                        <Option key={group.id} value={group.id}>{group.name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item label={t('skill.form.introduction')} name="introduction" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.introduction')}` }]}>
+                    <TextArea rows={4} />
+                  </Form.Item>
+                  <Form.Item label={t('skill.form.llmModel')} name="llmModel" rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.llmModel')}` }]}>
+                    <Select>
+                      {llmModels.map((model) => (
+                        <Option key={model.id} value={model.id} disabled={!model.enabled}>{model.name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item 
+                    label={t('skill.form.temperature')} 
+                    name="temperature"
+                    tooltip={t('skill.form.temperatureTip')}
+                  >
+                    <div className="flex">
+                      <Slider
+                        className="flex-1"
+                        min={0} 
+                        max={1} 
+                        step={0.01} 
+                        onChange={(value) => form.setFieldsValue({ temperature: value })}
+                        value={form.getFieldValue('temperature')}
+                      />
+                      <InputNumber
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        value={form.getFieldValue('temperature')}
+                        onChange={(value) => form.setFieldsValue({ temperature: value })}
+                      />
+                    </div>
+                  </Form.Item>
+                  <Form.Item 
+                    label={t('skill.form.prompt')}
+                    name="prompt"
+                    tooltip={t('skill.form.promptTip')}
+                    rules={[{ required: true, message: `${t('common.input')} ${t('skill.form.prompt')}` }]}>
+                    <TextArea rows={4} />
+                  </Form.Item>
+                </Form>
+              </div>
             </div>
-          </div>
-          <div className={`border rounded-md ${styles.llmContainer}`}>
-            <h2 className="text-lg font-semibold mb-3">{t('skill.chatEnhancement')}</h2>
-            <div className={`p-4 rounded-md pb-0 ${styles.contentWrapper}`}>
-              <Form labelCol={{ flex: '0 0 128px' }} wrapperCol={{ flex: '1' }}>
-                <div className="flex justify-between">
-                  <h3 className="text-base mb-4">{t('skill.chatHistory')}</h3>
-                  <Switch size="small" className="ml-2" checked={chatHistoryEnabled} onChange={setChatHistoryEnabled} />
-                </div>
-                {chatHistoryEnabled && (
-                  <div className="pb-4">
-                    <Form.Item label={t('skill.quantity')}>
-                      <InputNumber min={1} max={100} className="w-full" value={quantity} onChange={(value) => setQuantity(value ?? 1)} />
-                    </Form.Item>
+            <div className={`border rounded-md ${styles.llmContainer}`}>
+              <h2 className="text-lg font-semibold mb-3">{t('skill.chatEnhancement')}</h2>
+              <div className={`p-4 rounded-md pb-0 ${styles.contentWrapper}`}>
+                <Form labelCol={{ flex: '0 0 80px' }} wrapperCol={{ flex: '1' }}>
+                  <div className="flex justify-between">
+                    <h3 className="text-base mb-4">{t('skill.chatHistory')}</h3>
+                    <Switch size="small" className="ml-2" checked={chatHistoryEnabled} onChange={setChatHistoryEnabled} />
                   </div>
-                )}
-              </Form>
-            </div>
-            <div className={`p-4 rounded-md pb-0 ${styles.contentWrapper}`}>
-              <Form labelCol={{ flex: '0 0 128px' }} wrapperCol={{ flex: '1' }}>
-                <div className="flex justify-between">
-                  <h3 className="text-base mb-4">{t('skill.rag')}</h3>
-                  <Switch size="small" className="ml-2" checked={ragEnabled} onChange={setRagEnabled} />
-                </div>
-                {ragEnabled && (
-                  <div className="pb-4">
-                    <Form.Item label={t('skill.ragSource')}>
-                      <Switch size="small" className="ml-2" checked={showRagSource} onChange={setRagSourceStatus} />
-                    </Form.Item>
-                    <Form.Item label={t('skill.knowledgeBase')}>
-                      <Button type="dashed" onClick={handleAddRagSource}>
-                        + {t('common.add')}
-                      </Button>
-                      {ragSources.map((source, index) => (
-                        <div key={index} className="w-full mt-2">
-                          <div className={`w-full rounded-md px-4 py-2 flex items-center justify-between ${styles.borderContainer}`}>
-                            <span>{source.name}</span>
-                            <div className="flex-1 flex">
-                              <Slider
-                                className="flex-1 mx-2"
-                                min={0}
-                                max={1}
-                                step={0.01}
-                                value={source.score}
-                                onChange={(value) => handleScoreChange(source.name, value)}
-                              />
-                              <Input className="w-14" value={source.score} readOnly />
-                            </div>
-                            <div>
-                              <EditOutlined 
-                                className="mr-[8px] ml-[8px]"
-                                onClick={() => handleEditKnowledge(source)}
-                              />
-                              <DeleteOutlined onClick={() => handleDeleteRagSource(source.name)} />
+                  <p className="pb-4" style={{ 'color': 'var(--color-text-4)' }}>{t('skill.chatHistoryTip')}</p>
+                  {chatHistoryEnabled && (
+                    <div className="pb-4">
+                      <Form.Item label={t('skill.quantity')}>
+                        <InputNumber min={1} max={100} className="w-full" value={quantity} onChange={(value) => setQuantity(value ?? 1)} />
+                      </Form.Item>
+                    </div>
+                  )}
+                </Form>
+              </div>
+              <div className={`p-4 rounded-md pb-0 ${styles.contentWrapper}`}>
+                <Form labelCol={{ flex: '0 0 135px' }} wrapperCol={{ flex: '1' }}>
+                  <div className="flex justify-between">
+                    <h3 className="text-base mb-4">{t('skill.rag')}</h3>
+                    <Switch size="small" className="ml-2" checked={ragEnabled} onChange={setRagEnabled} />
+                  </div>
+                  <p className="pb-4" style={{ 'color': 'var(--color-text-4)' }}>{t('skill.ragTip')}</p>
+                  {ragEnabled && (
+                    <div className="pb-4">
+                      <Form.Item label={t('skill.ragSource')}>
+                        <Switch size="small" className="ml-2" checked={showRagSource} onChange={setRagSourceStatus} />
+                      </Form.Item>
+                      <Form.Item label={t('skill.knowledgeBase')} tooltip={t('skill.knowledgeBaseTip')}>
+                        <Button type="dashed" onClick={handleAddRagSource}>
+                          + {t('common.add')}
+                        </Button>
+                        {ragSources.map((source, index) => (
+                          <div key={index} className="w-full mt-2">
+                            <div className={`w-full rounded-md px-4 py-2 flex items-center justify-between ${styles.borderContainer}`}>
+                              <span>{source.name}</span>
+                              <div className="flex-1 flex">
+                                <Slider
+                                  className="flex-1 mx-2"
+                                  min={0}
+                                  max={1}
+                                  step={0.01}
+                                  value={source.score}
+                                  onChange={(value) => handleScoreChange(source.name, value)}
+                                />
+                                <Input className="w-14" value={source.score} readOnly />
+                              </div>
+                              <div>
+                                <EditOutlined 
+                                  className="mr-[8px] ml-[8px]"
+                                  onClick={() => handleEditKnowledge(source)}
+                                />
+                                <DeleteOutlined onClick={() => handleDeleteRagSource(source.name)} />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </Form.Item>
-                  </div>
-                )}
-              </Form>
-            </div>
-            <div className="px-4 py-2">
-              <Button type="primary" onClick={handleSave} loading={saveLoading}>
-                {t('common.save')}
-              </Button>
+                        ))}
+                      </Form.Item>
+                    </div>
+                  )}
+                </Form>
+              </div>
+              <div className="px-4 py-2">
+                <Button type="primary" onClick={handleSave} loading={saveLoading}>
+                  {t('common.save')}
+                </Button>
+              </div>
             </div>
           </div>
+          <div className="w-1/2 space-y-4">
+            <ProChatComponent showSource={ragEnabled && showRagSource} handleSendMessage={handleSendMessage} />
+          </div>
         </div>
-        <div className="w-1/2 space-y-4">
-          <ProChatComponent showSource={ragEnabled && showRagSource} handleSendMessage={handleSendMessage} />
-        </div>
-      </div>
+      )}
       <OperateModal
         visible={modalVisible}
         okText={t('common.confirm')}

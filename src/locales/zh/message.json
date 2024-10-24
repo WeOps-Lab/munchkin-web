@@ -8,6 +8,8 @@
     "search": "搜索",
     "create": "创建",
     "save": "保存",
+    "saveOnly": "仅保存",
+    "publish": "发布",
     "next": "下一步",
     "pre": "上一步",
     "train": "训练",
@@ -22,7 +24,8 @@
     "settings": "设置",
     "addNew": "新增",
     "model": "模型",
-    "synch": "同步",
+    "refresh": "刷新",
+    "error": "错误",
     "delConfirm": "你确定要删除选中的项吗？",
     "delConfirmCxt": "删除后，数据无法恢复。",
     "delSuccess": "删除成功",
@@ -47,12 +50,18 @@
     "inputRequired": "请输入，必填项",
     "invalidURL": "请输入有效的URL",
     "errorFetch": "获取错误",
-    "fieldRequired": "文本不能为空。本字段为必填项。"
+    "fieldRequired": "文本不能为空。本字段为必填项。",
+    "sendFailed": "发送失败",
+    "noAccessToken": "无法获取访问令牌",
+    "usePermissionsContextError": "usePermissionsContext必须在PermissionsProvider中使用",
+    "useLocaleError": "useLocale必须在LocaleProvider中使用",
+    "useThemeError": "useTheme必须在ThemeProvider中使用",
+    "viewDetails": "查看详情"
   },
   "knowledge": {
     "menu": "知识",
-    "add": "添加新知识",
-    "edit": "编辑知识",
+    "add": "添加知识库",
+    "edit": "编辑知识库",
     "source": "来源",
     "config": "配置",
     "choose": "选择",
@@ -63,7 +72,8 @@
       "name": "名称",
       "group": "分组",
       "introduction": "简介",
-      "embedModel": "嵌入模型",
+      "embedModel": "Embed模型",
+      "embedModelTip": "Embed模型把复杂的词汇或数据转化为简单的数字向量，使得计算机更容易理解语言的含义，提高了机器学习模型的性能。",
       "content": "内容",
       "owner": "所有者"
     },
@@ -81,13 +91,13 @@
     "testingSuccess": "测试成功完成！",
     "testingFailed": "测试失败。",
     "applyFailed": "应用配置失败。",
-    "embeddingModelTip": "在切换嵌入模型后，需要重新训练知识库文档。请在知识库详情中查看训练状态。",
-    "embeddingModel": "嵌入模型",
+    "embeddingModelTip": "在切换Embed模型后，需要重新训练知识库文档。请在知识库详情中查看训练状态。",
+    "embeddingModel": "Embed模型",
     "retrievalSetting": "检索设置",
     "weight": "权重",
     "pattern": "模式",
     "match": "匹配",
-    "matchPhrase": "短语匹配",
+    "matchPhrase": "精确匹配",
     "textSearch": "文本搜索",
     "textSearchDesc": "基于关键词搜索技术，从大量文本数据中搜索并提取相关文档。",
     "vectorSearch": "向量搜索",
@@ -95,9 +105,10 @@
     "returnQuantity": "返回数量",
     "candidateQuantity": "候选数量",
     "rerankModel": "重排模型",
+    "rerankModelDesc": "在搜索结果初步生成后，通过特定的算法对结果进行再次排序，以提升结果的相关性。",
     "documents": {
       "title": "文档",
-      "description": "文档管理用于添加新知识，包括本地文件、网页链接或自定义文本。新添加的知识可以被分段以便机器人使用。",
+      "description": "文档管理用于添加新知识，包括本地文件、网页链接或自定义文本。新添加的知识可以分块，以便机器人使用。",
       "name": "名称",
       "chunkSize": "块大小",
       "createdAt": "创建时间",
@@ -122,16 +133,20 @@
       "fullContent": "全Excel内容解析",
       "preview": "预览",
       "viewChunk": "查看块",
+      "characters": "字符",
       "link": "链接",
-      "deep": "深层"
+      "deep": "深度",
+      "deepTip": "在获取网站内容时，深度决定了抓取链接的层级深度，即从起始页面出发，最多可以跳转多少层链接。"
     },
     "testing": {
       "title": "测试",
-      "description": "基于给定查询文本测试知识库的召回效果。"
+      "description": "基于给定查询文本测试知识库的召回效果。",
+      "text": "文本",
+      "config": "配置"
     },
     "settings": {
       "title": "设置",
-      "description": "在这里，你可以修改知识的属性和工作方式。"
+      "description": "支持修改知识库的基本信息和相关配置。"
     }
   },
   "secret": {
@@ -146,38 +161,96 @@
     "menu": "技能",
     "add": "添加新技能",
     "edit": "编辑技能",
-    "information": "信息",
+    "information": "基本信息",
     "form": {
       "name": "名称",
       "group": "分组",
-      "introduction": "介绍",
+      "introduction":"简介",
       "owner": "所有者",
       "llmModel": "LLM模型",
       "temperature": "温度",
-      "prompt": "提示"
+      "temperatureTip": "用于控制文本生成的随机性和创造性；低温度会生成更确定的结果，而高温度则会增加文本的多样性和随机性。",
+      "prompt": "提示",
+      "promptTip": "可以输入相关的提示语，引导模型生成特定的回复应，通过提供上下文或问题以调节输出内容的方向和质量。"
     },
     "chatEnhancement": "聊天增强",
     "chatHistory": "聊天历史",
+    "chatHistoryTip": "聊天历史数量指的是系用户与机器人之间互动的对话轮次或消息总数。这一数量可以帮助机器人理解上下文，并增强回复的相关性和连贯性。",
     "quantity": "数量",
     "source": "来源",
     "rag": "RAG",
+    "ragTip": "RAG是一种将信息检索与生成模型结合的架构，先从知识库中检索相关信息，然后使用生成模型产生上下文相关的回答。",
     "ragSource": "RAG来源",
     "knowledgeBase": "知识库",
+    "knowledgeBaseTip": "支持选择同一分组下的知识库作为知识来源，并为知识库调整阈值，从而提高回答的准确性和可靠性。",
     "selectKnowledgeBase": "选择知识库",
     "selectedCount": "已选择数量",
+    "deleteConfirm": "你确定要删除选中的技能吗？",
     "settings": {
       "menu": "设置",
       "title": "LLM技能",
-      "description": "LLM技能包括选择LLM模型和知识库以优化语言理解和生成过程。用户还可以启用RAG（检索增强生成）和对话增强功能，以提高对话质量和准确性。"
+      "description": "LLM技能包括选择LLM模型和知识库以优化语言理解和生成过程。用户还可以启用RAG（检索增强生成）和对话增强功能，以提高对话质量和准确性。",
+      "test": "测试"
     }
   },
   "provider": {
-    "menu": "提供者",
+    "menu": "供应商",
     "setting": "模型设置",
     "form": {
       "key": "API密钥",
       "url": "URL",
       "enabled": "启用"
+    }
+  },
+  "studio": {
+    "menu": "Studio",
+    "deleteConfirm": "Are you sure you want to delete this studio?",
+    "offDeleteConfirm": "Please go offline before deleting the bot.",
+    "offAndDel": "Offline & Delete",
+    "add": "Add New Studio",
+    "edit": "Edit Studio",
+    "information": "Information",
+    "form": {
+      "name": "Name",
+      "group": "Group",
+      "introduction": "Introduction",
+      "owner": "Owner",
+      "model": "Model"
+    },
+    "off": "Offline",
+    "on": "Online",
+    "settings": {
+      "title": "Settings",
+      "selectSkills": "Select Skills",
+      "selectChannels": "Select Channels",
+      "noChannelHasBeenOpened": "No channel has been opened yet. Please configure the channel first before making a selection.",
+      "clickHere": "Click here ",
+      "toConfigureChannels": "to configure channels",
+      "domain": "Domain",
+      "enableSsl": "enable SSL",
+      "portMapping": "Port Mapping",
+      "description": "Select the corresponding skills for the bot, configure the relevant information, and then publish.",
+      "publishTip": "After the robot is published, it will be updated on the selected channels.",
+      "selectedParams": "Please ensure that the selected channels parameters are configured."
+    },
+    "channel": {
+      "title": "Channel",
+      "setting": "Setting",
+      "description": "Built-in with multiple messaging channels, allowing the bot to interact with users through these channels."
+    },
+    "logs": {
+      "title": "Conversation Logs",
+      "description": "You can view the log records of the conversation between the user and the robot, and restore the conversation scene.",
+      "table": {
+        "title": "TITLE",
+        "createdTime": "CREATED TIME",
+        "updatedTime": "UPDATED TIME",
+        "user": "USER",
+        "channel": "CHANNEL",
+        "count": "COUNT",
+        "actions": "ACTIONS",
+        "detail": "DETAIL"
+      }
     }
   }
 }

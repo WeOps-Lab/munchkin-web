@@ -48,7 +48,7 @@ const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDat
         <Form.Item label={t('knowledge.form.name')}>
           <Input
             value={formData.name}
-            placeholder={`Please ${t('common.input')} ${t('knowledge.form.name')}`}
+            placeholder={`${t('common.inputMsg')}${t('knowledge.form.name')}`}
             onChange={(e) => handleInputChange('name', e.target.value)}
           />
         </Form.Item>
@@ -57,7 +57,7 @@ const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDat
             <AIEditor
               value={formData.content}
               onChange={(value) => handleInputChange('content', value)}
-              placeholder={`Please ${t('common.input')} ${t('knowledge.form.content')}`}
+              placeholder={`${t('common.inputMsg')}${t('knowledge.form.content')}`}
               style={{ height: '100%' }}
             />
           </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ProChatMessage, ChatMessage } from '@/types/skill';
+import { Spin } from 'antd';
 import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
 
@@ -21,12 +22,16 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ showSource = fa
   }, []);
 
   if (!ProChat) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Spin />
+      </div>
+    );
   }
 
   return (
     <div className="rounded-lg h-full">
-      <h2 className="text-lg font-semibold mb-3">Test</h2>
+      <h2 className="text-lg font-semibold mb-3">{t('skill.settings.test')}</h2>
       <div style={{ height: 'calc(100vh - 280px)' }} className={`rounded-lg ${styles.chatContainer}`}>
         <ProChat
           request={async (messages: ChatMessage<Record<string, any>>[]) => {

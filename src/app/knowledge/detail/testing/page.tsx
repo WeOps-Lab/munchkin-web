@@ -101,7 +101,7 @@ const TestingPage: React.FC = () => {
       <div className="flex p-4">
         <div className="w-1/2 pr-4">
           <div className={`mb-4 border rounded-md ${styles.testingHeader}`}>
-            <h2 className="text-lg font-semibold">Text</h2>
+            <h2 className="text-lg font-semibold">{t('knowledge.testing.text')}</h2>
             <div className="relative">
               <TextArea
                 placeholder="Enter text to search"

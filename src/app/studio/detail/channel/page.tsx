@@ -142,14 +142,13 @@ const ChannelPage: React.FC = () => {
           <Button key="cancel" onClick={handleCloseModal}>{t('common.cancel')}</Button>,
           <Button key="confirm" type="primary" loading={confirmLoading} onClick={handleConfirmModal}>{t('common.confirm')}</Button>,
         ]}
-        width={800}
       >
         {formLoading ? (
           <div className="flex items-center">
             <Spin size="large" className="m-auto" />
           </div>
         ) : (
-          <Form layout="horizontal" labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} style={{ padding: '16px 0' }}>
+          <Form layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} style={{ padding: '16px 0' }}>
             <Form.Item label="Open">
               <Switch size="small" checked={open} onChange={handleSwitchChange} />
             </Form.Item>

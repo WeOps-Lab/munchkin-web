@@ -98,8 +98,7 @@ const StudioLogsPage: React.FC = () => {
       setLoading(false);
     });
 
-    // Fetch channels
-    get('/channel_mgmt/channel/')
+    get('/bot_mgmt/bot/get_bot_channels/')
       .then((response) => {
         setChannels(response.map((channel: any) => ({ id: channel.id, name: channel.name })));
       })

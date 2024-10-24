@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Switch, Dropdown, Menu, Tag, Checkbox, message, Spin } from 'antd';
 import { useTranslation } from '@/utils/i18n';
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownOutlined, CheckOutlined } from '@ant-design/icons';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
 import { useSearchParams } from 'next/navigation';
@@ -44,7 +44,7 @@ const StudioSettingsPage: React.FC = () => {
         const [rasaModelsData, skillsData, channelsData, botData] = await Promise.all([
           get('/bot_mgmt/rasa_model/'),
           get('/model_provider_mgmt/llm/'),
-          get('/channel_mgmt/channel/'),
+          get('/bot_mgmt/bot/get_bot_channels/', { bot_id: botId }),
           get(`/bot_mgmt/bot/${botId}`)
         ]);
 
@@ -66,7 +66,7 @@ const StudioSettingsPage: React.FC = () => {
 
         setOnline(botData.online);
         setSelectedSkills(botData.llm_skills);
-        setSelectedChannels(botData.channels?.map((channel: any) => channel.id));
+        setSelectedChannels(botData.channels);
         setIsDomainEnabled(botData.enable_bot_domain);
         setEnableSsl(botData.enable_ssl); // 设置初始SSL状态
         setIsPortMappingEnabled(botData.enable_node_port);
@@ -96,7 +96,7 @@ const StudioSettingsPage: React.FC = () => {
         team: values.group,
         enable_bot_domain: isDomainEnabled,
         bot_domain: isDomainEnabled ? botDomain : null,
-        enable_ssl: isDomainEnabled ? enableSsl : null, // 添加SSL相关字段
+        enable_ssl: isDomainEnabled ? enableSsl : false,
         enable_node_port: isPortMappingEnabled,
         node_port: isPortMappingEnabled ? nodePort : null,
         rasa_model: values.rasa_model,
@@ -275,13 +275,14 @@ const StudioSettingsPage: React.FC = () => {
                                 : [...prev, channel.id]
                             );
                           }}
-                          className={`flex items-center cursor-pointer rounded-md p-4 text-center ${isSelected 
+                          className={`relative flex items-center cursor-pointer rounded-md p-4 text-center ${isSelected 
                             ? styles.selectedCommonItem
                             : styles.cardFillColor}` 
                           }
                         >
                           <Icon type={getTypeIcon(channel.name)} className="text-3xl mr-[5px]" />
                           {channel.name}
+                          {isSelected && <CheckOutlined className={`${styles.checkedIcon}`} />}
                         </div>
                       );
                     })}

@@ -74,4 +74,24 @@
 
 .selectedCommonItem {
   background: var(--color-bg-active);
+  &::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 20px solid var(--color-primary);
+    border-left: 20px solid transparent;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 0 0 5px;
+  }
+  
+  .checkedIcon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 12px;
+    color: #ffffff;
+    z-index: 99;
+  }
 }

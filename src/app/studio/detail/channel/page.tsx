@@ -5,12 +5,13 @@ import { Modal, Input, Switch, Tag, Button, Form, Spin, message } from 'antd';
 import Icon from '@/components/icon';
 import styles from '@/styles/common.less';
 import { useTranslation } from '@/utils/i18n';
+import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import { ChannelProps } from '@/types/studio';
 
 const ChannelPage: React.FC = () => {
   const { t } = useTranslation();
-  const { get, patch } = useApiClient();
+  const { get, post } = useApiClient();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentApp, setCurrentApp] = useState<Partial<ChannelProps>>({});
   const [open, setOpen] = useState(false);
@@ -19,11 +20,15 @@ const ChannelPage: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [apps, setApps] = useState<ChannelProps[]>([]);
   const [currentChannelType, setCurrentChannelType] = useState<string>('');
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const botId = searchParams.get('id');
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await get('/channel_mgmt/channel/');
+      const params = botId ? { bot_id: botId } : {};
+      const data = await get('/bot_mgmt/bot/get_bot_channels/', params);
       const appsData = data.map((channel: any) => ({
         id: channel.id,
         name: channel.name,
@@ -63,6 +68,7 @@ const ChannelPage: React.FC = () => {
 
   const handleConfirmModal = async () => {
     const updatedConfig = {
+      id: currentApp.id,
       enabled: open,
       channel_config: {
         [currentChannelType]: fields,
@@ -70,13 +76,16 @@ const ChannelPage: React.FC = () => {
     };
 
     try {
-      await patch(`/channel_mgmt/channel/${currentApp.id}/`, updatedConfig);
-      message.success(t('common.success'));
+      setConfirmLoading(true);
+      await post(`/bot_mgmt/bot/update_bot_channel/`, updatedConfig);
+      message.success(t('common.saveSuccess'));
       handleCloseModal();
       await fetchData();
     } catch (error) {
-      message.error(t('common.error'));
+      message.error(t('common.updateFailed'));
       console.error('Failed to update channel config:', error);
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -131,7 +140,7 @@ const ChannelPage: React.FC = () => {
         onCancel={handleCloseModal} 
         footer={[
           <Button key="cancel" onClick={handleCloseModal}>{t('common.cancel')}</Button>,
-          <Button key="confirm" type="primary" onClick={handleConfirmModal}>{t('common.confirm')}</Button>,
+          <Button key="confirm" type="primary" loading={confirmLoading} onClick={handleConfirmModal}>{t('common.confirm')}</Button>,
         ]}
         width={800}
       >

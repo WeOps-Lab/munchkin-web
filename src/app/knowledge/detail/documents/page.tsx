@@ -239,7 +239,7 @@ const DocumentsPage: React.FC = () => {
     setLoading(true);
     const params = getTableParams();
     try {
-      const res = await get('/knowledge_mgmt/knowledge_document/', params);
+      const res = await get('/knowledge_mgmt/knowledge_document/', { params });
       const { items: data } = res;
       setTableData(data);
       setPagination(prev => ({

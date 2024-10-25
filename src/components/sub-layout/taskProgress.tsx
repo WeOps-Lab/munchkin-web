@@ -24,7 +24,7 @@ const TaskProgress: React.FC = () => {
     }
     const fetchTasks = async () => {
       try {
-        const data = await get('/knowledge_mgmt/knowledge_document/', { params });
+        const data = await get('/knowledge_mgmt/knowledge_document/', {params});
         setTasks(data);
       } catch (error) {
         console.error(`${t('common.fetchFailed')}: ${error}`);

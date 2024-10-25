@@ -44,7 +44,7 @@ const StudioSettingsPage: React.FC = () => {
         const [rasaModelsData, skillsData, channelsData, botData] = await Promise.all([
           get('/bot_mgmt/rasa_model/'),
           get('/model_provider_mgmt/llm/'),
-          get('/bot_mgmt/bot/get_bot_channels/', { bot_id: botId }),
+          get('/bot_mgmt/bot/get_bot_channels/', { params: { bot_id: botId } }),
           get(`/bot_mgmt/bot/${botId}`)
         ]);
 

@@ -10,6 +10,8 @@ import Icon from '@/components/icon';
 import useFetchConfigData from '@/hooks/useFetchConfigData';
 import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
+import ContentDrawer from '@/components/content-drawer';
+import useContentDrawer from '@/hooks/useContentDrawer';
 
 const { TextArea } = Input;
 
@@ -23,6 +25,13 @@ const TestingPage: React.FC = () => {
   const [results, setResults] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [applyLoading, setApplyLoading] = useState<boolean>(false);
+
+  const {
+    drawerVisible,
+    drawerContent,
+    showDrawer,
+    hideDrawer,
+  } = useContentDrawer();
 
   const getConfigParams = () => {
     return {
@@ -96,6 +105,10 @@ const TestingPage: React.FC = () => {
     return iconMap[type] || 'wendang';
   };
 
+  const handleContentClick = (content: string) => {
+    showDrawer(content);
+  };
+
   return (
     <Spin spinning={configLoading}>
       <div className="flex p-4">
@@ -153,7 +166,7 @@ const TestingPage: React.FC = () => {
               </>
             ) : results.length > 0 ? (
               results.map((result, index) => (
-                <div key={result.id} className={`p-4 border rounded-md ${styles.resultsItem}`}>
+                <div key={result.id} className={`p-4 border rounded-md ${styles.resultsItem}`} onClick={() => handleContentClick(result.content)}>
                   <div className="flex justify-between mb-2">
                     <div className="border px-2 rounded-md">
                       <span className={`text-xs ${styles.activeTxt}`}># {index + 1}</span>
@@ -173,6 +186,11 @@ const TestingPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <ContentDrawer
+        visible={drawerVisible}
+        onClose={hideDrawer}
+        content={drawerContent}
+      />
     </Spin>
   );
 };

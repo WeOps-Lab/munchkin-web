@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
+import ContentDrawer from '@/components/content-drawer';
+import useContentDrawer from '@/hooks/useContentDrawer';
 
 interface Paragraph {
   id: string;
@@ -22,6 +24,13 @@ const DocsResultPage: React.FC = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get('knowledgeId');
   const { get } = useApiClient();
+
+  const {
+    drawerVisible,
+    drawerContent,
+    showDrawer,
+    hideDrawer,
+  } = useContentDrawer();
 
   const fetchData = async (page: number, pageSize: number) => {
     if (id) {
@@ -61,6 +70,10 @@ const DocsResultPage: React.FC = () => {
     paragraph.content.toLowerCase().includes(searchTerm)
   );
 
+  const handleContentClick = (content: string) => {
+    showDrawer(content);
+  };
+
   return (
     <div className="w-full h-full">
       <div className="flex justify-end items-center mb-4">
@@ -80,7 +93,7 @@ const DocsResultPage: React.FC = () => {
         <>
           <div className={`flex flex-wrap -mx-2 ${styles.resultWrap}`}>
             {filteredParagraphs.map((paragraph, index) => (
-              <div key={paragraph.id} className="sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
+              <div key={paragraph.id} className="sm:w-1/2 md:w-1/3 lg:w-1/4 p-2" onClick={() => handleContentClick(paragraph.content)}>
                 <Card
                   size="small"
                   className={`rounded-lg flex flex-col justify-between ${styles.resultCard}`}
@@ -116,6 +129,11 @@ const DocsResultPage: React.FC = () => {
           </div>
         </>
       )}
+      <ContentDrawer
+        visible={drawerVisible}
+        onClose={hideDrawer}
+        content={drawerContent}
+      />
     </div>
   );
 };

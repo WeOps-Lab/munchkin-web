@@ -28,7 +28,7 @@ const ChannelPage: React.FC = () => {
     try {
       setLoading(true);
       const params = botId ? { bot_id: botId } : {};
-      const data = await get('/bot_mgmt/bot/get_bot_channels/', params);
+      const data = await get('/bot_mgmt/bot/get_bot_channels/', {params});
       const appsData = data.map((channel: any) => ({
         id: channel.id,
         name: channel.name,

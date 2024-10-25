@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Select, Checkbox, Switch, Slider, InputNumber, Input, Radio, message } from 'antd';
+import { Select, Switch, Slider, InputNumber, Input, Radio, message } from 'antd';
 import { ModelOption, TestConfigData } from '@/types/knowledge';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
@@ -76,15 +76,17 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
       <div className={`mb-4 flex ${styles.configTxt}`}>
         <label className="block text-sm font-medium mb-1 w-32">{t('knowledge.retrievalSetting')}</label>
         <div className="flex-1">
-          <div className="p-4 border rounded-md mb-4">
+          <div className="p-4 pb-0 border rounded-md mb-4">
             <div className="flex items-center mb-2 justify-between">
               <h3 className="text-base font-semibold">{t('knowledge.textSearch')}</h3>
-              <Checkbox
+              <Switch
+                size="small"
                 checked={configData.selectedSearchTypes.includes('textSearch')}
                 onChange={() => handleSearchTypeChange('textSearch')}
               />
+              
             </div>
-            <p className="text-sm mb-4">
+            <p className="text-sm mb-4" style={{ 'color': 'var(--color-text-4)' }}>
               {t('knowledge.textSearchDesc')}
             </p>
             {configData.selectedSearchTypes.includes('textSearch') && (
@@ -115,15 +117,16 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
               </>
             )}
           </div>
-          <div className="p-4 border rounded-md mb-4">
+          <div className="p-4 pb-0 border rounded-md mb-4">
             <div className="flex items-center mb-2 justify-between">
               <h3 className="text-base font-semibold">{t('knowledge.vectorSearch')}</h3>
-              <Checkbox
+              <Switch
+                size="small"
                 checked={configData.selectedSearchTypes.includes('vectorSearch')}
                 onChange={() => handleSearchTypeChange('vectorSearch')}
               />
             </div>
-            <p className="text-sm mb-4">
+            <p className="text-sm mb-4" style={{ 'color': 'var(--color-text-4)' }}>
               {t('knowledge.vectorSearchDesc')}
             </p>
             {configData.selectedSearchTypes.includes('vectorSearch') && (

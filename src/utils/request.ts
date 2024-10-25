@@ -85,8 +85,8 @@ const useApiClient = () => {
   }, []);
 
   // 封装请求方法，并使用 useCallback 确保函数是稳定的
-  const get = useCallback(async <T = any>(url: string, params?: Record<string, any>, config?: AxiosRequestConfig, onError?: () => void): Promise<T> => {
-    const response = await apiClient.get<T>(url, { ...config, params });
+  const get = useCallback(async <T = any>(url: string, config?: AxiosRequestConfig, onError?: () => void): Promise<T> => {
+    const response = await apiClient.get<T>(url, config);
     return handleResponse(response, onError);
   }, []);
 

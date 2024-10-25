@@ -6,6 +6,7 @@ import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
 import { PreviewData, ModelOption, PreprocessStepProps } from '@/types/knowledge';
 import ContentDrawer from '@/components/content-drawer';
+import useContentDrawer from '@/hooks/useContentDrawer';
 
 const { Option } = Select;
 
@@ -34,8 +35,12 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   const onConfigChangeRef = useRef(onConfigChange);
   const [isInitialConfigApplied, setIsInitialConfigApplied] = useState(false);
 
-  const [drawerVisible, setDrawerVisible] = useState(false);
-  const [drawerContent, setDrawerContent] = useState('');
+  const {
+    drawerVisible,
+    drawerContent,
+    showDrawer,
+    hideDrawer,
+  } = useContentDrawer();
 
   const generateConfig = (preview: boolean) => ({
     preview,
@@ -165,8 +170,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
   }, [post]);
 
   const handleContentClick = (content: string) => {
-    setDrawerContent(content);
-    setDrawerVisible(true);
+    showDrawer(content);
   };
 
   return (
@@ -300,7 +304,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
       </div>
       <ContentDrawer
         visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
+        onClose={hideDrawer}
         content={drawerContent}
       />
     </div>

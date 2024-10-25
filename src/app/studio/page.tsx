@@ -30,10 +30,7 @@ const StudioPage: React.FC = () => {
       Modal.confirm({
         title: t('studio.offDeleteConfirm'),
         okText: t('studio.offAndDel'),
-        onOk: async () => {
-          await patch(`/bot_mgmt/bot/${studio.id}/`, { online: false });
-          onDelete();
-        },
+        onOk: onDelete,
       });
     } else {
       Modal.confirm({

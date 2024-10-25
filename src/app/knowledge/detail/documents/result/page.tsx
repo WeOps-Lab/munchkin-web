@@ -93,7 +93,7 @@ const DocsResultPage: React.FC = () => {
         <>
           <div className={`flex flex-wrap -mx-2 ${styles.resultWrap}`}>
             {filteredParagraphs.map((paragraph, index) => (
-              <div key={paragraph.id} className="sm:w-1/2 md:w-1/3 lg:w-1/4 p-2" onClick={() => handleContentClick(paragraph.content)}>
+              <div key={paragraph.id} className="sm:w-1/2 md:w-1/3 lg:w-1/4 p-2 cursor-pointer" onClick={() => handleContentClick(paragraph.content)}>
                 <Card
                   size="small"
                   className={`rounded-lg flex flex-col justify-between ${styles.resultCard}`}

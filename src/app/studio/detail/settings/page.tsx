@@ -18,7 +18,7 @@ const { TextArea } = Input;
 const StudioSettingsPage: React.FC = () => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const { get, patch } = useApiClient();
+  const { get, post, patch } = useApiClient();
   const { groups } = useGroups();
   const [pageLoading, setPageLoading] = useState(true);
   const [rasaModels, setRasaModels] = useState<{ id: number; name: string; enabled: boolean }[]>([]);
@@ -120,7 +120,7 @@ const StudioSettingsPage: React.FC = () => {
   
   const toggleOnlineStatus = async () => {
     try {
-      await patch(`/bot_mgmt/bot/${botId}/`, { online: !online });
+      await post('/bot_mgmt/bot/stop_pilot/', { bot_ids: [Number(botId)] });
       setOnline(prevOnline => !prevOnline);
       message.success(t('common.saveSuccess'));
     } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Spin, Button } from 'antd';
+import { Modal, Spin, Button, Tooltip } from 'antd';
 import styles from './index.module.less';
 import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
@@ -23,7 +23,16 @@ const getIconTypeByIndex = (index: number, iconTypes: string[]) =>
   iconTypes[index % iconTypes.length] || 'zhishiku';
 
 const OperateModal: React.FC<OperateModalProps> = ({
-  visible, okText, cancelText, onOk, onCancel, items, selectedItems, title, showEmptyPlaceholder = false, iconTypes = defaultIconTypes
+  visible,
+  okText,
+  cancelText,
+  onOk,
+  onCancel,
+  items,
+  selectedItems,
+  title,
+  showEmptyPlaceholder = false,
+  iconTypes = defaultIconTypes
 }) => {
   const { t } = useTranslation();
   const [tempSelectedItem, setTempSelectedItem] = useState<number | null>(null);
@@ -58,12 +67,17 @@ const OperateModal: React.FC<OperateModalProps> = ({
     onCancel();
   };
 
+  const handleClickHere = () => {
+    window.open('/skill', '_blank');
+  };
+
   return (
     <Modal
       title={title}
       visible={visible}
       okText={showEmptyPlaceholder ? undefined : okText}
       cancelText={cancelText}
+      width={750}
       onOk={showEmptyPlaceholder ? undefined : handleConfirm}
       onCancel={handleModalCancel}
       footer={renderFooter()}
@@ -71,11 +85,11 @@ const OperateModal: React.FC<OperateModalProps> = ({
       <Spin spinning={false}>
         {showEmptyPlaceholder ? (
           <div>
-            {t('studio.settings.noChannelHasBeenOpened')}
-            <a href="/path/to/channel/config" style={{ 'color': 'var(--color-primary)' }}>
+            {t('studio.settings.noSkillHasBeenSelected')}
+            <a onClick={handleClickHere} style={{ color: 'var(--color-primary)', cursor: 'pointer' }}>
               {t('studio.settings.clickHere')}
             </a>
-            {t('studio.settings.toConfigureChannels')}
+            {t('studio.settings.toConfigureSkills')}
           </div>
         ) : (
           <>
@@ -87,7 +101,9 @@ const OperateModal: React.FC<OperateModalProps> = ({
                   onClick={() => handleItemSelect(item.id)}
                 >
                   <Icon type={getIconTypeByIndex(index, iconTypes)} className="text-2xl mr-[8px]" />
-                  {item.name}
+                  <Tooltip title={item.name}>
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">{item.name}</span>
+                  </Tooltip>
                 </div>
               ))}
             </div>

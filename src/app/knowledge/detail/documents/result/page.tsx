@@ -105,14 +105,9 @@ const DocsResultPage: React.FC = () => {
                     </div>
                   }
                 >
-                  <Tooltip 
-                    title={paragraph.content}
-                    overlayStyle={{ maxWidth: '550px' }}
-                  >
-                    <p className={`${styles.truncateLines}`}>
-                      {paragraph.content || '--'}
-                    </p>
-                  </Tooltip>
+                  <p className={`${styles.truncateLines}`}>
+                    {paragraph.content || '--'}
+                  </p>
                 </Card>
               </div>
             ))}

@@ -21,6 +21,7 @@ const StudioSettingsPage: React.FC = () => {
   const { get, post, patch } = useApiClient();
   const { groups } = useGroups();
   const [pageLoading, setPageLoading] = useState(true);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [rasaModels, setRasaModels] = useState<{ id: number; name: string; enabled: boolean }[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [channels, setChannels] = useState<{ id: number; name: string, enabled: boolean }[]>([]);
@@ -86,6 +87,7 @@ const StudioSettingsPage: React.FC = () => {
   const handleDeleteSkill = (id: number) => setSelectedSkills(prev => prev.filter(item => item !== id));
 
   const handleSave = async (isPublish = false) => {
+    setSaveLoading(true);
     try {
       const values = await form.validateFields();
 
@@ -109,12 +111,12 @@ const StudioSettingsPage: React.FC = () => {
     } catch (error) {
       console.error(error);
       message.error(t('common.saveFailed'));
+    } finally {
+      setSaveLoading(false);
     }
   };
 
-  const iconType = (index: number) => {
-    return index % 2 === 0 ? 'jishuqianyan' : 'theory'
-  };
+  const iconType = (index: number) => index % 2 === 0 ? 'jishuqianyan' : 'theory';
 
   const handleSaveAndPublish = () => handleSave(true);
   
@@ -128,16 +130,18 @@ const StudioSettingsPage: React.FC = () => {
     }
   };
 
-  const getTypeIcon = (name: string) => {
-    return name === 'enterprise_wechat' ? 'qiwei' : name === 'ding_talk' ? 'dingding1' : 'wangye'
-  }
+  const getTypeIcon = (name: string) => name === 'enterprise_wechat' ? 'qiwei' : name === 'ding_talk' ? 'dingding1' : 'wangye';
+
+  const handleConfigureChannels = () => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const url = `/studio/detail/channel?${queryParams.toString()}`;
+    window.open(url, '_blank');
+  };
 
   const menu = (
     <Menu style={{ width: 300 }}>
       <Menu.Item key="info" disabled style={{ whiteSpace: 'normal', opacity: 1, cursor: 'default' }}>
-        <div>
-          {t('studio.settings.publishTip')} {t('studio.settings.selectedParams')}
-        </div>
+        <div>{t('studio.settings.publishTip')} {t('studio.settings.selectedParams')}</div>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="save_publish">
@@ -161,13 +165,20 @@ const StudioSettingsPage: React.FC = () => {
     </Menu>
   );
 
+  const theme = typeof window !== 'undefined' && localStorage.getItem('theme');
+  const overlayBgClass = theme === 'dark' ? 'bg-gray-950' : 'bg-white';
+
+  const allChannelsDisabled = channels.every(channel => !channel.enabled);
+
   return (
     <div className="relative flex justify-center w-full">
-      {pageLoading ? (
-        <div className="min-h-[500px] flex justify-center items-center">
-          <Spin size="large" className="absolute top-1/2 transform -translate-y-1/2" />
+      {(pageLoading || saveLoading) && (
+        <div
+          className={`absolute inset-0 ${overlayBgClass} bg-opacity-50 z-50 flex justify-center items-center min-h-[500px]`}>
+          <Spin size="large" />
         </div>
-      ) : (
+      )}
+      {!pageLoading && (
         <div className="w-full sm:w-3/4 lg:w-2/3 xl:w-1/2">
           <div className="absolute top-0 right-0 flex items-center space-x-4">
             <Tag
@@ -290,6 +301,13 @@ const StudioSettingsPage: React.FC = () => {
                       );
                     })}
                   </div>
+                  {allChannelsDisabled && (<div className="mt-3">
+                    {t('studio.settings.noChannelHasBeenOpened')} 
+                    <a onClick={handleConfigureChannels} style={{ color: 'var(--color-primary)', cursor: 'pointer' }}>
+                      {t('studio.settings.clickHere')}
+                    </a> 
+                    {t('studio.settings.toConfigureChannels')}
+                  </div>)}
                 </Form.Item>
               </div>
             </div>
@@ -363,6 +381,7 @@ const StudioSettingsPage: React.FC = () => {
             items={skills}
             selectedItems={selectedSkills}
             title={t('studio.settings.selectSkills')}
+            showEmptyPlaceholder={skills.length === 0}
           />
         </div>
       )}

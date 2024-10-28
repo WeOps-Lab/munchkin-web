@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Switch, Button, InputNumber, Slider, Spin, message } from 'antd';
+import { Form, Input, Select, Switch, Button, InputNumber, Slider, Spin, message, Tooltip } from 'antd';
 import { useTranslation } from '@/utils/i18n';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
@@ -102,8 +102,9 @@ const SkillSettingsPage: React.FC = () => {
     setModalVisible(true);
   };
 
-  const handleModalOk = () => {
-    setRagSources(selectedKnowledgeBases.map(id => {
+  const handleModalOk = (newSelectedKnowledgeBases: number[]) => {
+    setSelectedKnowledgeBases(newSelectedKnowledgeBases);
+    setRagSources(newSelectedKnowledgeBases.map(id => {
       const base = knowledgeBases.find(base => base.id === id);
       return base ? { id: base.id, name: base.name, introduction: base.introduction || '', score: 0.7 } : null;
     }).filter(Boolean) as { id: number, name: string, introduction: string, score: number }[]);
@@ -112,12 +113,6 @@ const SkillSettingsPage: React.FC = () => {
 
   const handleModalCancel = () => {
     setModalVisible(false);
-  };
-
-  const handleKnowledgeBaseSelect = (id: number) => {
-    setSelectedKnowledgeBases((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
   };
 
   const handleDeleteRagSource = (sourceName: string) => {
@@ -317,8 +312,10 @@ const SkillSettingsPage: React.FC = () => {
                         {ragSources.map((source, index) => (
                           <div key={index} className="w-full mt-2">
                             <div className={`w-full rounded-md px-4 py-2 flex items-center justify-between ${styles.borderContainer}`}>
-                              <span>{source.name}</span>
-                              <div className="flex-1 flex">
+                              <Tooltip title={source.name}>
+                                <span className="inline-block max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap">{source.name}</span>
+                              </Tooltip>
+                              <div className="flex-1 flex items-center ml-2">
                                 <Slider
                                   className="flex-1 mx-2"
                                   min={0}
@@ -327,11 +324,10 @@ const SkillSettingsPage: React.FC = () => {
                                   value={source.score}
                                   onChange={(value) => handleScoreChange(source.name, value)}
                                 />
-                                <Input className="w-14" value={source.score} readOnly />
+                                <Input className="w-16" value={source.score} readOnly />
                               </div>
-                              <div>
-                                <EditOutlined 
-                                  className="mr-[8px] ml-[8px]"
+                              <div className="flex items-center space-x-2">
+                                <EditOutlined
                                   onClick={() => handleEditKnowledge(source)}
                                 />
                                 <DeleteOutlined onClick={() => handleDeleteRagSource(source.name)} />
@@ -364,7 +360,6 @@ const SkillSettingsPage: React.FC = () => {
         onCancel={handleModalCancel}
         knowledgeBases={knowledgeBases}
         selectedKnowledgeBases={selectedKnowledgeBases}
-        handleKnowledgeBaseSelect={handleKnowledgeBaseSelect}
       />
     </div>
   );

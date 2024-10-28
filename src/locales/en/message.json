@@ -190,7 +190,10 @@
       "menu": "Setting",
       "title": "LLM Skill",
       "description": "LLM skills include the selection of LLM models and knowledge bases to optimize language understanding and generation processes. Users can also enable RAG (Retrieval-Augmented Generation) and conversation enhancement features to improve dialogue quality and accuracy.",
-      "test": "Test"
+      "test": "Test",
+      "noKnowledgeBase": "No knowledge base has been set up yet.",
+      "toConfigureKnowledgeBase": " to configure the knowledge base.",
+      "clickHere": "click here"
     }
   },
   "provider": {
@@ -223,9 +226,11 @@
       "title": "Settings",
       "selectSkills": "Select Skills",
       "selectChannels": "Select Channels",
-      "noChannelHasBeenOpened": "No channel has been opened yet. Please configure the channel first before making a selection.",
+      "noChannelHasBeenOpened": "No channel has been opened yet.",
       "clickHere": "Click here ",
       "toConfigureChannels": "to configure channels",
+      "noSkillHasBeenSelected": "No skill has been selected yet.",
+      "toConfigureSkills": "to add skills",
       "domain": "Domain",
       "enableSsl": "enable SSL",
       "portMapping": "Port Mapping",

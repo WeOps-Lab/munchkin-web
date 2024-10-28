@@ -7,6 +7,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import Icon from '@/components/icon';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
+import { useSearchParams } from 'next/navigation';
 import type { ColumnType } from 'antd/es/table';
 
 dayjs.extend(isBetween);
@@ -36,6 +37,8 @@ const StudioLogsPage: React.FC = () => {
   const [data, setData] = useState<LogRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [channels, setChannels] = useState<Channel[]>([]);
+  const searchParams = useSearchParams();
+  const botId = searchParams.get('id');
 
   useEffect(() => {
     setLoading(true);
@@ -98,7 +101,7 @@ const StudioLogsPage: React.FC = () => {
       setLoading(false);
     });
 
-    get('/bot_mgmt/bot/get_bot_channels/')
+    get('/bot_mgmt/bot/get_bot_channels/', { params: { bot_id: botId } })
       .then((response) => {
         setChannels(response.map((channel: any) => ({ id: channel.id, name: channel.name })));
       })

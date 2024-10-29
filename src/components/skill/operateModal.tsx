@@ -57,11 +57,11 @@ const OperateModal: React.FC<OperateModalProps> = ({
       <Spin spinning={false}>
         {knowledgeBases.length === 0 ? (
           <div className="text-center">
-            <p>{t('skill.noKnowledgeBase')}</p>
+            <p>{t('skill.settings.noKnowledgeBase')}</p>
             <Button type="link" onClick={handleConfigureKnowledgeBases}>
-              {t('common.clickHere')}
+              {t('skill.settings.clickHere')}
             </Button>
-            {t('skill.toConfigureKnowledgeBase')}
+            {t('skill.settings.toConfigureKnowledgeBase')}
           </div>
         ) : (
           <>

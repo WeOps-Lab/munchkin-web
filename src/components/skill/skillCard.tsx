@@ -23,7 +23,7 @@ const SkillCard: React.FC<SkillCardProps> = (props) => {
       team={team}
       index={index}
       onMenuClick={onMenuClick}
-      redirectUrl="/skill/settings"
+      redirectUrl="/skill/detail"
       iconTypeMapping={iconTypeMapping}
     />
   );

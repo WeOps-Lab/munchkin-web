@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Dropdown, Space, Menu, Avatar } from 'antd';
 import { signOut, useSession } from 'next-auth/react';
+import Theme from '@/components/theme';
 import { DownOutlined } from '@ant-design/icons';
-import SettingsModal from './settings';
 import ConfigurationsModal from './configurations';
 import { useTranslation } from '@/utils/i18n';
 
@@ -10,15 +10,10 @@ const UserInfo = () => {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const username = session?.username || 'Qiu-Jia';
-  const [visible, setVisible] = useState<boolean>(false);
   const [configurationsVisible, setConfigurationsVisible] = useState<boolean>(false);
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });
-  };
-
-  const handleSettings = () => {
-    setVisible(true);
   };
 
   const handleConfigurations = () => {
@@ -35,20 +30,13 @@ const UserInfo = () => {
       type: 'divider',
     },
     {
-      label: <a onClick={handleSettings}>{t('common.settings')}</a>,
-      key: '1',
-    },
-    {
-      type: 'divider',
-    },
-    {
       label: <a onClick={handleLogout}>{t('common.logout')}</a>,
       key: '2',
     },
   ];
 
   return (
-    <div>
+    <div className='flex'>
       {username && (
         <Dropdown overlay={<Menu items={items} />} trigger={['click']}>
           <a className='cursor-pointer' onClick={(e) => e.preventDefault()}>
@@ -67,9 +55,7 @@ const UserInfo = () => {
           </a>
         </Dropdown>
       )}
-      <SettingsModal 
-        visible={visible} 
-        onClose={() => setVisible(false)} />
+      <Theme />
       <ConfigurationsModal 
         visible={configurationsVisible} 
         onClose={() => setConfigurationsVisible(false)} />

@@ -56,7 +56,8 @@
     "usePermissionsContextError": "usePermissionsContext必须在PermissionsProvider中使用",
     "useLocaleError": "useLocale必须在LocaleProvider中使用",
     "useThemeError": "useTheme必须在ThemeProvider中使用",
-    "viewDetails": "查看详情"
+    "viewDetails": "查看详情",
+    "api": "接口"
   },
   "knowledge": {
     "menu": "知识",

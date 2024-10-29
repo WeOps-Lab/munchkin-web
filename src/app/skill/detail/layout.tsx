@@ -31,7 +31,8 @@ const SkillSettingsLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const menuItems = [
-    { label: t('skill.settings.menu'), path: '/skill/settings', icon: 'shezhi' },
+    { label: t('skill.settings.menu'), path: '/skill/detail/settings', icon: 'shezhi' },
+    { label: t('common.api'), path: '/skill/detail/api', icon: 'api' }
   ];
 
   const intro = (

@@ -69,7 +69,7 @@ const StudioSettingsPage: React.FC = () => {
         setSelectedSkills(botData.llm_skills);
         setSelectedChannels(botData.channels);
         setIsDomainEnabled(botData.enable_bot_domain);
-        setEnableSsl(botData.enable_ssl); // 设置初始SSL状态
+        setEnableSsl(botData.enable_ssl);
         setIsPortMappingEnabled(botData.enable_node_port);
         setBotDomain(botData.bot_domain);
         setNodePort(botData.node_port);

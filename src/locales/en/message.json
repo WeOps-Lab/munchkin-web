@@ -56,7 +56,8 @@
     "usePermissionsContextError": "usePermissionsContext must be used within a PermissionsProvider",
     "useLocaleError": "useLocale must be used within a LocaleProvider",
     "useThemeError": "useTheme must be used within a ThemeProvider",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "api": "API"
   },
   "knowledge": {
     "menu": "Knowledge",

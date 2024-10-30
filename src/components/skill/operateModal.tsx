@@ -65,7 +65,7 @@ const OperateModal: React.FC<OperateModalProps> = ({
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-3 gap-4 py-4">
+            <div className="grid grid-cols-3 gap-4 py-4 max-h-[60vh] overflow-y-auto">
               {knowledgeBases.map((base, index) => (
                 <div
                   key={base.id}

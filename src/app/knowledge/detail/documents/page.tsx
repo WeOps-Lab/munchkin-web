@@ -7,9 +7,9 @@ import { PlusOutlined, DeleteOutlined, TrademarkOutlined, SyncOutlined } from '@
 import CustomTable from '@/components/custom-table';
 import SelectSourceModal from './selectSourceModal';
 import useApiClient from '@/utils/request';
-import moment from 'moment';
 import type { TableColumnsType, PaginationProps } from 'antd';
 import { useTranslation } from '@/utils/i18n';
+import { useLocalizedTime } from '@/hooks/useLocalizedTime';
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;
@@ -29,6 +29,7 @@ const DocumentsPage: React.FC = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { get, post } = useApiClient();
+  const { convertToLocalizedTime } = useLocalizedTime();
   const [activeTabKey, setActiveTabKey] = useState<string>('file');
   const [searchText, setSearchText] = useState<string>('');
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -75,7 +76,7 @@ const DocumentsPage: React.FC = () => {
       title: t('knowledge.documents.createdAt'),
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToLocalizedTime(text),
     },
     {
       title: t('knowledge.documents.createdBy'),

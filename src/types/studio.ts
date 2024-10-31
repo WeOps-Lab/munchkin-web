@@ -27,4 +27,26 @@ export interface ChannelProps {
   icon: string;
   channel_config: ChannelConfig;
 }
+
+export interface ProChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  created_at: Date;
+}
   
+export interface LogRecord {
+  key: string;
+  title: string;
+  createdTime: string;
+  updatedTime: string;
+  user: string;
+  channel: string;
+  count: number;
+  conversation?: ProChatMessage[];
+}
+
+export interface Channel {
+  id: string;
+  name: string;
+}

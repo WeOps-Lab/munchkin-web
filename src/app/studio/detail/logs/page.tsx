@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Input, DatePicker, Spin } from 'antd';
+import { Table, Button, Input, DatePicker, Spin, Drawer } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import Icon from '@/components/icon';
@@ -9,25 +9,12 @@ import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import { useSearchParams } from 'next/navigation';
 import type { ColumnType } from 'antd/es/table';
+import ProChatComponent from '@/components/studio/proChat';
+import { LogRecord, Channel } from '@/types/studio'
 
 dayjs.extend(isBetween);
 
 const { RangePicker } = DatePicker;
-
-interface LogRecord {
-  key: string;
-  title: string;
-  createdTime: string;
-  updatedTime: string;
-  user: string;
-  channel: string;
-  count: number;
-}
-
-interface Channel {
-  id: string;
-  name: string;
-}
 
 const StudioLogsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -37,6 +24,8 @@ const StudioLogsPage: React.FC = () => {
   const [data, setData] = useState<LogRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [channels, setChannels] = useState<Channel[]>([]);
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  const [selectedRecord, setSelectedRecord] = useState<LogRecord | null>(null);
   const searchParams = useSearchParams();
   const botId = searchParams.get('id');
 
@@ -54,6 +43,10 @@ const StudioLogsPage: React.FC = () => {
             user: 'kayla',
             channel: 'WeCom',
             count: 22,
+            conversation: [
+              { id: '1', role: 'user', content: '你好，帮助中心在哪里？', created_at: new Date() },
+              { id: '2', role: 'assistant', content: '您好，帮助中心在右上角点击帮助即可找到。', created_at: new Date() },
+            ],
           },
           {
             key: '2',
@@ -63,6 +56,10 @@ const StudioLogsPage: React.FC = () => {
             user: 'kayla',
             channel: 'WeCom',
             count: 1,
+            conversation: [
+              { id: '1', role: 'user', content: 'weops咋用', created_at: new Date() },
+              { id: '2', role: 'assistant', content: '您可以通过查看帮助文档来了解 how to use weops。', created_at: new Date() },
+            ],
           },
           {
             key: '3',
@@ -72,6 +69,10 @@ const StudioLogsPage: React.FC = () => {
             user: 'kayla',
             channel: 'WeCom',
             count: 2,
+            conversation: [
+              { id: '1', role: 'user', content: 'weops 咋用 www....', created_at: new Date() },
+              { id: '2', role: 'assistant', content: '您可以通过查看帮助文档来了解 how to use weops。', created_at: new Date() },
+            ],
           },
           {
             key: '4',
@@ -81,6 +82,10 @@ const StudioLogsPage: React.FC = () => {
             user: 'kayla',
             channel: 'WeCom',
             count: 33,
+            conversation: [
+              { id: '1', role: 'user', content: 'weops咋用', created_at: new Date() },
+              { id: '2', role: 'assistant', content: '您可以通过查看帮助文档来了解 how to use weops。', created_at: new Date() },
+            ],
           },
           {
             key: '5',
@@ -90,6 +95,10 @@ const StudioLogsPage: React.FC = () => {
             user: 'kayla',
             channel: 'WeCom',
             count: 3,
+            conversation: [
+              { id: '1', role: 'user', content: 'weops咋用', created_at: new Date() },
+              { id: '2', role: 'assistant', content: '您可以通过查看帮助文档来了解 how to use weops。', created_at: new Date() },
+            ],
           },
         ]);
       }, 2000);
@@ -116,6 +125,11 @@ const StudioLogsPage: React.FC = () => {
 
   const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     setDates(dates);
+  };
+
+  const handleDetailClick = (record: LogRecord) => {
+    setSelectedRecord(record);
+    setDrawerVisible(true);
   };
 
   const filteredData = data.filter((record) => {
@@ -171,7 +185,9 @@ const StudioLogsPage: React.FC = () => {
       title: t('studio.logs.table.actions'),
       key: 'actions',
       render: (text: any, record: LogRecord) => (
-        <Button type="link">{t('studio.logs.table.detail')}</Button>
+        <Button type="link" onClick={() => handleDetailClick(record)}>
+          {t('studio.logs.table.detail')}
+        </Button>
       ),
     },
   ];
@@ -197,6 +213,18 @@ const StudioLogsPage: React.FC = () => {
       ) : (
         <Table dataSource={filteredData} columns={columns} pagination={false} />
       )}
+      <Drawer
+        title={t('studio.logs.detail')}
+        open={drawerVisible}
+        onClose={() => setDrawerVisible(false)}
+        width={480}
+      >
+        {selectedRecord && selectedRecord.conversation && (
+          <ProChatComponent
+            initialChats={selectedRecord.conversation}
+          />
+        )}
+      </Drawer>
     </div>
   );
 };

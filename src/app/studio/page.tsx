@@ -12,7 +12,7 @@ import useGroups from '@/hooks/useGroups';
 
 const StudioPage: React.FC = () => {
   const { t } = useTranslation();
-  const { del, patch } = useApiClient();
+  const { del } = useApiClient();
   const { groups, loading } = useGroups();
 
   const beforeDelete = (studio: Studio, deleteCallback: () => void) => {

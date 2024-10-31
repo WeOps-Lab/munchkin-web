@@ -256,7 +256,8 @@
         "count": "COUNT",
         "actions": "ACTIONS",
         "detail": "DETAIL"
-      }
+      },
+      "detail": "Logs Detail"
     }
   }
 }

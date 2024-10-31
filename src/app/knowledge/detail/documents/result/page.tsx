@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Card, Input, Spin, Pagination, Tooltip } from 'antd';
+import { Card, Input, Spin, Pagination } from 'antd';
 import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
@@ -91,26 +91,28 @@ const DocsResultPage: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className={`flex flex-wrap -mx-2 ${styles.resultWrap}`}>
-            {filteredParagraphs.map((paragraph, index) => (
-              <div key={paragraph.id} className="sm:w-1/2 md:w-1/3 lg:w-1/4 p-2 cursor-pointer" onClick={() => handleContentClick(paragraph.content)}>
-                <Card
-                  size="small"
-                  className={`rounded-lg flex flex-col justify-between ${styles.resultCard}`}
-                  title={
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs ${styles.number}`}>
-                        #{index.toString().padStart(3, '0')}
-                      </span>
-                    </div>
-                  }
-                >
-                  <p className={`${styles.truncateLines}`}>
-                    {paragraph.content || '--'}
-                  </p>
-                </Card>
-              </div>
-            ))}
+          <div className={`${styles.resultWrap}`}>
+            <div className='grid grid-cols-4 gap-4'>
+              {filteredParagraphs.map((paragraph, index) => (
+                <div key={paragraph.id} className="p-2 cursor-pointer" onClick={() => handleContentClick(paragraph.content)}>
+                  <Card
+                    size="small"
+                    className={`rounded-lg flex flex-col justify-between ${styles.resultCard}`}
+                    title={
+                      <div className="flex justify-between items-center">
+                        <span className={`text-xs ${styles.number}`}>
+                          #{index.toString().padStart(3, '0')}
+                        </span>
+                      </div>
+                    }
+                  >
+                    <p className={`${styles.truncateLines}`}>
+                      {paragraph.content || '--'}
+                    </p>
+                  </Card>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="flex justify-end mt-4">
             <Pagination

@@ -47,7 +47,6 @@ async function introspectToken(token: string) {
 async function fetchUserRolesAndLocale(accessToken: string) {
   try {
     const introspectData = await introspectToken(accessToken);
-    console.log("Introspect data", introspectData);
     return {
       locale: introspectData.locale || 'en',
       roles: introspectData.realm_access.roles || [],

@@ -36,6 +36,7 @@
     "updateFailed": "Failed to update",
     "addSuccess": "Added successfully",
     "saveSuccess": "save successfully",
+    "publishSuccess": "publish successfully",
     "saveFailed": "Failed to save them(s)",
     "selectMsg": "Please select the ",
     "inputMsg": "Please input the ",
@@ -257,7 +258,8 @@
         "actions": "ACTIONS",
         "detail": "DETAIL"
       },
-      "detail": "Logs Detail"
+      "searchUser": "Please enter the user name to search...",
+      "records": "Record(s)"
     }
   }
 }

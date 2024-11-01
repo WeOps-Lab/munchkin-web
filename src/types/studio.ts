@@ -43,6 +43,7 @@ export interface LogRecord {
   user: string;
   channel: string;
   count: number;
+  ids?: number[];
   conversation?: ProChatMessage[];
 }
 

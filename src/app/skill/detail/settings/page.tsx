@@ -186,7 +186,7 @@ const SkillSettingsPage: React.FC = () => {
         conversation_window_size: chatHistoryEnabled ? quantity : undefined,
         temperature: values.temperature
       };
-
+      console.log('payload', payload);
       const reply = await post('/model_provider_mgmt/llm/execute/', payload);
       const botMessage: ProChatMessage = {
         id: new Date().getTime().toString(),

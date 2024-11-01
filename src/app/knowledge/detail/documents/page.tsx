@@ -13,6 +13,7 @@ import { useLocalizedTime } from '@/hooks/useLocalizedTime';
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;
+const { Search } = Input;
 
 interface TableData {
   id: string | number;
@@ -208,16 +209,9 @@ const DocumentsPage: React.FC = () => {
     }
   };
 
-  const onSearchTxtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const onTxtPressEnter = () => {
-    fetchData();
-  };
-
-  const onTxtClear = () => {
-    fetchData();
+  const handleSearch = async (value: string) => {
+    setSearchText(value);
+    await fetchData(value);
   };
 
   const handleTableChange = (pagination: PaginationProps) => {
@@ -226,7 +220,7 @@ const DocumentsPage: React.FC = () => {
 
   const { current, pageSize } = pagination;
 
-  const getTableParams = useCallback(() => {
+  const getTableParams = useCallback((searchText: string) => {
     return {
       name: searchText,
       page: current,
@@ -234,11 +228,11 @@ const DocumentsPage: React.FC = () => {
       knowledge_source_type: activeTabKey,
       knowledge_base_id: id
     };
-  }, [searchText, current, pageSize, activeTabKey]);
+  }, [current, pageSize, activeTabKey]);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (text = '') => {
     setLoading(true);
-    const params = getTableParams();
+    const params = getTableParams(text);
     try {
       const res = await get('/knowledge_mgmt/knowledge_document/', { params });
       const { items: data } = res;
@@ -255,7 +249,7 @@ const DocumentsPage: React.FC = () => {
   }, [get, getTableParams]);
 
   useEffect(() => {
-    fetchData();
+    fetchData(searchText);
     return () => {
       console.log('Component unmounted');
     };
@@ -295,20 +289,19 @@ const DocumentsPage: React.FC = () => {
         <TabPane tab={t('knowledge.webLink')} key='web_page' />
         <TabPane tab={t('knowledge.cusText')} key='manual' />
       </Tabs>
-      <div className='nav-box flex justify-end mb-[10px]'>
+      <div className='nav-box flex justify-end mb-[20px]'>
         <div className='left-side w-[240px] mr-[8px]'>
-          <Input
+          <Search
             placeholder={`${t('common.search')}...`}
-            value={searchText}
             allowClear
-            onChange={onSearchTxtChange}
-            onPressEnter={onTxtPressEnter}
-            onClear={onTxtClear}
+            onSearch={handleSearch}
+            enterButton
+            className="w-60"
           />
         </div>
         <div className='right-side flex'>
           <Tooltip className='mr-[8px]' title={t('common.refresh')}>
-            <Button icon={<SyncOutlined />} onClick={fetchData} />
+            <Button icon={<SyncOutlined />} onClick={() => fetchData()} /> {/* Adjusted here */}
           </Tooltip>
           <Button
             type='primary'

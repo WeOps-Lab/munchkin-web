@@ -58,7 +58,9 @@
     "useLocaleError": "useLocale must be used within a LocaleProvider",
     "useThemeError": "useTheme must be used within a ThemeProvider",
     "viewDetails": "View Details",
-    "api": "API"
+    "api": "API",
+    "open": "Open",
+    "close": "Close"
   },
   "knowledge": {
     "menu": "Knowledge",

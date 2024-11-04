@@ -58,7 +58,9 @@
     "useLocaleError": "useLocale必须在LocaleProvider中使用",
     "useThemeError": "useTheme必须在ThemeProvider中使用",
     "viewDetails": "查看详情",
-    "api": "接口"
+    "api": "接口",
+    "open": "开启",
+    "close": "关闭"
   },
   "knowledge": {
     "menu": "知识",

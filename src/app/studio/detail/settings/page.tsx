@@ -108,6 +108,10 @@ const StudioSettingsPage: React.FC = () => {
 
       await patch(`/bot_mgmt/bot/${botId}/`, payload);
       message.success(t(isPublish ? 'common.publishSuccess' : 'common.saveSuccess'));
+
+      if (isPublish) {
+        setOnline(true);
+      }
     } catch (error) {
       console.error(error);
       message.error(t('common.saveFailed'));

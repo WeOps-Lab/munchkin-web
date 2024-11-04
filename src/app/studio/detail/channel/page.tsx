@@ -112,8 +112,7 @@ const ChannelPage: React.FC = () => {
         apps.map((app) => (
           <div key={app.id} className="w-full sm:w-1/3 p-4">
             <div
-              className='border shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out rounded-lg p-4 relative cursor-pointer group'
-            >
+              className='border shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out rounded-lg p-4 relative cursor-pointer group'>
               <div className="absolute top-2 right-2">
                 <Switch
                   size="small"

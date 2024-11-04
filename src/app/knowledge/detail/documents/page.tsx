@@ -31,7 +31,12 @@ const DocumentsPage: React.FC = () => {
   const { t } = useTranslation();
   const { get, post } = useApiClient();
   const { convertToLocalizedTime } = useLocalizedTime();
-  const [activeTabKey, setActiveTabKey] = useState<string>('file');
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+  const name = searchParams.get('name');
+  const desc = searchParams.get('desc');
+  const type = searchParams.get('type');
+  const [activeTabKey, setActiveTabKey] = useState<string>(type || 'file');
   const [searchText, setSearchText] = useState<string>('');
   const [pagination, setPagination] = useState<PaginationProps>({
     current: 1,
@@ -44,10 +49,6 @@ const DocumentsPage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isTrainLoading, setIsTrainLoading] = useState(false);
   const [singleTrainLoading, setSingleTrainLoading] = useState<{ [key: string]: boolean }>({});
-  const searchParams = useSearchParams();
-  const id = searchParams.get('id');
-  const name = searchParams.get('name');
-  const desc = searchParams.get('desc');
 
   const randomColors = ['#ff9214', '#875cff', '#00cba6', '#155aef'];
 
@@ -284,7 +285,7 @@ const DocumentsPage: React.FC = () => {
 
   return (
     <div style={{marginTop: '-10px'}}>
-      <Tabs defaultActiveKey='local' onChange={handleTabChange}>
+      <Tabs defaultActiveKey={activeTabKey} onChange={handleTabChange}> {/* 使用activeTabKey */}
         <TabPane tab={t('knowledge.localFile')} key='file' />
         <TabPane tab={t('knowledge.webLink')} key='web_page' />
         <TabPane tab={t('knowledge.cusText')} key='manual' />

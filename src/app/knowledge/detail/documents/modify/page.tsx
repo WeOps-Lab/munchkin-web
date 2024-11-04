@@ -131,7 +131,7 @@ const KnowledgeModifyPage = () => {
   }, []);
 
   const handleDone = () => {
-    router.push(`/knowledge/detail/documents?id=${id}&name=${name}&desc=${desc}`);
+    router.push(`/knowledge/detail/documents?id=${id}&name=${name}&desc=${desc}&type=${type}`);
   };
 
   const renderStepContent = () => {

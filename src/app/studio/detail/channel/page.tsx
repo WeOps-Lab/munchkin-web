@@ -158,7 +158,6 @@ const ChannelPage: React.FC = () => {
                     value={fields[key]} 
                     visibilityToggle={false} 
                     onChange={(e) => setFields({ ...fields, [key]: e.target.value })} 
-                    onFocus={() => setFields({ ...fields, [key]: '' })}
                     onCopy={(e) => e.preventDefault()}
                     onCut={(e) => e.preventDefault()} 
                     autoComplete="new-password"

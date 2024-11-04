@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Modal, Input, Switch, Tag, Button, Form, Spin, message } from 'antd';
+import { Modal, Input, Switch, Button, Form, Spin, message } from 'antd';
 import Icon from '@/components/icon';
-import styles from '@/styles/common.less';
 import { useTranslation } from '@/utils/i18n';
 import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
@@ -17,6 +16,7 @@ const ChannelPage: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [fields, setFields] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
+  const [switchLoading, setSwitchLoading] = useState<{ [key: string]: boolean }>({});
   const [formLoading, setFormLoading] = useState(false);
   const [apps, setApps] = useState<ChannelProps[]>([]);
   const [currentChannelType, setCurrentChannelType] = useState<string>('');
@@ -82,14 +82,24 @@ const ChannelPage: React.FC = () => {
       await fetchData();
     } catch (error) {
       message.error(t('common.updateFailed'));
-      console.error('Failed to update channel config:', error);
     } finally {
       setConfirmLoading(false);
     }
   };
 
-  const handleSwitchChange = (checked: boolean) => {
-    setOpen(checked);
+  const handleSwitchChange = async (checked: boolean, app: ChannelProps) => {
+    setSwitchLoading(prev => ({ ...prev, [app.id]: true }));
+      
+    try {
+      await post('/bot_mgmt/bot/update_bot_channel/', { id: app.id, enabled: checked });
+      const updatedApps = apps.map(a => a.id === app.id ? { ...a, enabled: checked } : a);
+      setApps(updatedApps);
+      message.success(t('common.updateSuccess'));
+    } catch {
+      message.error(t('common.updateFailed'));
+    } finally {
+      setSwitchLoading(prev => ({ ...prev, [app.id]: false }));
+    }
   };
 
   const sensitiveKeys = ['client_secret', 'aes_key', 'secret', 'token'];
@@ -105,12 +115,14 @@ const ChannelPage: React.FC = () => {
               className='border shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out rounded-lg p-4 relative cursor-pointer group'
             >
               <div className="absolute top-2 right-2">
-                <Tag
-                  color={app.enabled ? 'green' : ''}
-                  className={`${styles.statusTag} ${app.enabled ? styles.online : styles.offline}`}
-                >
-                  {app.enabled ? 'Opened' : 'Closed'}
-                </Tag>
+                <Switch
+                  size="small"
+                  checked={app.enabled}
+                  loading={switchLoading[app.id] || false}
+                  checkedChildren={t('common.open')} 
+                  unCheckedChildren={t('common.close')}
+                  onChange={(checked) => handleSwitchChange(checked, app)}
+                />
               </div>
               <div className="flex justify-center items-center space-x-4 my-5">
                 <Icon type={app.icon} className="text-6xl" />
@@ -135,8 +147,8 @@ const ChannelPage: React.FC = () => {
 
       <Modal 
         title={t('studio.channel.setting')}
-        visible={isModalVisible} 
-        onCancel={handleCloseModal} 
+        visible={isModalVisible}
+        onCancel={handleCloseModal}
         footer={[
           <Button key="cancel" onClick={handleCloseModal}>{t('common.cancel')}</Button>,
           <Button key="confirm" type="primary" loading={confirmLoading} onClick={handleConfirmModal}>{t('common.confirm')}</Button>,
@@ -148,9 +160,6 @@ const ChannelPage: React.FC = () => {
           </div>
         ) : (
           <Form layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} style={{ padding: '16px 0' }}>
-            <Form.Item label="Open">
-              <Switch size="small" checked={open} onChange={handleSwitchChange} />
-            </Form.Item>
             {Object.keys(fields).map((key) => (
               <Form.Item key={key} label={key.replace(/_/g, ' ')}>
                 {sensitiveKeys.some(sensitiveKey => key.toLowerCase().includes(sensitiveKey)) ? (

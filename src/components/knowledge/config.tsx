@@ -92,7 +92,7 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
             {configData.selectedSearchTypes.includes('textSearch') && (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">{t('knowledge.pattern')}</label>
+                  <label className="text-sm w-[100px]">{t('knowledge.pattern')}</label>
                   <Radio.Group
                     onChange={handlePatternChange}
                     value={configData.textSearchMode}
@@ -103,16 +103,18 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
                   </Radio.Group>
                 </div>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">{t('knowledge.weight')}</label>
-                  <Slider
-                    className="flex-1 mx-2"
-                    min={0}
-                    max={1}
-                    step={0.01}
-                    value={configData.textSearchWeight}
-                    onChange={(value) => setConfigData(prevData => ({ ...prevData, textSearchWeight: value }))}
-                  />
-                  <Input className="w-14" value={configData.textSearchWeight.toFixed(2)} readOnly />
+                  <label className="text-sm w-[100px]">{t('knowledge.weight')}</label>
+                  <div className="flex flex-1 items-center gap-4">
+                    <Slider
+                      className="flex-1"
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      value={configData.textSearchWeight}
+                      onChange={(value) => setConfigData(prevData => ({ ...prevData, textSearchWeight: value }))}
+                    />
+                    <Input className="w-14" value={configData.textSearchWeight.toFixed(2)} readOnly />
+                  </div>
                 </div>
               </>
             )}
@@ -132,20 +134,23 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
             {configData.selectedSearchTypes.includes('vectorSearch') && (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">{t('knowledge.weight')}</label>
-                  <Slider
-                    className="flex-1 mx-2"
-                    min={0}
-                    max={1}
-                    step={0.01}
-                    value={configData.vectorSearchWeight}
-                    onChange={(value) => setConfigData(prevData => ({ ...prevData, vectorSearchWeight: value }))}
-                  />
-                  <Input className="w-14" value={configData.vectorSearchWeight.toFixed(2)} readOnly />
+                  <label className="text-sm w-[100px]">{t('knowledge.weight')}</label>
+                  <div className='flex flex-1 items-center gap-4'>
+                    <Slider
+                      className="flex-1"
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      value={configData.vectorSearchWeight}
+                      onChange={(value) => setConfigData(prevData => ({ ...prevData, vectorSearchWeight: value }))}
+                    />
+                    <Input className="w-14" value={configData.vectorSearchWeight.toFixed(2)} readOnly />
+                  </div>
                 </div>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">{t('knowledge.returnQuantity')}</label>
+                  <label className="text-sm w-[100px]">{t('knowledge.returnQuantity')}</label>
                   <InputNumber
+                    className='flex-1'
                     min={1}
                     value={configData.quantity}
                     onChange={(value) => setConfigData(prevData => ({ ...prevData, quantity: value ?? 1 }))}
@@ -153,8 +158,9 @@ const ConfigComponent: React.FC<ConfigProps> = ({ configData, setConfigData }) =
                   />
                 </div>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-sm w-32">{t('knowledge.candidateQuantity')}</label>
+                  <label className="text-sm w-[100px]">{t('knowledge.candidateQuantity')}</label>
                   <InputNumber
+                    className='flex-1'
                     min={1}
                     value={configData.candidate}
                     onChange={(value) => setConfigData(prevData => ({ ...prevData, candidate: value ?? 1 }))}

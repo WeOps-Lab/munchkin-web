@@ -23,6 +23,8 @@ const SkillSettingsPage: React.FC = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
 
+  const [temperature, setTemperature] = useState(0.7);
+
   const [chatHistoryEnabled, setChatHistoryEnabled] = useState(true);
   const [ragEnabled, setRagEnabled] = useState(true);
   const [showRagSource, setRagSourceStatus] = useState(false);
@@ -75,6 +77,8 @@ const SkillSettingsPage: React.FC = () => {
           setChatHistoryEnabled(data.enable_conversation_history);
           setRagEnabled(data.enable_rag);
           setRagSourceStatus(data.enable_rag_knowledge_source);
+
+          setTemperature(data.temperature || 0.7);
 
           const initialRagSources = data.rag_score_threshold.map((item: RagScoreThresholdItem) => {
             const base = knowledgeBases.find((base) => base.id === Number(item.knowledge_base));
@@ -154,7 +158,7 @@ const SkillSettingsPage: React.FC = () => {
         enable_rag_knowledge_source: showRagSource,
         rag_score_threshold: ragScoreThreshold,
         conversation_window_size: chatHistoryEnabled ? quantity : undefined,
-        temperature: values.temperature
+        temperature: temperature
       };
       setSaveLoading(true);
       await put(`/model_provider_mgmt/llm/${id}/`, payload);
@@ -184,9 +188,8 @@ const SkillSettingsPage: React.FC = () => {
         rag_score_threshold: ragScoreThreshold,
         chat_history: quantity ? newMessage.slice(0, quantity).map(msg => ({ text: msg.content, event: msg.role })) : [],
         conversation_window_size: chatHistoryEnabled ? quantity : undefined,
-        temperature: values.temperature
+        temperature: temperature
       };
-      console.log('payload', payload);
       const reply = await post('/model_provider_mgmt/llm/execute/', payload);
       const botMessage: ProChatMessage = {
         id: new Date().getTime().toString(),
@@ -201,6 +204,12 @@ const SkillSettingsPage: React.FC = () => {
     } catch (error) {
       console.error(t('common.fetchFailed'), error);
     }
+  };
+
+  const handleTemperatureChange = (value: number | null) => {
+    const newValue = value === null ? 0 : value;
+    setTemperature(newValue);
+    form.setFieldsValue({ temperature: newValue });
   };
 
   return (
@@ -247,21 +256,21 @@ const SkillSettingsPage: React.FC = () => {
                     name="temperature"
                     tooltip={t('skill.form.temperatureTip')}
                   >
-                    <div className="flex">
+                    <div className="flex gap-4">
                       <Slider
                         className="flex-1"
                         min={0} 
                         max={1} 
                         step={0.01} 
-                        onChange={(value) => form.setFieldsValue({ temperature: value })}
-                        value={form.getFieldValue('temperature')}
+                        value={temperature}
+                        onChange={handleTemperatureChange}
                       />
                       <InputNumber
                         min={0}
                         max={1}
                         step={0.01}
-                        value={form.getFieldValue('temperature')}
-                        onChange={(value) => form.setFieldsValue({ temperature: value })}
+                        value={temperature}
+                        onChange={handleTemperatureChange}
                       />
                     </div>
                   </Form.Item>
@@ -315,7 +324,7 @@ const SkillSettingsPage: React.FC = () => {
                               <Tooltip title={source.name}>
                                 <span className="inline-block max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap">{source.name}</span>
                               </Tooltip>
-                              <div className="flex-1 flex items-center ml-2">
+                              <div className="flex-1 flex items-center ml-2 gap-4">
                                 <Slider
                                   className="flex-1 mx-2"
                                   min={0}

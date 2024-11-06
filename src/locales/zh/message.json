@@ -7,6 +7,7 @@
     "set": "设置",
     "search": "搜索",
     "create": "创建",
+    "update": "更新",
     "save": "保存",
     "saveOnly": "仅保存",
     "publish": "发布",
@@ -140,7 +141,13 @@
       "characters": "字符",
       "link": "链接",
       "deep": "深度",
-      "deepTip": "在获取网站内容时，深度决定了抓取链接的层级深度，即从起始页面出发，最多可以跳转多少层链接。"
+      "deepTip": "在获取网站内容时，深度决定了抓取链接的层级深度，即从起始页面出发，最多可以跳转多少层链接。",
+      "webLinkSaveSuccess": "网页链接数据保存成功",
+      "webLinkSaveFailed": "请更正表单中的错误或保存网页链接数据失败",
+      "fileUploadSuccess": "文件上传成功",
+      "fileUploadFailed": "文件上传失败",
+      "manualDataSaveSuccess": "手动数据保存成功",
+      "manualDataSaveFailed": "保存手动数据失败"
     },
     "testing": {
       "title": "测试",
@@ -159,7 +166,11 @@
     "createdAt": "创建时间",
     "title": "API密钥",
     "subTitle": "为了防止API滥用，请保护你的API密钥。",
-    "create": "创建新密钥"
+    "create": "创建新密钥",
+    "selectGroup": "选择分组",
+    "group": "分组",
+    "copied": "已复制到粘贴板",
+    "deleteConfirm": "你确定要删除选中的密钥吗？"
   },
   "skill": {
     "menu": "技能",

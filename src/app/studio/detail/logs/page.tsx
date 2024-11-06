@@ -57,7 +57,7 @@ const StudioLogsPage: React.FC = () => {
         key: index.toString(),
         title: item.title,
         createdTime: item.created_at,
-        updatedTime: item.created_at,
+        updatedTime: item.updated_at,
         user: item.username,
         channel: item.channel_type,
         count: item.count,
@@ -166,7 +166,7 @@ const StudioLogsPage: React.FC = () => {
       key: 'channel',
       filters: channelFilters,
       filteredValue: selectedChannels,
-      onFilter: (value, record: LogRecord) => true,
+      onFilter: () => true,
       render: (text: string) => (
         <div className="flex">
           <Icon type="qiwei_qiwei" className="text-xl mr-[4px]" />

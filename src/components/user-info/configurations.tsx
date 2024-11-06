@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Space, Popconfirm, message, Tooltip, Spin } from 'antd';
+import { Button, Table, Space, Popconfirm, message, Tooltip, Spin, Modal, Select } from 'antd';
 import { CopyOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import OperateModal from '@/components/operate-modal';
 import useApiClient from '@/utils/request';
@@ -14,6 +14,8 @@ interface TableData {
   id: number;
   api_secret: string;
   created_at: string;
+  team: string;
+  team_name?: string;
 }
 
 const initialDataSource: Array<TableData> = [];
@@ -24,26 +26,42 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
   const [dataSource, setDataSource] = useState(initialDataSource);
   const [loading, setLoading] = useState<boolean>(false);
   const [creating, setCreating] = useState<boolean>(false);
+  const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [groupVisible, setGroupVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchGroups = async () => {
       setLoading(true);
+      try {
+        const data = await get('/knowledge_mgmt/knowledge_base/get_teams/');
+        setGroups(data);
+        return data;
+      } catch (error) {
+        message.error(t('common.fetchFailed'));
+        return [];
+      }
+    };
+
+    const fetchData = async (groups: any[]) => {
       try {
         const data = await get('/base/user_api_secret/');
         setDataSource(data.map((item: TableData) => ({
           id: item.id,
           api_secret: item.api_secret,
           created_at: item.created_at,
+          team: item.team,
+          team_name: groups.find(group => group.id === item.team)?.name,
         })));
       } catch (error) {
-        message.error('Failed to fetch data');
+        message.error(t('common.fetchFailed'));
       } finally {
         setLoading(false);
       }
     };
 
     if (visible) {
-      fetchData();
+      fetchGroups().then((groupData) => fetchData(groupData));
     }
   }, [get, visible]);
 
@@ -54,28 +72,38 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
       setDataSource(newDataSource);
       message.success(`Deleted key: ${key}`);
     } catch (error) {
-      message.error('Failed to delete key');
+      message.error(t('common.delFailed'));
     }
   };
 
   const handleCopy = (key: string) => {
     navigator.clipboard.writeText(key);
-    message.success('Copied to clipboard');
+    message.success(t('secret.copied'));
   };
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
+    setGroupVisible(true);
+  };
+
+  const handleGroupSelect = async () => {
+    if (!selectedGroup) return;
+
     setCreating(true);
     try {
-      const data = await post('/base/user_api_secret/');
+      const data = await post('/base/user_api_secret/', { team: selectedGroup });
+      const group = groups.find(group => group.id === selectedGroup);
       const newEntry = {
         id: data.id,
         api_secret: data.api_secret,
         created_at: data.created_at,
+        team: selectedGroup,
+        team_name: group ? group.name : undefined,
       };
       setDataSource([...dataSource, newEntry]);
-      message.success('Created new Secret key');
+      message.success(t('common.addSuccess'));
+      setGroupVisible(false);
     } catch (error) {
-      message.error('Failed to create new key');
+      message.error(t('common.saveFailed'));
     } finally {
       setCreating(false);
     }
@@ -103,6 +131,12 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
       width: 150,
     },
     {
+      title: t('secret.group'),
+      dataIndex: 'team_name',
+      key: 'team_name',
+      width: 150,
+    },
+    {
       title: '',
       key: 'action',
       width: 80,
@@ -114,7 +148,7 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
             onClick={() => handleCopy(record.api_secret)}
           ></Button>
           <Popconfirm
-            title="Are you sure to delete this key?"
+            title={t('secret.deleteConfirm')}
             onConfirm={() => handleDelete(record.id)}
             okText="Yes"
             cancelText="No"
@@ -128,7 +162,7 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
 
   return (
     <OperateModal
-      width={600}
+      width={800}
       visible={visible}
       title={t('secret.title')}
       subTitle={t('secret.subTitle')}
@@ -154,11 +188,30 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
           type="primary"
           icon={<PlusOutlined />}
           onClick={handleCreate}
-          disabled={creating || dataSource.length > 0 || loading}
+          disabled={creating || loading}
         >
           {creating ? <Spin /> : t('secret.create')}
         </Button>
       </div>
+      <Modal
+        visible={groupVisible}
+        title={t('secret.selectGroup')}
+        centered
+        onCancel={() => setGroupVisible(false)}
+        onOk={handleGroupSelect}
+      >
+        <Select
+          style={{ width: '100%' }}
+          placeholder={t('common.select')}
+          onChange={setSelectedGroup}
+        >
+          {groups.map(group => (
+            <Select.Option key={group.id} value={group.id} disabled={dataSource.some(item => item.team === group.id)}>
+              {group.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Modal>
     </OperateModal>
   );
 };

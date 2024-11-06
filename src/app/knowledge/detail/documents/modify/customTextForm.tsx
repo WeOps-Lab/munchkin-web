@@ -10,14 +10,15 @@ const AIEditor = dynamic(() => import('@/components/ai-editor'), { ssr: false })
 interface CustomTextFormProps {
   onFormChange: (isValid: boolean) => void;
   onFormDataChange: (data: { name: string; content: string }) => void;
+  initialData: { name: string; content: string };
 }
 
-const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDataChange }) => {
+const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDataChange, initialData }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<{ name: string; content: string }>({
-    name: '',
-    content: '',
+    name: initialData.name,
+    content: initialData.content,
   });
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const CustomTextForm: React.FC<CustomTextFormProps> = ({ onFormChange, onFormDat
           onFormChange(isValid);
           onFormDataChange(formData);
         }}
+        initialValues={formData}
       >
         <Form.Item label={t('knowledge.form.name')}>
           <Input

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Breadcrumb, Button, Steps, message } from 'antd';
@@ -22,7 +22,7 @@ const KnowledgeModifyPage = () => {
   const id = searchParams.get('id');
   const name = searchParams.get('name');
   const desc = searchParams.get('desc');
-  const { post } = useApiClient();
+  const { get, post } = useApiClient();
   const { saveConfig } = useSaveConfig();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isStepValid, setIsStepValid] = useState<boolean>(false);
@@ -32,9 +32,22 @@ const KnowledgeModifyPage = () => {
   const [webLinkData, setWebLinkData] = useState<{ name: string, link: string, deep: number }>({ name: '', link: '', deep: 1 });
   const [manualData, setManualData] = useState<{ name: string, content: string }>({ name: '', content: '' });
   const [loading, setLoading] = useState<boolean>(false);
+  const [config, setConfig] = useState(null);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   const formRef = useRef<any>(null);
 
+  useEffect(() => {
+    const configParam = searchParams.get('config');
+    const idParam = searchParams.get('documentId');
+    if (idParam && configParam) {
+      setCurrentStep(1);
+      setIsUpdate(true);
+      setDocumentIds([Number(idParam)]);
+      setConfig(JSON.parse(configParam));
+    }
+  }, [searchParams]);
+  
   const sourceTypeToDisplayText: { [key: string]: string } = {
     file: t('knowledge.localFile'),
     web_page: t('knowledge.webLink'),
@@ -48,16 +61,23 @@ const KnowledgeModifyPage = () => {
       if (type === 'web_page') {
         try {
           await formRef.current?.validateFields();
-          const data = await post('/knowledge_mgmt/web_page_knowledge/create_web_page_knowledge/', {
-            knowledge_base_id: id,
+          const params = {
             name: webLinkData.name,
             url: webLinkData.link,
             max_depth: webLinkData.deep,
-          });
-          setDocumentIds([data]);
-          message.success('Web link data saved successfully');
+          }
+          if (documentIds.length) {
+            await post(`/knowledge_mgmt/knowledge_document/${documentIds[0]}/update_document_base_info/`, params)
+          } {
+            const data = await post('/knowledge_mgmt/web_page_knowledge/create_web_page_knowledge/', {
+              knowledge_base_id: id,
+              ...params
+            });
+            setDocumentIds([data]);
+          }
+          message.success(t('knowledge.documents.webLinkSaveSuccess'));
         } catch (error) {
-          message.error('Please correct the errors in the form or failed to save web link data');
+          message.error(t('knowledge.documents.webLinkSaveFail'));
           setLoading(false);
           return;
         }
@@ -72,23 +92,30 @@ const KnowledgeModifyPage = () => {
             },
           });
           setDocumentIds(data);
-          message.success('Files uploaded successfully');
+          message.success(t('knowledge.documents.fileUploadSuccess'));
         } catch (error) {
-          message.error('Failed to upload files');
+          message.error(t('knowledge.documents.fileUploadFailed'));
           setLoading(false);
           return;
         }
       } else if (type === 'manual') {
         try {
-          const data = await post('/knowledge_mgmt/manual_knowledge/create_manual_knowledge/', {
-            knowledge_base_id: id,
+          const params = {
             name: manualData.name,
             content: manualData.content,
-          });
-          setDocumentIds([data]);
-          message.success('Manual data saved successfully');
+          }
+          if (documentIds.length) {
+            await post(`/knowledge_mgmt/knowledge_document/${documentIds[0]}/update_document_base_info/`, params)
+          } else {
+            const data = await post('/knowledge_mgmt/manual_knowledge/create_manual_knowledge/', {
+              knowledge_base_id: id,
+              ...params
+            });
+            setDocumentIds([data]);
+          }
+          message.success(t('knowledge.documents.manualDataSaveSuccess'));
         } catch (error) {
-          message.error('Failed to save manual data');
+          message.error(t('knowledge.documents.manualDataSaveFailed'));
           setLoading(false);
           return;
         }
@@ -104,7 +131,31 @@ const KnowledgeModifyPage = () => {
     setLoading(false);
   };
 
-  const handlePrevious = () => {
+  const handleConfirm = async () => {
+    setLoading(true);
+    await saveConfig({
+      ...(preprocessConfig as object),
+      is_save_only: false,
+    });
+    setLoading(false);
+  }
+
+  const handlePrevious = async () => {
+    if (isUpdate && (type === 'web_page' || type === 'manual')) {
+      const data = await get(`/knowledge_mgmt/knowledge_document/${documentIds[0]}/get_document_detail/`);
+      if (type === 'web_page') {
+        setWebLinkData({
+          name: data.name,
+          link: data.url,
+          deep: data.max_depth,
+        });
+      } else if (type === 'manual') {
+        setManualData({
+          name: data.name,
+          content: data.content,
+        });
+      }
+    }
     setCurrentStep(currentStep - 1);
   };
 
@@ -137,13 +188,13 @@ const KnowledgeModifyPage = () => {
   const renderStepContent = () => {
     switch (type) {
       case 'file':
-        return <LocalFileUpload onFileChange={handleFileChange} />;
+        return <LocalFileUpload onFileChange={handleFileChange} initialFileList={fileList} />;
       case 'web_page':
-        return <WebLinkForm ref={formRef} onFormChange={handleValidationChange} onFormDataChange={handleWebLinkDataChange} />;
+        return <WebLinkForm ref={formRef} initialData={webLinkData} onFormChange={handleValidationChange} onFormDataChange={handleWebLinkDataChange} />;
       case 'manual':
-        return <CustomTextForm onFormChange={handleValidationChange} onFormDataChange={handleManualDataChange} />;
+        return <CustomTextForm initialData={manualData} onFormChange={handleValidationChange} onFormDataChange={handleManualDataChange} />;
       default:
-        return <LocalFileUpload onFileChange={handleFileChange} />;
+        return <LocalFileUpload onFileChange={handleFileChange} initialFileList={fileList} />;
     }
   };
 
@@ -158,7 +209,7 @@ const KnowledgeModifyPage = () => {
         knowledgeSourceType={type} 
         knowledgeDocumentIds={documentIds}
         onConfigChange={handlePreprocessConfigChange}
-        initialConfig={{}} />,
+        initialConfig={config} />,
     },
     {
       title: t('knowledge.finish'),
@@ -176,7 +227,7 @@ const KnowledgeModifyPage = () => {
       <Breadcrumb>
         <Breadcrumb.Item>{t('knowledge.menu')}</Breadcrumb.Item>
         <Breadcrumb.Item>{type && sourceTypeToDisplayText[type]}</Breadcrumb.Item>
-        <Breadcrumb.Item>{t('common.create')}</Breadcrumb.Item>
+        <Breadcrumb.Item>{isUpdate ? t('common.update') : t('common.create')}</Breadcrumb.Item>
       </Breadcrumb>
       <div className="px-7 py-5">
         <Steps className="px-16 py-8" current={currentStep}>
@@ -188,11 +239,18 @@ const KnowledgeModifyPage = () => {
           {steps[currentStep].content}
         </div>
         <div className="fixed bottom-10 right-20 z-50 flex space-x-2">
-          {currentStep > 0 && currentStep < steps.length - 1 && (
+          {currentStep > 0 && currentStep < steps.length - 1 && type !== 'file' && (
             <Button onClick={handlePrevious}>
               {t('common.pre')}
             </Button>
           )}
+          {
+            currentStep === 1  && isUpdate && (
+              <Button type="primary" onClick={handleConfirm}>
+                {t('common.confirm')}
+              </Button>
+            )
+          }
           {currentStep < steps.length - 1 && (
             <Button type="primary" onClick={handleNext} disabled={!isStepValid} loading={loading}>
               {t('common.next')}

@@ -118,7 +118,11 @@ const DocumentsPage: React.FC = () => {
       key: 'action',
       render: (_, record) => (
         <>
-          <Button type='link' className='mr-[10px]' onClick={() => handleSetClick(record)}>
+          <Button 
+            type='link' 
+            className='mr-[10px]'
+            disabled={record.train_status_display === 'Training'}
+            onClick={() => handleSetClick(record)}>
             {t('common.set')}
           </Button>
           <Button
@@ -158,11 +162,10 @@ const DocumentsPage: React.FC = () => {
       documentId: record.id?.toString() || '',
       name: name || '',
       desc: desc || '',
-      sourceType: activeTabKey,
-      status: record.train_status_display,
+      type: activeTabKey,
       config: JSON.stringify(config),
     });
-    router.push(`/knowledge/detail/documents/config?${queryParams.toString()}`);
+    router.push(`/knowledge/detail/documents/modify?${queryParams.toString()}`);
   };
 
   const handleDelete = (keys: React.Key[]) => {

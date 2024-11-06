@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Spin } from 'antd';
-import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less'
 import { ProChatMessage } from '@/types/studio'
 
@@ -9,7 +8,6 @@ interface ChatComponentProps {
 }
 
 const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ initialChats }) => {
-  const { t } = useTranslation();
   const [ProChat, setProChat] = useState<React.ComponentType<any> | null>(null);
 
   useEffect(() => {

@@ -8,24 +8,25 @@ const { TextArea } = Input;
 interface WebLinkFormProps {
   onFormChange: (isValid: boolean) => void;
   onFormDataChange: (data: { name: string, link: string, deep: number }) => void;
+  initialData: { name: string, link: string, deep: number };
 }
 
-const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, onFormDataChange }, ref) => {
+const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, onFormDataChange, initialData }, ref) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<{ name: string; link: string; deep: number }>({
-    name: '',
-    link: '',
-    deep: 1,
+    name: initialData.name,
+    link: initialData.link,
+    deep: initialData.deep,
   });
 
   useImperativeHandle(ref, () => form);
 
   useEffect(() => {
     form.setFieldsValue({
-      deep: formData.deep,
+      ...formData,
     });
-  }, [form]);
+  }, [formData, form]);
 
   useEffect(() => {
     const isValid = formData.name.trim() !== '' && formData.link.trim() !== '';
@@ -61,6 +62,7 @@ const WebLinkForm = forwardRef<FormInstance, WebLinkFormProps>(({ onFormChange, 
           onFormChange(isValid);
           onFormDataChange(formData);
         }}
+        initialValues={formData} // 设置初始表单值
       >
         <Form.Item
           label={t('knowledge.form.name')}

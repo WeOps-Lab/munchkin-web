@@ -9,11 +9,12 @@ const { Dragger } = Upload;
 
 interface LocalFileUploadProps {
   onFileChange: (files: File[]) => void;
+  initialFileList: any[];
 }
 
-const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange }) => {
+const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange, initialFileList }) => {
   const { t } = useTranslation();
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [fileList, setFileList] = useState<any[]>(initialFileList || []);
 
   useEffect(() => {
     const files = fileList.map(file => file.originFileObj).filter(Boolean) as File[];

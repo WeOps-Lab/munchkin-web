@@ -7,6 +7,7 @@
     "set": "Set",
     "search": "Search",
     "create": "Create",
+    "update": "Update",
     "save": "Save",
     "publish": "Publish",
     "saveOnly": "Save Only",
@@ -140,7 +141,13 @@
       "characters": "Characters",
       "link": "Link",
       "deep": "Deep",
-      "deepTip": "When retrieving website content, depth determines the hierarchical level of links to be crawled, specifying how many levels of links can be followed from the starting page."
+      "deepTip": "When retrieving website content, depth determines the hierarchical level of links to be crawled, specifying how many levels of links can be followed from the starting page.",
+      "webLinkSaveSuccess": "Web link data saved successfully",
+      "webLinkSaveFailed": "Please correct the errors in the form or failed to save web link data",
+      "fileUploadSuccess": "Files uploaded successfully",
+      "fileUploadFailed": "Failed to upload files",
+      "manualDataSaveSuccess": "Manual data saved successfully",
+      "manualDataSaveFailed": "Failed to save manual data"
     },
     "testing": {
       "title": "Testing",
@@ -159,7 +166,11 @@
     "createdAt": "Created",
     "title": "API Secret Keys",
     "subTitle": "To prevent API abuse, protect your API Key.",
-    "create": "Create new Secret key"
+    "create": "Create new Secret key",
+    "selectGroup": "Select Group",
+    "group": "Group",
+    "copied": "Copied to clipboard",
+    "deleteConfirm": "Are you sure you want to delete this secret key?"
   },
   "skill": {
     "menu": "Skill",

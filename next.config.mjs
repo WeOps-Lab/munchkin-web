@@ -1,12 +1,16 @@
 import withAntdLess from 'next-plugin-antd-less';
 
 export default withAntdLess({
-  reactStrictMode: false, 
+  reactStrictMode: false,
+  staticPageGenerationTimeout: 300,
+  experimental: {
+    proxyTimeout: 300_000, // 将超时设置为300秒
+  },
   async rewrites() {
     return [
       {
         source: '/reqApi/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*/`, // 代理到后台服务器
+        destination: `${process.env.NEXTAPI_URL}/:path*/`, // 代理到后台服务器
       },
     ];
   },

@@ -7,7 +7,7 @@ import { useTranslation } from '@/utils/i18n';
 
 const apiClient = axios.create({
   baseURL: '/reqApi',
-  timeout: 120000, // 请求超时时间
+  timeout: 30000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json',
   },

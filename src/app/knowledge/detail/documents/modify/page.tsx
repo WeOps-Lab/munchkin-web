@@ -32,6 +32,7 @@ const KnowledgeModifyPage = () => {
   const [webLinkData, setWebLinkData] = useState<{ name: string, link: string, deep: number }>({ name: '', link: '', deep: 1 });
   const [manualData, setManualData] = useState<{ name: string, content: string }>({ name: '', content: '' });
   const [loading, setLoading] = useState<boolean>(false);
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [config, setConfig] = useState(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
@@ -86,6 +87,7 @@ const KnowledgeModifyPage = () => {
           const formData = new FormData();
           formData.append('knowledge_base_id', id as string);
           fileList.forEach(file => formData.append('files', file));
+          
           const data = await post('/knowledge_mgmt/file_knowledge/create_file_knowledge/', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
@@ -132,12 +134,12 @@ const KnowledgeModifyPage = () => {
   };
 
   const handleConfirm = async () => {
-    setLoading(true);
+    setConfirmLoading(true);
     await saveConfig({
       ...(preprocessConfig as object),
       is_save_only: false,
     });
-    setLoading(false);
+    setConfirmLoading(false);
   }
 
   const handlePrevious = async () => {
@@ -246,7 +248,7 @@ const KnowledgeModifyPage = () => {
           )}
           {
             currentStep === 1  && isUpdate && (
-              <Button type="primary" onClick={handleConfirm}>
+              <Button type="primary" onClick={handleConfirm} loading={confirmLoading}>
                 {t('common.confirm')}
               </Button>
             )

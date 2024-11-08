@@ -147,7 +147,11 @@
       "fileUploadSuccess": "Files uploaded successfully",
       "fileUploadFailed": "Failed to upload files",
       "manualDataSaveSuccess": "Manual data saved successfully",
-      "manualDataSaveFailed": "Failed to save manual data"
+      "manualDataSaveFailed": "Failed to save manual data",
+      "selectSemanticModel": "Please select a semantic model when Semantic Chunk Parsing is enabled.",
+      "selectOcrModel": "Please select an OCR model when OCR Enhancement is enabled.",
+      "configSaved": "Configuration saved and preprocessing started",
+      "preprocessFailed": "Failed to start preprocessing"
     },
     "testing": {
       "title": "Testing",

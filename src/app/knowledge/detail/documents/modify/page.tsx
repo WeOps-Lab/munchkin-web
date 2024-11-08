@@ -211,7 +211,7 @@ const KnowledgeModifyPage = () => {
         knowledgeSourceType={type} 
         knowledgeDocumentIds={documentIds}
         onConfigChange={handlePreprocessConfigChange}
-        initialConfig={config} />,
+        initialConfig={config || {}} />,
     },
     {
       title: t('knowledge.finish'),

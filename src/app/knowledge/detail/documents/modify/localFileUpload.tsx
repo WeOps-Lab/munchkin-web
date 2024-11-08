@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useTranslation } from '@/utils/i18n';
+import { uploadChunks } from '@/utils/upload';
 
 const { Dragger } = Upload;
 
@@ -32,8 +33,23 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange, initial
     const isAllowedType = allowedTypes.includes(file.type);
     if (!isAllowedType) {
       message.error(`${file.name} ${t('common.fileType')}`);
+      return Upload.LIST_IGNORE;
     }
     return isAllowedType;
+  };
+
+  const handleCustomRequest = async (options: any) => {
+    const { file, onSuccess, onError, onProgress } = options;
+    try {
+      await uploadChunks(file, (progressEvent) => {
+        onProgress({
+          percent: (progressEvent.loaded / progressEvent.total) * 100,
+        });
+      });
+      onSuccess("ok");
+    } catch (err) {
+      onError(err);
+    }
   };
 
   return (
@@ -43,6 +59,7 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange, initial
         multiple
         fileList={fileList}
         beforeUpload={handleBeforeUpload}
+        customRequest={handleCustomRequest}
         onChange={(info) => {
           setFileList(info.fileList);
         }}

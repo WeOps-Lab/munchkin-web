@@ -147,7 +147,11 @@
       "fileUploadSuccess": "文件上传成功",
       "fileUploadFailed": "文件上传失败",
       "manualDataSaveSuccess": "手动数据保存成功",
-      "manualDataSaveFailed": "保存手动数据失败"
+      "manualDataSaveFailed": "保存手动数据失败",
+      "selectSemanticModel": "启用语义分块解析时请选择语义模型。",
+      "selectOcrModel": "启用OCR增强时请选择OCR模型。",
+      "configSaved": "配置已保存，预处理已开始",
+      "preprocessFailed": "无法启动预处理"
     },
     "testing": {
       "title": "测试",

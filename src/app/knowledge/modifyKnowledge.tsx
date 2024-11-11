@@ -45,7 +45,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         defaultValues.team = [groups[0].id];
       }
       if (modelOptions.length > 0) {
-        defaultValues.embed_model = modelOptions[0].id;
+        defaultValues.embed_model = modelOptions.filter(option => option.enabled)?.[0]?.id;
       }
       form.setFieldsValue(defaultValues);
     }

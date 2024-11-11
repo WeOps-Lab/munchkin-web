@@ -73,6 +73,9 @@
     "preprocess": "预处理",
     "finish": "完成",
     "finishTip": "所有上传的文件将会被加入训练队列。请在左侧查看训练进度。",
+    "backToList": "返回文档列表",
+    "or": "或",
+    "goToTesting": "前往测试", 
     "form": {
       "name": "名称",
       "group": "分组",

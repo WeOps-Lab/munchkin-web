@@ -18,7 +18,7 @@ const PreprocessStep: React.FC<PreprocessStepProps> = ({ onConfigChange, knowled
     chunkOverlap: initialConfig?.chunkOverlap ?? 0,
     semanticChunkParsing: initialConfig?.semanticChunkParsing ?? false,
     semanticModel: initialConfig?.semanticModel ?? null,
-    ocrEnhancement: initialConfig?.ocrEnhancement ?? true,
+    ocrEnhancement: initialConfig?.ocrEnhancement ?? false,
     ocrModel: initialConfig?.ocrModel ?? null,
     excelParsing: initialConfig?.excelParsing ?? false,
     excelParseOption: initialConfig?.excelParseOption ?? 'fullContent',

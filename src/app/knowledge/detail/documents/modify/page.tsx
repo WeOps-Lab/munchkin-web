@@ -189,6 +189,10 @@ const KnowledgeModifyPage = () => {
     router.push(`/knowledge/detail/documents?id=${id}&name=${name}&desc=${desc}&type=${type}`);
   };
 
+  const handleToTesting = () => {
+    router.push(`/knowledge/detail/testing?id=${id}&name=${name}&desc=${desc}`);
+  };
+
   const renderStepContent = () => {
     switch (type) {
       case 'file':
@@ -221,6 +225,11 @@ const KnowledgeModifyPage = () => {
         <div className="flex flex-col items-center">
           <Image src="/finish.png" alt="Finish" width={150} height={40} />
           <p>{t('knowledge.finishTip')}</p>
+          <p>
+            <span className='text-blue-500 cursor-pointer' onClick={handleDone}>{t('knowledge.backToList')}</span>
+            <span> {t('knowledge.or')} </span>
+            <span className='text-blue-500 cursor-pointer' onClick={handleToTesting}>{t('knowledge.goToTesting')}</span>
+          </p>
         </div>
       ),
     },

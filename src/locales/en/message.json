@@ -72,7 +72,10 @@
     "choose": "Choose",
     "preprocess": "Preprocess",
     "finish": "Finish",
-    "finishTip": "All files uploaded will be added to the training queue. Please check the training progress on the left side.",
+    "finishTip": "All files uploaded will be added to the training queue. Please check the training progress on the left side",
+    "backToList": "Back to List",
+    "or": "or",
+    "goToTesting": "Go to Testing", 
     "form": {
       "name": "Name",
       "group": "Group",

@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Breadcrumb, Button, Steps, message } from 'antd';
+import { Breadcrumb, Button, Steps, message, Spin } from 'antd';
 import LocalFileUpload from './localFileUpload';
 import WebLinkForm from './webLinkForm';
 import CustomTextForm from './customTextForm';
@@ -31,6 +31,7 @@ const KnowledgeModifyPage = () => {
   const [preprocessConfig, setPreprocessConfig] = useState<any>(null);
   const [webLinkData, setWebLinkData] = useState<{ name: string, link: string, deep: number }>({ name: '', link: '', deep: 1 });
   const [manualData, setManualData] = useState<{ name: string, content: string }>({ name: '', content: '' });
+  const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [config, setConfig] = useState(null);
@@ -47,6 +48,7 @@ const KnowledgeModifyPage = () => {
       setDocumentIds([Number(idParam)]);
       setConfig(JSON.parse(configParam));
     }
+    setPageLoading(false);
   }, [searchParams]);
   
   const sourceTypeToDisplayText: { [key: string]: string } = {
@@ -69,7 +71,7 @@ const KnowledgeModifyPage = () => {
           }
           if (documentIds.length) {
             await post(`/knowledge_mgmt/knowledge_document/${documentIds[0]}/update_document_base_info/`, params)
-          } {
+          } else {
             const data = await post('/knowledge_mgmt/web_page_knowledge/create_web_page_knowledge/', {
               knowledge_base_id: id,
               ...params
@@ -232,14 +234,22 @@ const KnowledgeModifyPage = () => {
         <Breadcrumb.Item>{isUpdate ? t('common.update') : t('common.create')}</Breadcrumb.Item>
       </Breadcrumb>
       <div className="px-7 py-5">
-        <Steps className="px-16 py-8" current={currentStep}>
-          {steps.map((step, index) => (
-            <Step key={index} title={step.title} />
-          ))}
-        </Steps>
-        <div className="steps-content" style={{ marginTop: 24 }}>
-          {steps[currentStep].content}
-        </div>
+        {pageLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Spin />
+          </div>
+        ) : (
+          <div>
+            <Steps className="px-16 py-8" current={currentStep}>
+              {steps.map((step, index) => (
+                <Step key={index} title={step.title} />
+              ))}
+            </Steps>
+            <div className="steps-content" style={{ marginTop: 24 }}>
+              {steps[currentStep].content}
+            </div>
+          </div>
+        )}
         <div className="fixed bottom-10 right-20 z-50 flex space-x-2">
           {currentStep > 0 && currentStep < steps.length - 1 && type !== 'file' && (
             <Button onClick={handlePrevious}>
@@ -255,7 +265,7 @@ const KnowledgeModifyPage = () => {
           }
           {currentStep < steps.length - 1 && (
             <Button type="primary" onClick={handleNext} disabled={!isStepValid} loading={loading}>
-              {t('common.next')}
+              {currentStep === 1 ? t('knowledge.finish') : t('common.next')}
             </Button>
           )}
           {currentStep === steps.length - 1 && (

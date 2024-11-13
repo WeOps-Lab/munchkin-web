@@ -139,8 +139,9 @@ const KnowledgeModifyPage = () => {
     setConfirmLoading(true);
     await saveConfig({
       ...(preprocessConfig as object),
-      is_save_only: false,
+      is_save_only: true,
     });
+    setCurrentStep(currentStep + 1);
     setConfirmLoading(false);
   }
 
@@ -267,7 +268,7 @@ const KnowledgeModifyPage = () => {
           )}
           {
             currentStep === 1  && isUpdate && (
-              <Button type="primary" onClick={handleConfirm} loading={confirmLoading}>
+              <Button type="primary" onClick={handleConfirm} disabled={!isStepValid} loading={confirmLoading}>
                 {t('common.confirm')}
               </Button>
             )

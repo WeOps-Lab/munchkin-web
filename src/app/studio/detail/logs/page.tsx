@@ -104,7 +104,7 @@ const StudioLogsPage: React.FC = () => {
     setConversationLoading(true);
 
     try {
-      const data = await post('/bot_mgmt/history/get_log_detail/', { ids: record.ids });
+      const data = await post('/bot_mgmt/history/get_log_detail/', { ids: record.ids, page: 1, page_size: 20 });
       setSelectedConversation({
         ...record,
         conversation: data.map((item: any, index: number) => ({
@@ -254,6 +254,8 @@ const StudioLogsPage: React.FC = () => {
           selectedConversation && selectedConversation.conversation && (
             <ProChatComponent
               initialChats={selectedConversation.conversation}
+              conversationId={selectedConversation.ids}
+              count={selectedConversation.count}
             />
           )
         )}

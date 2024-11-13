@@ -121,7 +121,7 @@ const DocumentsPage: React.FC = () => {
           <Button 
             type='link' 
             className='mr-[10px]'
-            disabled={record.train_status_display === 'Training'}
+            disabled={[0, 4].includes(record.train_status)}
             onClick={() => handleSetClick(record)}>
             {t('common.set')}
           </Button>
@@ -130,14 +130,14 @@ const DocumentsPage: React.FC = () => {
             className='mr-[10px]'
             onClick={() => handleTrain([record.id])}
             loading={singleTrainLoading[record.id.toString()]}
-            disabled={record.train_status_display === 'Training'}
+            disabled={[0, 4].includes(record.train_status)}
           >
             {t('common.train')}
           </Button>
           <Button 
             type='link' 
             onClick={() => handleDelete([record.id])}
-            disabled={record.train_status_display === 'Training'}>
+            disabled={[0, 4].includes(record.train_status)}>
             {t('common.delete')}
           </Button>
         </>

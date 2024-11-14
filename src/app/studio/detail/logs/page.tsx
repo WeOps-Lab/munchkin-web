@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Input, DatePicker, Spin, Drawer, Button, Pagination, Tag } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons';
+import { Table, Input, DatePicker, Spin, Drawer, Button, Pagination, Tag, Tooltip } from 'antd';
+import { ClockCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import Icon from '@/components/icon';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import { useSearchParams } from 'next/navigation';
@@ -40,7 +39,6 @@ const StudioLogsPage: React.FC = () => {
   const searchParams = useSearchParams();
   const botId = searchParams.get('id');
 
-  // 使用useCallback防止每次渲染重新创建fetchLogs函数
   const fetchLogs = useCallback(async (searchText = '', dates: [Dayjs | null, Dayjs | null] | null = [null, null], page = 1, pageSize = 10, selectedChannels: string[] = []) => {
     setLoading(true);
     try {
@@ -135,6 +133,16 @@ const StudioLogsPage: React.FC = () => {
     fetchLogs(searchText, dates, current, size, selectedChannels);
   };
 
+  const handleRefresh = () => {
+    fetchLogs(searchText, dates, pagination.current, pagination.pageSize, selectedChannels);
+  };
+
+  const handleChannelFilterChange = (channels: string[]) => {
+    setSelectedChannels(channels);
+    setPagination({ ...pagination, current: 1 });
+    fetchLogs(searchText, dates, 1, pagination.pageSize, channels);
+  };
+
   const channelFilters = channels.map(channel => ({ text: channel.name, value: channel.name }));
 
   const columns: ColumnType<LogRecord>[] = [
@@ -166,13 +174,8 @@ const StudioLogsPage: React.FC = () => {
       key: 'channel',
       filters: channelFilters,
       filteredValue: selectedChannels,
-      onFilter: () => true,
-      render: (text: string) => (
-        <div className="flex">
-          <Icon type="qiwei_qiwei" className="text-xl mr-[4px]" />
-          {text}
-        </div>
-      ),
+      onFilter: (value) => !!value,  // not used anymore
+      filterMultiple: true,
     },
     {
       title: t('studio.logs.table.count'),
@@ -201,6 +204,9 @@ const StudioLogsPage: React.FC = () => {
             enterButton
             className='w-60'
           />
+          <Tooltip className='mr-[8px]' title={t('common.refresh')}>
+            <Button icon={<SyncOutlined />} onClick={handleRefresh} />
+          </Tooltip>
           <RangePicker
             showTime
             value={dates as [Dayjs, Dayjs]}
@@ -219,6 +225,7 @@ const StudioLogsPage: React.FC = () => {
             columns={columns}
             pagination={false}
             scroll={{ y: 'calc(100vh - 400px)' }}
+            onChange={(pagination, filters) => handleChannelFilterChange(filters.channel as string[])}
           />
         )}
       </div>
@@ -236,12 +243,12 @@ const StudioLogsPage: React.FC = () => {
         )}
       </div>
       <Drawer
-        title={
+        title={selectedConversation && (
           <div className="flex items-center">
-            <span>{selectedConversation?.user}</span>
-            <Tag color="blue" className='ml-4' icon={<ClockCircleOutlined />}>{selectedConversation?.count} {t('studio.logs.records')}</Tag>
+            <span>{selectedConversation.user}</span>
+            <Tag color="blue" className='ml-4' icon={<ClockCircleOutlined />}>{selectedConversation.count} {t('studio.logs.records')}</Tag>
           </div>
-        }
+        )}
         open={drawerVisible}
         onClose={() => setDrawerVisible(false)}
         width={680}

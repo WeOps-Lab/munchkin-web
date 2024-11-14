@@ -123,7 +123,7 @@ const ChannelPage: React.FC = () => {
                   onChange={(checked) => handleSwitchChange(checked, app)}
                 />
               </div>
-              <div className="flex justify-center items-center space-x-4 my-5">
+              <div className="flex justify-center items-center space-x-4 my-10">
                 <Icon type={app.icon} className="text-6xl" />
                 <h2 className="text-xl font-bold m-0">{app.name}</h2>
               </div>

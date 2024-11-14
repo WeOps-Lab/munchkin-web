@@ -29,14 +29,6 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ showSource = fa
       return;
     }
     setIsFullscreen(!isFullscreen);
-
-    setTimeout(() => {
-      if (containerRef.current) {
-        containerRef.current.style.display = 'none';
-        containerRef.current.offsetHeight;
-        containerRef.current.style.display = '';
-      }
-    }, 0);
   };
 
   if (!ProChat) {

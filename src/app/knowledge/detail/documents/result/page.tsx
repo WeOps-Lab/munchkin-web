@@ -32,13 +32,14 @@ const DocsResultPage: React.FC = () => {
     hideDrawer,
   } = useContentDrawer();
 
-  const fetchData = async (page: number, pageSize: number) => {
+  const fetchData = async (page: number, pageSize: number, searchValue?: string) => {
     if (id) {
       setLoading(true);
       const params = {
         page,
-        page_size: pageSize
-      }
+        page_size: pageSize,
+        search_term: searchValue || ''
+      };
       try {
         const { count, items } = await get(`/knowledge_mgmt/knowledge_document/${id}/get_detail/`, { params });
         setParagraphsState(items);
@@ -52,11 +53,13 @@ const DocsResultPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData(currentPage, pageSize);
-  }, [id, get, currentPage, pageSize]);
+    fetchData(currentPage, pageSize, searchTerm);
+  }, [id, get]);
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value.toLowerCase());
+    setSearchTerm(value);
+    setCurrentPage(1);
+    fetchData(1, pageSize, value);
   };
 
   const handlePageChange = (page: number, pageSize?: number) => {
@@ -64,11 +67,8 @@ const DocsResultPage: React.FC = () => {
     if (pageSize) {
       setPageSize(pageSize);
     }
+    fetchData(page, pageSize || 20, searchTerm);
   };
-
-  const filteredParagraphs = paragraphsState.filter(paragraph =>
-    paragraph.content.toLowerCase().includes(searchTerm)
-  );
 
   const handleContentClick = (content: string) => {
     showDrawer(content);
@@ -77,11 +77,12 @@ const DocsResultPage: React.FC = () => {
   return (
     <div className="w-full h-full">
       <div className="flex justify-end items-center mb-4">
-        <Input
+        <Input.Search
           placeholder={`${t('common.search')}...`}
           allowClear
-          onChange={(e) => handleSearch(e.target.value)}
-          onPressEnter={() => handleSearch(searchTerm)}
+          enterButton
+          size="middle"
+          onSearch={handleSearch}
           style={{ width: '240px' }}
         />
       </div>
@@ -93,7 +94,7 @@ const DocsResultPage: React.FC = () => {
         <>
           <div className={`${styles.resultWrap}`}>
             <div className='grid grid-cols-4 gap-4'>
-              {filteredParagraphs.map((paragraph, index) => (
+              {paragraphsState.map((paragraph, index) => (
                 <div key={paragraph.id} className="p-2 cursor-pointer" onClick={() => handleContentClick(paragraph.content)}>
                   <Card
                     size="small"

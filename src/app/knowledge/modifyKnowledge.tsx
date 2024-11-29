@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Modal } from 'antd';
+import { Form } from 'antd';
 import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
@@ -97,17 +97,17 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         onOk={handleConfirm}
         confirmLoading={confirmLoading}
       >
-        <CommonForm 
-          form={form} 
-          loading={loading} 
-          groups={groups} 
-          modelOptions={modelOptions} 
-          isTraining={isTraining} 
-          formType="knowledge" 
-          visible={visible} 
+        <CommonForm
+          form={form}
+          loading={loading}
+          groups={groups}
+          modelOptions={modelOptions}
+          isTraining={isTraining}
+          formType="knowledge"
+          visible={visible}
         />
       </OperateModal>
-      <Modal
+      <OperateModal
         title={t('common.confirm')}
         visible={isModalVisible}
         onOk={handleModalOk}
@@ -116,7 +116,7 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
         centered
       >
         <p>{modalContent}</p>
-      </Modal>
+      </OperateModal>
     </>
   );
 };

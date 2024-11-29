@@ -9,12 +9,7 @@ import ModifyKnowledgeModal from './modifyKnowledge';
 import knowledgeStyle from './index.module.less';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
-
-const iconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
-
-const getIconTypeByIndex = (index: number) => {
-  return iconTypes[index % iconTypes.length];
-};
+import { getIconTypeByIndex } from '@/utils/knowledgeBaseUtils';
 
 const KnowledgePage = () => {
   const router = useRouter();
@@ -28,7 +23,7 @@ const KnowledgePage = () => {
 
   useEffect(() => {
     const getKnowledgeBase = async () => {
-      setLoading(true); 
+      setLoading(true);
       try {
         const data = await get('/knowledge_mgmt/knowledge_base/');
         setCards(Array.isArray(data) ? data : []);
@@ -106,7 +101,7 @@ const KnowledgePage = () => {
   return (
     <div className="px-12 w-full">
       <div className="flex justify-end mb-4">
-        <Input 
+        <Input
           size="large"
           placeholder={`${t('common.search')}...`}
           style={{ width: '350px' }}

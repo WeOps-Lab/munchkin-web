@@ -22,22 +22,6 @@
   background-color: var(--color-bg);
   min-height: 200px;
 }
-
-.llmSection {
-  height: calc(100vh - 240px);
-  overflow-y: auto;
-  .llmContainer {
-    color: var(--color-text-2);
-    h2 {
-      padding: 10px;
-      background-color: var(--color-bg-active);
-    }
-    .contentWrapper {
-      margin: 10px 20px;
-      background: var(--color-fill-1);
-    }
-  }
-}
 .borderContainer {
   border: 1px solid var(--color-border-2);
   background: var(--color-bg-1);
@@ -59,11 +43,11 @@
     border-radius: 50%;
   }
 }
-  
+
 .online::before {
   background-color: #389e0d;
 }
-  
+
 .offline::before {
   background-color: #e4e4e4;
 }
@@ -85,7 +69,7 @@
     right: 0;
     border-radius: 0 0 0 5px;
   }
-  
+
   .checkedIcon {
     position: absolute;
     top: 5px;
@@ -117,5 +101,24 @@
     font-size: 12px;
     color: #ffffff;
     z-index: 99;
+  }
+}
+
+.resultsItem {
+  background-color: var(--color-fill-1);
+  border-color: var(--color-border);
+  color: var(--color-text-3);
+  &:hover {
+    cursor: pointer;
+    background-color: var(--color-bg-1);
+    box-shadow: 2px 2px 2px var(--color-fill-1);
+    border: 1px solid var(--color-border-1);
+  }
+  .content {
+    color: var(--color-text-1);
+    word-break: break-all;
+  }
+  .activeTxt {
+    color: var(--color-text-active) !important;
   }
 }

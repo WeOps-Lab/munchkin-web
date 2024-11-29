@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Spin, Button, Tooltip } from 'antd';
+import { Spin, Button, Tooltip } from 'antd';
 import styles from './index.module.less';
 import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
+import OperateModal from '@/components/operate-modal';
+import { getIconTypeByIndex } from '@/utils/knowledgeBaseUtils';
 
 interface OperateModalProps {
   visible: boolean;
@@ -19,10 +21,7 @@ interface OperateModalProps {
 
 const defaultIconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
 
-const getIconTypeByIndex = (index: number, iconTypes: string[]) =>
-  iconTypes[index % iconTypes.length] || 'zhishiku';
-
-const OperateModal: React.FC<OperateModalProps> = ({
+const StudioOperateModal: React.FC<OperateModalProps> = ({
   visible,
   okText,
   cancelText,
@@ -72,7 +71,7 @@ const OperateModal: React.FC<OperateModalProps> = ({
   };
 
   return (
-    <Modal
+    <OperateModal
       title={title}
       visible={visible}
       okText={showEmptyPlaceholder ? undefined : okText}
@@ -113,8 +112,8 @@ const OperateModal: React.FC<OperateModalProps> = ({
           </>
         )}
       </Spin>
-    </Modal>
+    </OperateModal>
   );
 };
 
-export default OperateModal;
+export default StudioOperateModal;

@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Input, DatePicker, Spin, Drawer, Button, Pagination, Tag, Tooltip } from 'antd';
 import { ClockCircleOutlined, SyncOutlined } from '@ant-design/icons';
@@ -12,6 +11,7 @@ import type { ColumnType } from 'antd/es/table';
 import ProChatComponent from '@/components/studio/proChat';
 import { LogRecord, Channel } from '@/types/studio';
 import { useLocalizedTime } from '@/hooks/useLocalizedTime';
+import { fetchLogDetails, createConversation } from '@/utils/logUtils';
 
 dayjs.extend(isBetween);
 
@@ -70,15 +70,15 @@ const StudioLogsPage: React.FC = () => {
 
   useEffect(() => {
     fetchLogs();
-    
-    const fetchChannels = async () => { 
+
+    const fetchChannels = async () => {
       try {
         const data = await get('/bot_mgmt/bot/get_bot_channels/', { params: { bot_id: botId } });
         setChannels(data.map((channel: any) => ({ id: channel.id, name: channel.name })));
       } catch (error) {
         console.error(`${t('common.fetchFailed')}:`, error);
       }
-    }
+    };
     fetchChannels();
   }, [get, botId, fetchLogs]);
 
@@ -102,17 +102,14 @@ const StudioLogsPage: React.FC = () => {
     setConversationLoading(true);
 
     try {
-      const data = await post('/bot_mgmt/history/get_log_detail/', { ids: record.ids, page: 1, page_size: 20 });
+      const data = await fetchLogDetails(post, record?.ids || []);
+      const conversation = await createConversation(data, get);
+
       setSelectedConversation({
         ...record,
-        conversation: data.map((item: any, index: number) => ({
-          id: index.toString(),
-          role: item.role === 'bot' ? 'assistant' : 'user',
-          content: item.content,
-          created_at: new Date(),
-        })),
+        conversation,
       });
-    } catch(error) {
+    } catch (error) {
       console.error(`${t('common.fetchFailed')}:`, error);
     } finally {
       setConversationLoading(false);
@@ -261,7 +258,7 @@ const StudioLogsPage: React.FC = () => {
           selectedConversation && selectedConversation.conversation && (
             <ProChatComponent
               initialChats={selectedConversation.conversation}
-              conversationId={selectedConversation.ids}
+              conversationId={selectedConversation.ids || []}
               count={selectedConversation.count}
             />
           )

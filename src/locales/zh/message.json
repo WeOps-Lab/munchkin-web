@@ -75,7 +75,7 @@
     "finishTip": "所有上传的文件将会被加入训练队列。请在左侧查看训练进度。",
     "backToList": "返回文档列表",
     "or": "或",
-    "goToTesting": "前往测试", 
+    "goToTesting": "前往测试",
     "form": {
       "name": "名称",
       "group": "分组",
@@ -212,7 +212,6 @@
       "menu": "设置",
       "title": "LLM技能",
       "description": "LLM技能包括选择LLM模型和知识库以优化语言理解和生成过程。用户还可以启用RAG（检索增强生成）和对话增强功能，以提高对话质量和准确性。",
-      "test": "测试",
       "noKnowledgeBase": "目前还没有知识库数据,",
       "toConfigureKnowledgeBase": "去新增知识库。",
       "clickHere": "点击这里"
@@ -281,5 +280,35 @@
       "searchUser": "Please enter the user name to search...",
       "records": "Record(s)"
     }
+  },
+  "chat": {
+    "test": "Test",
+    "sendFailed": "Failed to send message",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Could not copy message",
+    "regenerateFailed": "Failed to regenerate message",
+    "clickCancel": "Click to cancel",
+    "send": "Send",
+    "inputMessage": "Please enter a message",
+    "clearConfirm": "You are about to clear the conversation. After clearing, you will not be able to retrieve it. Do you want to clear the current conversation?",
+    "clear": "Clear Conversation",
+    "inputPlaceholder": "Please enter a message...",
+    "regenerate": "Regenerate",
+    "copy": "Copy",
+    "mark": "Mark",
+    "more": "More",
+    "annotationSaved": "Annotation saved successfully",
+    "annotationFailed": "Failed to save annotation",
+    "annotationRemoved": "Annotation removed successfully",
+    "annotationRemoveFailed": "Failed to remove annotation",
+    "editAnnotation": "Edit Annotation",
+    "removeAnnotation": "Remove Annotation",
+    "addAnnotation": "Add Annotation",
+    "question": "Question",
+    "answer": "Answer",
+    "saveToKnowledgeBase": "Save to Knowledge Base",
+    "removeAnnotationConfirm": "Are you sure you want to remove this annotation?",
+    "noKnowledge": "No knowledge available.",
+    "knowledgeDetails": "Knowledge Details"
   }
 }

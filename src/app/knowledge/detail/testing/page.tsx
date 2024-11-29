@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Input, Button, message, Spin, Empty, Skeleton, List } from 'antd';
 import ConfigComponent from '@/components/knowledge/config';
-import { ResultItem } from '@/types/knowledge';
+import { ResultItem } from '@/types/global';
 import useApiClient from '@/utils/request';
-import Icon from '@/components/icon';
 import useFetchConfigData from '@/hooks/useFetchConfigData';
 import { useTranslation } from '@/utils/i18n';
 import styles from './index.module.less';
 import ContentDrawer from '@/components/content-drawer';
 import useContentDrawer from '@/hooks/useContentDrawer';
+import KnowledgeResultItem from '@/components/block-result';
 
 const { TextArea } = Input;
 
@@ -96,22 +96,13 @@ const TestingPage: React.FC = () => {
     }
   };
 
-  const getIconByType = (type: string) => {
-    const iconMap: { [key: string]: string } = {
-      manual: 'wenben',
-      file: 'wendang',
-      web_page: 'icon-wangzhantuiguang'
-    };
-    return iconMap[type] || 'wendang';
-  };
-
   const handleContentClick = (content: string) => {
     showDrawer(content);
   };
 
   return (
     <Spin spinning={configLoading}>
-      <div className="flex p-4">
+      <div className="flex">
         <div className="w-1/2 pr-4">
           <div className={`mb-4 border rounded-md ${styles.testingHeader}`}>
             <h2 className="text-lg font-semibold">{t('knowledge.testing.text')}</h2>
@@ -166,19 +157,12 @@ const TestingPage: React.FC = () => {
               </>
             ) : results.length > 0 ? (
               results.map((result, index) => (
-                <div key={result.id} className={`p-4 border rounded-md ${styles.resultsItem}`} onClick={() => handleContentClick(result.content)}>
-                  <div className="flex justify-between mb-2">
-                    <div className="border px-2 rounded-md">
-                      <span className={`text-xs ${styles.activeTxt}`}># {index + 1}</span>
-                      <span className="ml-2 text-xs">| {t('knowledge.ranking')}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span>{t('knowledge.score')}: {result.score.toFixed(4)}</span>
-                    </div>
-                  </div>
-                  <p className={`text-sm ${styles.content} mb-2`}>{result.content}</p>
-                  <p className={`flex items-center text-sm ${styles.activeTxt}`}><Icon type={getIconByType(result.knowledge_source_type)} className="text-xl pr-1" />{result.name}</p>
-                </div>
+                <KnowledgeResultItem
+                  key={result.id}
+                  result={result}
+                  index={index}
+                  onClick={handleContentClick}
+                />
               ))
             ) : (
               <Empty description={t('common.noResult')} />

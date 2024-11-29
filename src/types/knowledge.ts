@@ -16,7 +16,7 @@ export interface Card {
   team: string[];
   embed_model: number;
 }
-  
+
 export interface ModifyKnowledgeModalProps {
   visible: boolean;
   onCancel: () => void;
@@ -60,15 +60,4 @@ export interface TestConfigData {
   quantity: number;
   candidate: number;
   selectedEmbedModel: string | null;
-}
-
-export interface ResultItem {
-  id: number;
-  name: string;
-  content: string;
-  created_at: string;
-  created_by: string;
-  knowledge_source_type: string;
-  rerank_score: number;
-  score: number;
 }

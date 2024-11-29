@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Space, Popconfirm, message, Tooltip, Spin, Modal, Select } from 'antd';
+import { Button, Table, Space, Popconfirm, message, Tooltip, Spin, Select } from 'antd';
 import { CopyOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import OperateModal from '@/components/operate-modal';
 import useApiClient from '@/utils/request';
@@ -193,7 +193,7 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
           {creating ? <Spin /> : t('secret.create')}
         </Button>
       </div>
-      <Modal
+      <OperateModal
         visible={groupVisible}
         title={t('secret.selectGroup')}
         centered
@@ -211,7 +211,7 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
             </Select.Option>
           ))}
         </Select>
-      </Modal>
+      </OperateModal>
     </OperateModal>
   );
 };

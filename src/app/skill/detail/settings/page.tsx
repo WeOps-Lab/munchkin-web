@@ -164,7 +164,7 @@ const SkillSettingsPage: React.FC = () => {
           updateAt: new Date().toISOString(),
           knowledgeBase: reply.citing_knowledge || null,
         };
-        resolve([...newMessage.slice(0, -1), botMessage]);
+        resolve([...newMessage, botMessage]);
       } catch (error) {
         console.error(t('common.fetchFailed'), error);
         resolve(newMessage);

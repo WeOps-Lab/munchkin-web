@@ -1,35 +1,32 @@
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Input, Spin, Drawer, Button, Pagination, Tag, Switch } from 'antd';
-import { ClockCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table, Input, Spin, Button, Pagination, Switch, message, Popconfirm } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import { useLocalizedTime } from '@/hooks/useLocalizedTime';
-import AddRuleModal from './addRuleModal';
+import ModifyRuleModal from './modifyRuleModal';
 
 const { Search } = Input;
 
 interface SkillRule {
   key: string;
-  title: string;
-  createdTime: string;
-  user: string;
-  state: boolean;
-  rule: string;
-  details?: any;
+  name: string;
+  created_at: string;
+  created_by: string;
+  is_enabled: boolean;
+  [key: string]: any;
 }
 
 const SkillRules: React.FC = () => {
   const { t } = useTranslation();
-  const { get, post } = useApiClient();
+  const { get, post, del } = useApiClient();
   const { convertToLocalizedTime } = useLocalizedTime();
   const [searchText, setSearchText] = useState('');
   const [data, setData] = useState<SkillRule[]>([]);
   const [loading, setLoading] = useState(false);
-  const [drawerVisible, setDrawerVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSkillRule, setSelectedSkillRule] = useState<SkillRule | null>(null);
-  const [skillRuleLoading, setSkillRuleLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -43,14 +40,7 @@ const SkillRules: React.FC = () => {
       if (searchText) params.search = searchText;
 
       const res = await get('/model_provider_mgmt/rule/', { params });
-      setData(res.items.map((item: any, index: number) => ({
-        key: index.toString(),
-        title: item.title,
-        createdTime: item.created_at,
-        user: item.username,
-        state: item.state,
-        rule: item.rule,
-      })));
+      setData(res.items);
       setTotal(res.count);
     } catch (error) {
       console.error(`${t('common.fetchFailed')}:`, error);
@@ -68,24 +58,6 @@ const SkillRules: React.FC = () => {
     fetchSkillRules(value, 1, pagination.pageSize);
   };
 
-  const handleDetailClick = async (record: SkillRule) => {
-    setSelectedSkillRule(record);
-    setDrawerVisible(true);
-    setSkillRuleLoading(true);
-
-    try {
-      const details = await get(`/bot_mgmt/skill_rules/${record.key}`);
-      setSelectedSkillRule({
-        ...record,
-        details,
-      });
-    } catch (error) {
-      console.error(`${t('common.fetchFailed')}:`, error);
-    } finally {
-      setSkillRuleLoading(false);
-    }
-  };
-
   const handleTableChange = (page: number, pageSize?: number) => {
     const newPagination = {
       current: page,
@@ -96,8 +68,7 @@ const SkillRules: React.FC = () => {
   };
 
   const handlePageSizeChange = (current: number, size: number) => {
-    setPagination({ current, pageSize: size });
-    fetchSkillRules(searchText, current, size);
+    handleTableChange(current, size);
   };
 
   const handleSwitchChange = async (checked: boolean, record: SkillRule) => {
@@ -109,57 +80,54 @@ const SkillRules: React.FC = () => {
     }
   };
 
-  const handleAdd = () => {
+  const openModal = (skillRule: SkillRule | null = null) => {
+    setSelectedSkillRule(skillRule);
     setModalVisible(true);
   };
 
-  const handleAddRule = async (values: any) => {
-    try {
-      await post('/model_provider_mgmt/rule/', {
-        name: values.name,
-        description: values.description,
-        condition: {
-          operator: values.conditions[0].operator,
-          conditions: values.conditions.map((cond: any) => ({
-            type: cond.type,
-            obj: cond.obj,
-            value: cond.value,
-          })),
-        },
-        action: values.action,
-        action_set: {
-          skill_prompt: values.skill_prompt,
-          knowledge_base_list: values.knowledge_base_list,
-        },
-      });
-      setModalVisible(false);
-      fetchSkillRules(searchText, pagination.current, pagination.pageSize);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleAdd = () => openModal();
+
+  const handleEdit = (record: SkillRule) => openModal(record);
+
+  const handleConfirmRule = () => {
+    setModalVisible(false);
+    fetchSkillRules();
+    setSelectedSkillRule(null);
   };
+
+  const handleDeleteRule = async (id: number) => {
+    try {
+      await del(`/model_provider_mgmt/rule/${id}/`);
+      fetchSkillRules();
+      message.success(t('common.deleteSuccess'));
+    } catch (error) {
+      console.error(`${t('common.deleteFailed')}:`, error);
+    } finally {
+      setSelectedSkillRule(null);
+    }
+  }
 
   const columns = [
     {
       title: t('skill.rules.table.name'),
-      dataIndex: 'title',
-      key: 'title',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: t('skill.rules.table.createdAt'),
-      dataIndex: 'createdTime',
-      key: 'createdTime',
+      dataIndex: 'created_at',
+      key: 'created_at',
       render: (text: string) => convertToLocalizedTime(text),
     },
     {
       title: t('skill.rules.table.creator'),
-      dataIndex: 'user',
-      key: 'user',
+      dataIndex: 'created_by',
+      key: 'created_by',
     },
     {
       title: t('skill.rules.table.state'),
-      dataIndex: 'state',
-      key: 'state',
+      dataIndex: 'is_enabled',
+      key: 'is_enabled',
       render: (text: boolean, record: SkillRule) => (
         <Switch
           checked={text}
@@ -172,12 +140,19 @@ const SkillRules: React.FC = () => {
       key: 'actions',
       render: (text: any, record: SkillRule) => (
         <>
-          <Button type="link" onClick={() => handleDetailClick(record)}>
+          <Button type="link" onClick={() => handleEdit(record)}>
             {t('common.edit')}
           </Button>
-          <Button type="link" danger onClick={() => console.log('Delete')}>
-            {t('common.delete')}
-          </Button>
+          <Popconfirm
+            title={t('skill.rules.deleteConfirm')}
+            onConfirm={() => handleDeleteRule(record.id)}
+            okText={t('common.confirm')}
+            cancelText={t('common.cancel')}
+          >
+            <Button type="link" danger>
+              {t('common.delete')}
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
@@ -202,6 +177,7 @@ const SkillRules: React.FC = () => {
           </div>
         ) : (
           <Table
+            rowKey='id'
             dataSource={data}
             columns={columns}
             pagination={false}
@@ -222,33 +198,19 @@ const SkillRules: React.FC = () => {
           />
         )}
       </div>
-      <Drawer
-        title={selectedSkillRule && (
-          <div className="flex items-center">
-            <span>{selectedSkillRule.user}</span>
-            <Tag color="blue" className='ml-4' icon={<ClockCircleOutlined />}>{selectedSkillRule.rule}</Tag>
-          </div>
-        )}
-        open={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        width={680}
-      >
-        {skillRuleLoading ? (
-          <div className='flex justify-center items-center w-full h-full'>
-            <Spin />
-          </div>
-        ) : (
-          selectedSkillRule && selectedSkillRule.details && (
-            <div>
-              <p>{selectedSkillRule.details.description}</p>
-            </div>
-          )
-        )}
-      </Drawer>
-      <AddRuleModal
+      <ModifyRuleModal
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
-        onOk={handleAddRule}
+        onOk={handleConfirmRule}
+        initialValues={selectedSkillRule ? {
+          key: selectedSkillRule.key,
+          name: selectedSkillRule.name,
+          description: selectedSkillRule.description,
+          conditionsOperator: selectedSkillRule.condition?.operator,
+          conditions: selectedSkillRule.condition?.conditions,
+          action: selectedSkillRule.action,
+          action_set: selectedSkillRule.action_set,
+        } : null}
       />
     </div>
   );

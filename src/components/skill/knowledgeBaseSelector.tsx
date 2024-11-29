@@ -29,9 +29,7 @@ const KnowledgeBaseSelector: React.FC<KnowledgeBaseSelectorProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    if (ragSources) {
-      setRagSources?.(ragSources);
-    }
+    setRagSources?.(ragSources);
   }, [ragSources, setRagSources]);
 
   const handleScoreChange = (sourceName: string, newScore: number) => {

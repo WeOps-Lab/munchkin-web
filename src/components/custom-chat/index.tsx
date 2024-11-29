@@ -6,7 +6,7 @@ import {
   SendOutlined
 } from '@ant-design/icons';
 import { Bubble, Sender } from '@ant-design/x';
-import type { CustomChatMessage, Annotation } from '@/types/global';
+import { CustomChatMessage, Annotation } from '@/types/global';
 import { v4 as uuidv4 } from 'uuid';
 import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
@@ -83,15 +83,15 @@ const CustomChat: React.FC<CustomChatProps> = ({ handleSendMessage, showMarkOnly
       try {
         if (handleSendMessage) {
           const responseMessages = await handleSendMessage([...messages, newMessage]);
-          handleSendComplete([...messages, ...responseMessages.slice(messages.length)]);
+          handleSendComplete(responseMessages);
         }
       } catch (error) {
         console.error(`${t('chat.sendFailed')}:`, error);
-        setMessages((prevMessages) => prevMessages);
+        setMessages(messages);
         setLoading(false);
       }
     }
-  }, [loading, handleSendMessage, messages, handleSendComplete, t]);
+  }, [loading, handleSendMessage, messages, handleSendComplete]);
 
   const handleCopyMessage = (content: string) => {
     navigator.clipboard.writeText(content).then(() => {
@@ -102,7 +102,7 @@ const CustomChat: React.FC<CustomChatProps> = ({ handleSendMessage, showMarkOnly
   };
 
   const handleDeleteMessage = (id: string) => {
-    setMessages((prevMessages) => prevMessages.filter(msg => msg.id !== id));
+    setMessages(messages.filter(msg => msg.id !== id));
   };
 
   const handleRegenerateMessage = useCallback(async (id: string) => {
@@ -124,9 +124,7 @@ const CustomChat: React.FC<CustomChatProps> = ({ handleSendMessage, showMarkOnly
         try {
           if (handleSendMessage) {
             const responseMessages = await handleSendMessage([...messages]);
-            const newResponseMessages = responseMessages.slice(updatedMessages.length - 1);
-            const filteredMessages = updatedMessages.filter(msg => msg.id !== newMessage.id);
-            handleSendComplete([...filteredMessages, ...newResponseMessages]);
+            handleSendComplete(responseMessages);
           }
         } catch (error) {
           console.error(`${t('chat.regenerateFailed')}:`, error);
@@ -134,7 +132,7 @@ const CustomChat: React.FC<CustomChatProps> = ({ handleSendMessage, showMarkOnly
         }
       }
     }
-  }, [messages, handleSendMessage, handleSendComplete, t]);
+  }, [messages, handleSendMessage, handleSendComplete]);
 
   const renderContent = (msg: CustomChatMessage) => {
     const { content, knowledgeBase } = msg;

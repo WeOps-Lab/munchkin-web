@@ -37,6 +37,7 @@ export const createConversation = async (data: any[], get: any): Promise<CustomC
       role: item.role,
       content: item.content,
       annotation: annotation,
+      knowledgeBase: item.citing_knowledge,
     } as CustomChatMessage;
   }));
 };

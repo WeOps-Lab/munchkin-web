@@ -1,6 +1,9 @@
+'use client';
+
 import React, { useRef, useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Space, Row, Col } from 'antd';
+import { Form, Input, Select, Button, Space, Row, Col, message } from 'antd';
 import { MinusCircleFilled, PlusOutlined } from '@ant-design/icons';
+import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import { KnowledgeBase, KnowledgeBaseRagSource } from '@/types/skill';
@@ -10,26 +13,26 @@ import KnowledgeBaseSelector from '@/components/skill/knowledgeBaseSelector';
 
 const { Option } = Select;
 
-interface AddRuleModalProps {
+interface ModifyRuleModalProps {
   visible: boolean;
   onCancel: () => void;
-  onOk: (values: any) => void;
+  onOk: () => void;
+  initialValues?: any;
 }
 
-const AddRuleModal: React.FC<AddRuleModalProps> = ({
-  visible,
-  onCancel,
-  onOk,
-}) => {
+const ModifyRuleModal: React.FC<ModifyRuleModalProps> = ({ visible, onCancel, onOk, initialValues }) => {
   const { t } = useTranslation();
-  const { get } = useApiClient();
+  const { get, post, patch } = useApiClient();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const addButtonRef = useRef<{ add: () => void }>({ add: () => { null } });
   const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
   const [ragSources, setRagSources] = useState<KnowledgeBaseRagSource[]>([]);
   const [selectedKnowledgeBases, setSelectedKnowledgeBases] = useState<number[]>([]);
-  const [conditionsCount, setConditionsCount] = useState(0);
+  const [conditionsCount, setConditionsCount] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,32 +49,101 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
     fetchData();
   }, [get]);
 
+  useEffect(() => {
+    if (initialValues) {
+      form.setFieldsValue({
+        ...initialValues,
+        skill_prompt: initialValues.action_set?.skill_prompt
+      });
+      const { conditions, action_set: actionSet } = initialValues;
+      setConditionsCount(conditions?.length || 1);
+      const selectedKnowledgeBaseIds = actionSet?.knowledge_base_list || [];
+      setSelectedKnowledgeBases(selectedKnowledgeBaseIds);
+      const selectedRagSources = knowledgeBases.filter(source => selectedKnowledgeBaseIds.includes(source.id)).map(source => ({
+        id: source.id,
+        name: source.name,
+        introduction: source.introduction || '',
+      })) as KnowledgeBaseRagSource[];
+      setRagSources(selectedRagSources);
+    } else {
+      form.resetFields();
+      setRagSources([]);
+      setSelectedKnowledgeBases([]);
+      setConditionsCount(1);
+    }
+  }, [visible, initialValues, form]);
+
+  const handleAddCondition = async () => {
+    try {
+      const values = await form.validateFields(['conditions']);
+      addButtonRef.current.add();
+      setConditionsCount(values.conditions.length + 1);
+    } catch (error) {
+      message.error(t('common.inputRequired'));
+    }
+  };
+
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      // 将选择的知识库添加到提交的数据中
-      values.knowledge_base_list = selectedKnowledgeBases;
-      onOk(values);
-      form.resetFields();
+      setConfirmLoading(true);
+
+      const postData = {
+        skill: id,
+        name: values.name,
+        description: values.description,
+        condition: {
+          operator: values.conditionsOperator || 'or',
+          conditions: values.conditions.map((cond: any) => ({
+            type: cond.type,
+            obj: cond.obj,
+            value: cond.value,
+          })),
+        },
+        action: values.action,
+        action_set: {
+          skill_prompt: values.skill_prompt,
+          knowledge_base_list: selectedKnowledgeBases,
+        },
+      };
+      if (initialValues && initialValues.key) {
+        await patch(`/model_provider_mgmt/rule/${initialValues.key}/`, postData);
+      } else {
+        await post('/model_provider_mgmt/rule/', postData);
+      }
+      onOk();
     } catch (error) {
       console.error(error);
+      message.error(t('common.inputRequired'));
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
   return (
     <OperateModal
-      title={t('skill.rules.add')}
+      title={initialValues ? t('skill.rules.edit') : t('skill.rules.add')}
       visible={visible}
       onCancel={() => {
         onCancel();
-        form.resetFields();
-        setConditionsCount(0);
       }}
       onOk={handleOk}
       loading={loading}
-      width={800}
+      confirmLoading={confirmLoading}
+      width={850}
     >
-      <Form form={form} layout="horizontal" labelCol={{ flex: '0 0 108px' }} wrapperCol={{ flex: '1' }}>
+      <Form
+        form={form}
+        layout="horizontal"
+        labelCol={{ flex: '0 0 108px' }}
+        wrapperCol={{ flex: '1' }}
+        initialValues={{
+          conditionsOperator: 'or',
+          conditions: [{ obj: 'user', type: 'ding_talk', operator: 'include', value: '' }],
+          action: 0,
+          ...initialValues,
+        }}
+      >
         <Form.Item
           name="name"
           label={t('skill.rules.name')}
@@ -95,7 +167,7 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
                   name="conditionsOperator"
                   className="my-auto z-10 w-full"
                 >
-                  {(conditionsCount > 1) && (
+                  {conditionsCount > 0 && (
                     <Select style={{ width: '80px' }}>
                       <Option value="or">OR</Option>
                       <Option value="and">AND</Option>
@@ -107,7 +179,7 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
                 <Form.List name="conditions">
                   {(fields, { add, remove }) => {
                     addButtonRef.current.add = () => {
-                      add();
+                      add({ obj: 'user', type: 'ding_talk', operator: 'include', value: '' });
                       setConditionsCount(fields.length + 1);
                     };
                     return (
@@ -120,17 +192,19 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
                           >
                             <Form.Item
                               {...restField}
-                              name={[name, 'questioner']}
+                              name={[name, 'obj']}
                               rules={[{ required: true, message: t('common.inputRequired') }]}
                             >
-                              <Input className="w-30" placeholder={t('skill.rules.questioner')} />
+                              <Select style={{ width: '100px' }} defaultValue="user" placeholder={`${t('skill.rules.questioner')}`}>
+                                <Option value="user">User</Option>
+                              </Select>
                             </Form.Item>
                             <Form.Item
                               {...restField}
                               name={[name, 'type']}
                               rules={[{ required: true, message: t('common.inputRequired') }]}
                             >
-                              <Select className="w-35" placeholder={`${t('common.inputMsg')}${t('skill.rules.type')}`}>
+                              <Select style={{ width: '150px' }} defaultValue="ding_talk" placeholder={`${t('common.inputMsg')}${t('skill.rules.type')}`}>
                                 <Option value="ding_talk">Ding Talk</Option>
                                 <Option value="enterprise_wechat">Enterprise Wechat</Option>
                               </Select>
@@ -138,11 +212,9 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
                             <Form.Item
                               {...restField}
                               name={[name, 'operator']}
-                              rules={[{ required: true, message: t('common.inputRequired') }]}
                             >
-                              <Select className="w-35" placeholder={`${t('common.inputMsg')}${t('skill.rules.operator')}`}>
+                              <Select style={{ width: '100px' }} defaultValue="include" placeholder={`${t('common.inputMsg')}${t('skill.rules.operator')}`}>
                                 <Option value="include">Include</Option>
-                                <Option value="exclude">Exclude</Option>
                               </Select>
                             </Form.Item>
                             <Form.Item
@@ -170,7 +242,7 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
             <Button
               type="dashed"
               className="mt-2"
-              onClick={() => addButtonRef.current.add()}
+              onClick={handleAddCondition}
               block
               icon={<PlusOutlined />}
             >
@@ -183,7 +255,7 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
           label={t('skill.rules.action')}
           rules={[{ required: true, message: t('common.inputRequired') }]}
         >
-          <Select rootClassName='mb-5' placeholder={t('skill.rules.action')} className="w-full">
+          <Select rootClassName='mb-5' placeholder={t('skill.rules.action')} className="w-full" defaultValue={0}>
             <Option value={0}>Use defined knowledge and prompt</Option>
           </Select>
           <div className={`p-4 rounded-md ${styles.ruleContainer}`}>
@@ -212,4 +284,4 @@ const AddRuleModal: React.FC<AddRuleModalProps> = ({
   );
 };
 
-export default AddRuleModal;
+export default ModifyRuleModal;

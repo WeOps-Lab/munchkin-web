@@ -104,7 +104,6 @@ const StudioLogsPage: React.FC = () => {
     try {
       const data = await fetchLogDetails(post, record?.ids || []);
       const conversation = await createConversation(data, get);
-
       setSelectedConversation({
         ...record,
         conversation,

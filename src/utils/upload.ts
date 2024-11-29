@@ -19,7 +19,7 @@ const uploadChunk = (
   index: number,
   fileName: string
 ): Promise<boolean> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const formData = new FormData();
     formData.append("chunk", chunk);
     formData.append("index", index.toString());

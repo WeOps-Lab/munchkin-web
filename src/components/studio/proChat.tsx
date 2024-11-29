@@ -2,19 +2,20 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Spin } from 'antd';
 import throttle from 'lodash/throttle';
 import styles from './index.module.less';
-import { ProChatMessage } from '@/types/studio';
+import { CustomChatMessage } from '@/types/global';
 import useApiClient from '@/utils/request';
+import CustomChat from '@/components/custom-chat';
+import { fetchLogDetails, createConversation } from '@/utils/logUtils';
 
 interface ChatComponentProps {
-  initialChats: ProChatMessage[];
-  conversationId: number[] | undefined;
+  initialChats: CustomChatMessage[];
+  conversationId: number[];
   count: number;
 }
 
 const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ initialChats, conversationId, count }) => {
-  const { post } = useApiClient();
-  const [ProChat, setProChat] = useState<React.ComponentType<any> | null>(null);
-  const [messages, setMessages] = useState<ProChatMessage[]>(initialChats);
+  const { get, post } = useApiClient();
+  const [messages, setMessages] = useState<CustomChatMessage[]>(initialChats);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -22,24 +23,15 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ initialChats, c
 
   const fetchMoreData = useCallback(async () => {
     if (loading || !hasMore) return;
-
     setLoading(true);
+
     try {
-      const data = await post('/bot_mgmt/history/get_log_detail/', { ids: conversationId, page: page + 1, page_size: 20 });
+      const data = await fetchLogDetails(post, conversationId, page + 1);
       if (data.length === 0 || count <= messages.length) {
         setHasMore(false);
       } else {
-        const newMessages = data.map((item: any, index: number) => ({
-          id: `${page}-${index}`,
-          role: item.role === 'bot' ? 'assistant' : 'user',
-          content: item.content,
-          created_at: new Date(item.created_at),
-        }));
-
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          ...newMessages,
-        ]);
+        const newMessages = await createConversation(data, get);
+        setMessages((prevMessages) => [...prevMessages, ...newMessages]);
         setPage((prevPage) => prevPage + 1);
       }
     } catch (error) {
@@ -50,12 +42,10 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ initialChats, c
   }, [loading, hasMore, page, conversationId, post, count, messages]);
 
   const handleScroll = useCallback(throttle(() => {
-    const scrollElement = proChatContainerRef.current?.querySelector('.ant-pro-chat-chat-list-container') as HTMLDivElement;
+    const scrollElement = proChatContainerRef.current?.querySelector('.chat-content-wrapper') as HTMLDivElement;
     if (!scrollElement || loading || !hasMore) return;
 
     const { scrollTop, scrollHeight, clientHeight } = scrollElement;
-
-    // Check if we've scrolled to within 300px of the bottom
     if (scrollTop + clientHeight >= scrollHeight - 300) {
       fetchMoreData();
     }
@@ -63,22 +53,13 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ initialChats, c
 
   useEffect(() => {
     if (page === 1) {
-      fetchMoreData(); // 初始加载第二页
+      fetchMoreData();
     }
   }, [fetchMoreData, page]);
 
   useEffect(() => {
-    const loadProChat = async () => {
-      const { ProChat } = await import('@ant-design/pro-chat');
-      setProChat(() => ProChat);
-    };
-    loadProChat();
-  }, []);
-
-  // 更改监听器的添加和删除方式
-  useEffect(() => {
     const proChatContainer = proChatContainerRef.current;
-    const scrollElement = proChatContainer?.querySelector('.ant-pro-chat-chat-list-container') as HTMLDivElement;
+    const scrollElement = proChatContainer?.querySelector('.chat-content-wrapper') as HTMLDivElement;
 
     if (scrollElement) {
       scrollElement.addEventListener('scroll', handleScroll);
@@ -91,17 +72,9 @@ const ProChatComponentWrapper: React.FC<ChatComponentProps> = ({ initialChats, c
     };
   }, [handleScroll]);
 
-  if (!ProChat) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Spin />
-      </div>
-    );
-  }
-
   return (
     <div className={`rounded-lg h-full ${styles.proChatDetail}`} ref={proChatContainerRef}>
-      <ProChat chats={messages} />
+      <CustomChat initialMessages={messages} showMarkOnly={true} mode='preview' />
       {loading && <div className='flex justify-center items-center'><Spin /></div>}
     </div>
   );

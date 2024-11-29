@@ -24,7 +24,7 @@ const SkillSettingsLayout = ({ children }: { children: React.ReactNode }) => {
       } else if (pathSegments.length > 3) {
         router.push(`/knowledge/detail?id=${id}&name=${name}&desc=${desc}`);
       }
-    } 
+    }
     else {
       router.back();
     }
@@ -32,7 +32,8 @@ const SkillSettingsLayout = ({ children }: { children: React.ReactNode }) => {
 
   const menuItems = [
     { label: t('skill.settings.menu'), path: '/skill/detail/settings', icon: 'shezhi' },
-    { label: t('common.api'), path: '/skill/detail/api', icon: 'api' }
+    { label: t('common.api'), path: '/skill/detail/api', icon: 'api' },
+    { label: t('skill.rules.menu'), path: '/skill/detail/rules', icon: 'api' }
   ];
 
   const intro = (

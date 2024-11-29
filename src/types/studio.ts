@@ -1,3 +1,5 @@
+import { CustomChatMessage } from '@/types/global';
+
 export interface Studio {
   id: number;
   name: string;
@@ -28,13 +30,6 @@ export interface ChannelProps {
   channel_config: ChannelConfig;
 }
 
-export interface ProChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  created_at: Date;
-}
-  
 export interface LogRecord {
   key: string;
   title: string;
@@ -44,7 +39,7 @@ export interface LogRecord {
   channel: string;
   count: number;
   ids?: number[];
-  conversation?: ProChatMessage[];
+  conversation?: CustomChatMessage[];
 }
 
 export interface Channel {

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Spin, Tooltip, Button } from 'antd';
+import { Spin, Tooltip, Button } from 'antd';
 import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
 import { KnowledgeBase } from '@/types/skill';
 import styles from './index.module.less';
+import OperateModal from '@/components/operate-modal';
+import { getIconTypeByIndex } from '@/utils/knowledgeBaseUtils';
 
 interface OperateModalProps {
   visible: boolean;
@@ -15,11 +17,7 @@ interface OperateModalProps {
   selectedKnowledgeBases: number[];
 }
 
-const iconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
-
-const getIconTypeByIndex = (index: number) => iconTypes[index % iconTypes.length];
-
-const OperateModal: React.FC<OperateModalProps> = ({
+const SkillOperateModal: React.FC<OperateModalProps> = ({
   visible, okText, cancelText, onOk, onCancel, knowledgeBases, selectedKnowledgeBases
 }) => {
   const { t } = useTranslation();
@@ -46,7 +44,7 @@ const OperateModal: React.FC<OperateModalProps> = ({
   };
 
   return (
-    <Modal
+    <OperateModal
       title={t('skill.selectKnowledgeBase')}
       visible={visible}
       okText={okText}
@@ -89,8 +87,8 @@ const OperateModal: React.FC<OperateModalProps> = ({
           </>
         )}
       </Spin>
-    </Modal>
+    </OperateModal>
   );
 };
 
-export default OperateModal;
+export default SkillOperateModal;

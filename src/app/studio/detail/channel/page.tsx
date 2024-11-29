@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Modal, Input, Switch, Button, Form, Spin, message } from 'antd';
+import { Input, Switch, Button, Form, Spin, message } from 'antd';
 import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
 import { useSearchParams } from 'next/navigation';
 import useApiClient from '@/utils/request';
 import { ChannelProps } from '@/types/studio';
+import OperateModal from '@/components/operate-modal';
 
 const ChannelPage: React.FC = () => {
   const { t } = useTranslation();
@@ -89,7 +90,7 @@ const ChannelPage: React.FC = () => {
 
   const handleSwitchChange = async (checked: boolean, app: ChannelProps) => {
     setSwitchLoading(prev => ({ ...prev, [app.id]: true }));
-      
+
     try {
       await post('/bot_mgmt/bot/update_bot_channel/', { id: app.id, enabled: checked });
       const updatedApps = apps.map(a => a.id === app.id ? { ...a, enabled: checked } : a);
@@ -118,7 +119,7 @@ const ChannelPage: React.FC = () => {
                   size="small"
                   checked={app.enabled}
                   loading={switchLoading[app.id] || false}
-                  checkedChildren={t('common.open')} 
+                  checkedChildren={t('common.open')}
                   unCheckedChildren={t('common.close')}
                   onChange={(checked) => handleSwitchChange(checked, app)}
                 />
@@ -144,7 +145,7 @@ const ChannelPage: React.FC = () => {
         ))
       )}
 
-      <Modal 
+      <OperateModal
         title={t('studio.channel.setting')}
         visible={isModalVisible}
         onCancel={handleCloseModal}
@@ -162,18 +163,18 @@ const ChannelPage: React.FC = () => {
             {Object.keys(fields).map((key) => (
               <Form.Item key={key} label={key.replace(/_/g, ' ')}>
                 {sensitiveKeys.some(sensitiveKey => key.toLowerCase().includes(sensitiveKey)) ? (
-                  <Input.Password 
-                    value={fields[key]} 
-                    visibilityToggle={false} 
-                    onChange={(e) => setFields({ ...fields, [key]: e.target.value })} 
+                  <Input.Password
+                    value={fields[key]}
+                    visibilityToggle={false}
+                    onChange={(e) => setFields({ ...fields, [key]: e.target.value })}
                     onCopy={(e) => e.preventDefault()}
-                    onCut={(e) => e.preventDefault()} 
+                    onCut={(e) => e.preventDefault()}
                     autoComplete="new-password"
                   />
                 ) : (
-                  <Input 
-                    value={fields[key]} 
-                    onChange={(e) => setFields({ ...fields, [key]: e.target.value })} 
+                  <Input
+                    value={fields[key]}
+                    onChange={(e) => setFields({ ...fields, [key]: e.target.value })}
                     autoComplete="off"
                   />
                 )}
@@ -181,7 +182,7 @@ const ChannelPage: React.FC = () => {
             ))}
           </Form>
         )}
-      </Modal>
+      </OperateModal>
     </div>
   );
 };

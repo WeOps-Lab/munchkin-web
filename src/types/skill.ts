@@ -25,19 +25,9 @@ export interface KnowledgeBase {
   introduction: string;
 }
 
-export interface ChatMessage<T extends Record<string, any> = Record<string, any>> {
-  id: string;
-  role: 'user' | 'bot';
-  content: string;
-  createAt?: Date;
-  updateAt?: Date;
-  [key: string]: any;
-}
-
-export interface ProChatMessage extends ChatMessage {
-  id: string;
-  role: 'user' | 'bot';
-  content: string;
-  createAt: Date;
-  updateAt: Date;
+export interface KnowledgeBaseRagSource {
+  id: number,
+  name: string,
+  introduction: string,
+  score?: number
 }

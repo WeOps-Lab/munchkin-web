@@ -103,7 +103,7 @@ const EntityList = <T,>({ endpoint, CardComponent, ModifyModalComponent, itemTyp
   return (
     <div className="px-12 w-full min-h-screen">
       <div className="flex justify-end mb-4">
-        <Input 
+        <Input
           size="large"
           placeholder={`${t('common.search')}...`}
           style={{ width: '350px' }}
@@ -122,11 +122,11 @@ const EntityList = <T,>({ endpoint, CardComponent, ModifyModalComponent, itemTyp
             </div>
           </div>
           {filteredItems.map((item, index) => (
-            <CardComponent 
-              key={(item as any).id} 
-              {...item} 
-              index={index} 
-              onMenuClick={handleMenuClick} 
+            <CardComponent
+              key={(item as any).id}
+              {...item}
+              index={index}
+              onMenuClick={handleMenuClick}
             />
           ))}
         </div>

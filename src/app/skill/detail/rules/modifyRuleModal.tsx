@@ -130,7 +130,7 @@ const ModifyRuleModal: React.FC<ModifyRuleModalProps> = ({ visible, onCancel, on
       onOk={handleOk}
       loading={loading}
       confirmLoading={confirmLoading}
-      width={850}
+      width={900}
     >
       <Form
         form={form}
@@ -140,8 +140,7 @@ const ModifyRuleModal: React.FC<ModifyRuleModalProps> = ({ visible, onCancel, on
         initialValues={{
           conditionsOperator: 'or',
           conditions: [{ obj: 'user', type: 'ding_talk', operator: 'include', value: '' }],
-          action: 0,
-          ...initialValues,
+          action: 0
         }}
       >
         <Form.Item

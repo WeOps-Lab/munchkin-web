@@ -279,6 +279,19 @@
       },
       "searchUser": "Please enter the user name to search...",
       "records": "Record(s)"
+    },
+    "statistics": {
+      "title": "Statistics",
+      "description": "The operational statistics of the Bot are used to analyze the usage and invocation of the robot by users.",
+      "last7Days": "Last 7 Days",
+      "totalConsumption": "Total Token Consumption",
+      "totalConsumptionDesc": "This reports the total amount of Token consumed within the selected time range.",
+      "totalConsumptionOverview": "Token Consumption Overview",
+      "totalConsumptionOverviewDesc": "This provides statistics on the time distribution of Token consumption within the selected time range.",
+      "totalConversation": "Total Conversation",
+      "totalConversationDesc": "This counts the total number of conversations by all users of the Bot within the selected time range. Each question and answer counts as one conversation round, and Bot testing questions and answers are not included in the statistics.",
+      "totalActiveUser": "Total Active User",
+      "totalActiveUserDesc": "This counts the number of distinct users who engaged in conversations with the Bot within the selected time range."
     }
   },
   "chat": {

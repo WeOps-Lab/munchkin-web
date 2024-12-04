@@ -12,6 +12,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@ant-design/charts": "^2.2.3",
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.0",
     "@ant-design/x": "1.0.0-alpha.12",

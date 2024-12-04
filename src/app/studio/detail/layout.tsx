@@ -24,7 +24,7 @@ const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
       } else if (pathSegments.length > 3) {
         router.push(`/studio/detail?id=${id}&name=${name}&desc=${desc}`);
       }
-    } 
+    }
     else {
       router.back();
     }
@@ -34,6 +34,7 @@ const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
     { label: t('studio.settings.title'), path: '/studio/detail/settings', icon: 'shezhi' },
     { label: t('studio.channel.title'), path: '/studio/detail/channel', icon: 'channel1' },
     { label: t('studio.logs.title'), path: '/studio/detail/logs', icon: 'talk-line' },
+    { label: t('studio.statistics.title'), path: '/studio/detail/statistics', icon: 'tongji' },
   ];
 
   const intro = (

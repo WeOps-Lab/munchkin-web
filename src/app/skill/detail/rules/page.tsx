@@ -20,7 +20,7 @@ interface SkillRule {
 
 const SkillRules: React.FC = () => {
   const { t } = useTranslation();
-  const { get, post, del } = useApiClient();
+  const { get, patch, del } = useApiClient();
   const { convertToLocalizedTime } = useLocalizedTime();
   const [searchText, setSearchText] = useState('');
   const [data, setData] = useState<SkillRule[]>([]);
@@ -32,12 +32,13 @@ const SkillRules: React.FC = () => {
     current: 1,
     pageSize: 10,
   });
+  const [switchLoading, setSwitchLoading] = useState<{ [key: string]: boolean }>({});
 
   const fetchSkillRules = useCallback(async (searchText = '', page = 1, pageSize = 10) => {
     setLoading(true);
     try {
       const params: any = { page, page_size: pageSize };
-      if (searchText) params.search = searchText;
+      if (searchText) params.name = searchText;
 
       const res = await get('/model_provider_mgmt/rule/', { params });
       setData(res.items);
@@ -72,11 +73,15 @@ const SkillRules: React.FC = () => {
   };
 
   const handleSwitchChange = async (checked: boolean, record: SkillRule) => {
+    const { id } = record;
+    setSwitchLoading((prev) => ({ ...prev, [id]: true }));
     try {
-      await post(`/model_provider_mgmt/rule/${record.key}/update_state`, { state: checked });
+      await patch(`/model_provider_mgmt/rule/${id}/`, { is_enabled: checked });
       fetchSkillRules(searchText, pagination.current, pagination.pageSize);
     } catch (error) {
       console.error(`${t('common.updateFailed')}:`, error);
+    } finally {
+      setSwitchLoading((prev) => ({ ...prev, [id]: false }));
     }
   };
 
@@ -99,9 +104,9 @@ const SkillRules: React.FC = () => {
     try {
       await del(`/model_provider_mgmt/rule/${id}/`);
       fetchSkillRules();
-      message.success(t('common.deleteSuccess'));
+      message.success(t('common.delSuccess'));
     } catch (error) {
-      console.error(`${t('common.deleteFailed')}:`, error);
+      console.error(`${t('common.delFailed')}:`, error);
     } finally {
       setSelectedSkillRule(null);
     }
@@ -130,7 +135,9 @@ const SkillRules: React.FC = () => {
       key: 'is_enabled',
       render: (text: boolean, record: SkillRule) => (
         <Switch
+          size='small'
           checked={text}
+          loading={switchLoading[record.id]}
           onChange={(checked) => handleSwitchChange(checked, record)}
         />
       ),
@@ -203,11 +210,14 @@ const SkillRules: React.FC = () => {
         onCancel={() => setModalVisible(false)}
         onOk={handleConfirmRule}
         initialValues={selectedSkillRule ? {
-          key: selectedSkillRule.key,
+          key: selectedSkillRule.id,
           name: selectedSkillRule.name,
           description: selectedSkillRule.description,
           conditionsOperator: selectedSkillRule.condition?.operator,
-          conditions: selectedSkillRule.condition?.conditions,
+          conditions: selectedSkillRule.condition?.conditions.map((condition: any) => ({
+            ...condition,
+            operator: 'include',
+          })),
           action: selectedSkillRule.action,
           action_set: selectedSkillRule.action_set,
         } : null}

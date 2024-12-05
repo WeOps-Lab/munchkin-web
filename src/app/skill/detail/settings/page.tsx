@@ -172,7 +172,6 @@ const SkillSettingsPage: React.FC = () => {
     });
   };
 
-
   const handleTemperatureChange = (value: number | null) => {
     const newValue = value === null ? 0 : value;
     setTemperature(newValue);

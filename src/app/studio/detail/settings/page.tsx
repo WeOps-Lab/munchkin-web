@@ -177,6 +177,8 @@ const StudioSettingsPage: React.FC = () => {
 
   const allChannelsDisabled = channels.every(channel => !channel.enabled);
 
+  const showCustomChat = channels.filter(channel => selectedChannels.includes(channel.id)).some(channel => channel.name === 'web') && online;
+
   const handleSendMessage = async (newMessage: CustomChatMessage[], lastUserMessage?: CustomChatMessage): Promise<CustomChatMessage[]> => {
     return new Promise(async (resolve) => {
       const message = lastUserMessage || [...newMessage].reverse().find(message => message.role === 'user');
@@ -189,7 +191,7 @@ const StudioSettingsPage: React.FC = () => {
           sender: "user",
           message: message?.content || '',
         };
-        const response = await fetch(`http://104.215.58.237:${botDomain || 5005}/webhooks/rest/webhook`, {
+        const response = await fetch(`http://104.215.58.237:${nodePort || 5005}/webhooks/rest/webhook`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -235,8 +237,8 @@ const StudioSettingsPage: React.FC = () => {
         </div>
       )}
       {!pageLoading && (
-        <div className={`w-full flex transition-all ${online ? 'justify-between' : 'justify-center'}`}>
-          <div className={`w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 ${online ? 'overflow-y-auto h-[calc(100vh-240px)]' : ''}`}>
+        <div className={`w-full flex transition-all ${showCustomChat ? 'justify-between' : 'justify-center'}`}>
+          <div className={`w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 ${showCustomChat ? 'overflow-y-auto h-[calc(100vh-240px)]' : ''}`}>
             <div className="absolute top-0 right-0 flex items-center space-x-4">
               <Tag
                 color={online ? 'green' : ''}
@@ -441,7 +443,7 @@ const StudioSettingsPage: React.FC = () => {
               showEmptyPlaceholder={skills.length === 0}
             />
           </div>
-          {online && (
+          {showCustomChat && (
             <div className="w-1/2 pl-4 h-[calc(100vh-240px)]">
               <CustomChat handleSendMessage={handleSendMessage} />
             </div>

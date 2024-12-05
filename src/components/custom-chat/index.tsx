@@ -142,7 +142,7 @@ const CustomChat: React.FC<CustomChatProps> = ({ handleSendMessage, showMarkOnly
           dangerouslySetInnerHTML={{ __html: md.render(content) }}
           className={styles.markdownBody}
         />
-        {Array.isArray(knowledgeBase) && <KnowledgeBase knowledgeList={knowledgeBase} />}
+        {(Array.isArray(knowledgeBase) && knowledgeBase.length) ? <KnowledgeBase knowledgeList={knowledgeBase} /> : null}
       </>
     );
   };

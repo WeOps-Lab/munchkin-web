@@ -197,6 +197,9 @@ const StudioSettingsPage: React.FC = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload),
+          credentials: 'include',
+          referrer: '',
+          referrerPolicy: 'no-referrer-when-downgrade',
         });
 
         if (!response.ok) {
@@ -238,7 +241,7 @@ const StudioSettingsPage: React.FC = () => {
       )}
       {!pageLoading && (
         <div className={`w-full flex transition-all ${showCustomChat ? 'justify-between' : 'justify-center'}`}>
-          <div className={`w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 ${showCustomChat ? 'overflow-y-auto h-[calc(100vh-240px)]' : ''}`}>
+          <div className={`w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 ${showCustomChat ? 'overflow-y-auto h-[calc(100vh-230px)]' : ''}`}>
             <div className="absolute top-0 right-0 flex items-center space-x-4">
               <Tag
                 color={online ? 'green' : ''}
@@ -444,7 +447,7 @@ const StudioSettingsPage: React.FC = () => {
             />
           </div>
           {showCustomChat && (
-            <div className="w-1/2 pl-4 h-[calc(100vh-240px)]">
+            <div className="w-1/2 pl-4 h-[calc(100vh-230px)]">
               <CustomChat handleSendMessage={handleSendMessage} />
             </div>
           )}

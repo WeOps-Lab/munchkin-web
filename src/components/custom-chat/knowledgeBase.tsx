@@ -71,7 +71,7 @@ const KnowledgeBaseComp: React.FC<KnowledgeBaseProps> = ({ knowledgeList }) => {
 
   return (
     <div className="mt-4 flex flex-wrap gap-4">
-      {knowledgeList && knowledgeList.length > 0 ? (
+      {knowledgeList && knowledgeList.length && (
         knowledgeList.map((item, index) => (
           <div
             key={index}
@@ -91,8 +91,6 @@ const KnowledgeBaseComp: React.FC<KnowledgeBaseProps> = ({ knowledgeList }) => {
             </div>
           </div>
         ))
-      ) : (
-        <p>{t('chat.noKnowledge')}</p>
       )}
 
       {currentResult && (

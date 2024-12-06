@@ -99,7 +99,7 @@ const KnowledgeBaseComp: React.FC<KnowledgeBaseProps> = ({ knowledgeList }) => {
           placement="right"
           onClose={onClose}
           visible={isDrawerVisible}
-          width={400}
+          width={600}
         >
           <Spin spinning={loading}>
             <div className="space-y-4">

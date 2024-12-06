@@ -51,6 +51,7 @@ const SkillOperateModal: React.FC<OperateModalProps> = ({
       cancelText={cancelText}
       onOk={handleOk}
       onCancel={onCancel}
+      width={700}
     >
       <Spin spinning={false}>
         {knowledgeBases.length === 0 ? (

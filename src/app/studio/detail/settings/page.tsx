@@ -191,7 +191,7 @@ const StudioSettingsPage: React.FC = () => {
           sender: "user",
           message: message?.content || '',
         };
-        const response = await fetch(`http://104.215.58.237:${nodePort || 5005}/webhooks/rest/webhook`, {
+        const response = await fetch('/api/webhook', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

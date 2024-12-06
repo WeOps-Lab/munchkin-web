@@ -132,7 +132,7 @@ const ChartComponent: React.FC = () => {
     setDateRange({ start, end });
   };
 
-  const lineConfig = (dataField: DataField, areaConfig = false): LineConfig => {
+  const lineConfig = (dataField: DataField): LineConfig => {
     const isTokenOverview = dataField === 'tokenOverviewData';
     return {
       data: data[dataField],
@@ -186,7 +186,7 @@ const ChartComponent: React.FC = () => {
           <div className="flex justify-center items-center text-8xl font-bold h-[250px]">{data.tokenConsumption}</div>
         ), 'totalConsumption')}
         {renderCard('studio.statistics.totalConsumptionOverview', 'studio.statistics.totalConsumptionOverviewDesc', (
-          <Line {...lineConfig('tokenOverviewData', true)} />
+          <Line {...lineConfig('tokenOverviewData')} />
         ), 'totalConsumptionOverview')}
         {renderCard('studio.statistics.totalConversation', 'studio.statistics.totalConversationDesc', (
           <Line {...lineConfig('conversationsData')} />

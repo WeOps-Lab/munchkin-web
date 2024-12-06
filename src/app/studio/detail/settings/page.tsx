@@ -198,8 +198,6 @@ const StudioSettingsPage: React.FC = () => {
           },
           body: JSON.stringify(payload),
           credentials: 'include',
-          referrer: '',
-          referrerPolicy: 'no-referrer-when-downgrade',
         });
 
         if (!response.ok) {

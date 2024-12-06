@@ -72,14 +72,21 @@ const ChartComponent: React.FC = () => {
         case ChartType.CONVERSATIONS:
         case ChartType.ACTIVE_USERS:
           const combinedData: any[] = [];
+          const totalData: any[] = [];
+          // total data is always the first element in the response
           for (const [key, values] of Object.entries(dataResponse)) {
             (values as any[]).forEach((item: any) => {
-              combinedData.push({ ...item, category: key });
+              if (key === 'total') {
+                totalData.push({ ...item, category: key });
+              } else {
+                combinedData.push({ ...item, category: key });
+              }
             });
           }
+          const sortedData = [...totalData, ...combinedData];
           setData(prevData => ({
             ...prevData,
-            [`${type}Data`]: combinedData.length ? combinedData : dataResponse,
+            [`${type}Data`]: sortedData,
           }));
           break;
         default:
@@ -135,15 +142,6 @@ const ChartComponent: React.FC = () => {
       smooth: !isTokenOverview,
       height: 250,
       autoFit: true,
-      area: areaConfig ? {
-        style: {
-          fill: 'l(270) 0:#ffffff 1:#d6e4ff',
-        },
-      } : undefined,
-      point: areaConfig ? {
-        size: 3,
-        shape: 'circle',
-      } : undefined,
       colorField: !isTokenOverview ? 'category' : undefined,
       scale: { color: { range: ['#155AEF', '#30BF78', '#FAAD14', '#b842ff'] } },
       tooltip: {

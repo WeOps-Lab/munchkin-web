@@ -35,19 +35,31 @@ const ModifyRuleModal: React.FC<ModifyRuleModalProps> = ({ visible, onCancel, on
   const [conditionsCount, setConditionsCount] = useState(1);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const data = await get('/knowledge_mgmt/knowledge_base/');
-        setKnowledgeBases(data);
-      } catch (error) {
-        console.error(t('common.fetchFailed'), error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchSkillDetail();
   }, [get]);
+
+  const fetchSkillDetail = async () => {
+    setLoading(true);
+    try {
+      const { knowledge_base: knowledgeBase } = await get(`/model_provider_mgmt/llm/${id}/`);
+      await fetchData(knowledgeBase);
+    } catch (error) {
+      console.error(t('common.fetchFailed'), error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchData = async (ids: number[]) => {
+    try {
+      const data = await get('/knowledge_mgmt/knowledge_base/');
+      setKnowledgeBases(data.filter((item: KnowledgeBase) => ids.includes(item.id)));
+    } catch (error) {
+      console.error(t('common.fetchFailed'), error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (initialValues) {

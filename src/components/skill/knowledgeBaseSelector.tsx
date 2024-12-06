@@ -89,7 +89,7 @@ const KnowledgeBaseSelector: React.FC<KnowledgeBaseSelectorProps> = ({
                 <Tooltip title={source.name}>
                   <div className='flex items-center'>
                     {!showScore && (<Icon className='text-sm mr-1' type={getIconTypeByIndex(index)} />)}
-                    <span className="inline-block max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap">{source.name}</span>
+                    <span className={`inline-block text-ellipsis overflow-hidden whitespace-nowrap ${showScore ? 'w-24' : 'w-48'}`}>{source.name}</span>
                   </div>
                 </Tooltip>
                 {showScore && (

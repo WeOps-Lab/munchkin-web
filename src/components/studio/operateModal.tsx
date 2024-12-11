@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Spin, Button, Tooltip } from 'antd';
+import { Spin, Button, Tooltip, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import styles from './index.module.less';
 import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
-import { getIconTypeByIndex } from '@/utils/knowledgeBaseUtils';
 
 interface OperateModalProps {
   visible: boolean;
@@ -19,8 +19,6 @@ interface OperateModalProps {
   iconTypes?: string[];
 }
 
-const defaultIconTypes = ['zhishiku', 'zhishiku-red', 'zhishiku-blue', 'zhishiku-yellow', 'zhishiku-green'];
-
 const StudioOperateModal: React.FC<OperateModalProps> = ({
   visible,
   okText,
@@ -31,10 +29,10 @@ const StudioOperateModal: React.FC<OperateModalProps> = ({
   selectedItems,
   title,
   showEmptyPlaceholder = false,
-  iconTypes = defaultIconTypes
 }) => {
   const { t } = useTranslation();
   const [tempSelectedItem, setTempSelectedItem] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     setTempSelectedItem(selectedItems[0] ?? null);
@@ -70,6 +68,14 @@ const StudioOperateModal: React.FC<OperateModalProps> = ({
     window.open('/skill', '_blank');
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredItems = items.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <OperateModal
       title={title}
@@ -92,14 +98,17 @@ const StudioOperateModal: React.FC<OperateModalProps> = ({
           </div>
         ) : (
           <>
+            <div className="flex justify-end">
+              <Input className="w-[300px]" placeholder={t('common.input')} suffix={<SearchOutlined />} onChange={handleSearch} />
+            </div>
             <div className="grid grid-cols-3 gap-4 py-4 max-h-[60vh] overflow-y-auto">
-              {items.map((item, index) => (
+              {filteredItems.map((item, index) => (
                 <div
                   key={item.id}
                   className={`flex p-4 border rounded-md cursor-pointer ${styles.item} ${tempSelectedItem === item.id ? styles.selectedItem : ''}`}
                   onClick={() => handleItemSelect(item.id)}
                 >
-                  <Icon type={getIconTypeByIndex(index, iconTypes)} className="text-2xl mr-[8px]" />
+                  <Icon type={index % 2 ? 'theory' : 'jishuqianyan'} className="text-2xl mr-[8px]" />
                   <Tooltip title={item.name}>
                     <span className="overflow-hidden text-ellipsis whitespace-nowrap">{item.name}</span>
                   </Tooltip>

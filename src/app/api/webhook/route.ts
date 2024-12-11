@@ -6,10 +6,10 @@ export const GET = async () => {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { sender, message } = await req.json();
+    const { sender, message, port } = await req.json();
     const payload = { sender, message };
 
-    const backendResponse = await fetch('http://104.215.58.237:40010/webhooks/rest/webhook', {
+    const backendResponse = await fetch(`http://104.215.58.237:${port}/webhooks/rest/webhook`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

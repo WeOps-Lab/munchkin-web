@@ -1,21 +1,17 @@
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Input, DatePicker, Spin, Drawer, Button, Pagination, Tag, Tooltip } from 'antd';
+import { Table, Input, Spin, Drawer, Button, Pagination, Tag, Tooltip } from 'antd';
 import { ClockCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import dayjs, { Dayjs } from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import { useSearchParams } from 'next/navigation';
 import type { ColumnType } from 'antd/es/table';
 import ProChatComponent from '@/components/studio/proChat';
+import TimeSelector from '@/components/time-selector';
 import { LogRecord, Channel } from '@/types/studio';
 import { useLocalizedTime } from '@/hooks/useLocalizedTime';
 import { fetchLogDetails, createConversation } from '@/utils/logUtils';
 
-dayjs.extend(isBetween);
-
-const { RangePicker } = DatePicker;
 const { Search } = Input;
 
 const StudioLogsPage: React.FC = () => {
@@ -23,7 +19,7 @@ const StudioLogsPage: React.FC = () => {
   const { get, post } = useApiClient();
   const { convertToLocalizedTime } = useLocalizedTime();
   const [searchText, setSearchText] = useState('');
-  const [dates, setDates] = useState<[Dayjs | null, Dayjs | null] | null>([null, null]);
+  const [dates, setDates] = useState<number[]>([]);
   const [data, setData] = useState<LogRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -39,14 +35,14 @@ const StudioLogsPage: React.FC = () => {
   const searchParams = useSearchParams();
   const botId = searchParams.get('id');
 
-  const fetchLogs = useCallback(async (searchText = '', dates: [Dayjs | null, Dayjs | null] | null = [null, null], page = 1, pageSize = 10, selectedChannels: string[] = []) => {
+  const fetchLogs = useCallback(async (searchText = '', dates: number[] = [], page = 1, pageSize = 10, selectedChannels: string[] = []) => {
     setLoading(true);
     try {
       const params: any = { bot_id: botId, page, page_size: pageSize };
       if (searchText) params.search = searchText;
       if (dates && dates[0] && dates[1]) {
-        params.start_time = dates[0].toISOString();
-        params.end_time = dates[1].toISOString();
+        params.start_time = new Date(dates[0]).toISOString();
+        params.end_time = new Date(dates[1]).toISOString();
       }
       if (selectedChannels.length > 0) params.channel_type = selectedChannels.join(',');
 
@@ -58,7 +54,7 @@ const StudioLogsPage: React.FC = () => {
         updatedTime: item.updated_at,
         user: item.username,
         channel: item.channel_type,
-        count: item.count,
+        count: Math.ceil(item.count / 2),
         ids: item.ids,
       })));
       setTotal(res.count);
@@ -87,13 +83,6 @@ const StudioLogsPage: React.FC = () => {
     setSelectedChannels([]);
     setPagination({ ...pagination, current: 1 });
     fetchLogs(value, dates, 1, pagination.pageSize, []);
-  };
-
-  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
-    setDates(dates);
-    setSelectedChannels([]);
-    setPagination({ ...pagination, current: 1 });
-    fetchLogs(searchText, dates, 1, pagination.pageSize, []);
   };
 
   const handleDetailClick = async (record: LogRecord) => {
@@ -137,6 +126,14 @@ const StudioLogsPage: React.FC = () => {
     setSelectedChannels(channels);
     setPagination({ ...pagination, current: 1 });
     fetchLogs(searchText, dates, 1, pagination.pageSize, channels);
+  };
+
+  const handleDateChange = (value: number[]) => {
+    console.log('value', value);
+    setDates(value);
+    setSelectedChannels([]);
+    setPagination({ ...pagination, current: 1 });
+    fetchLogs(searchText, value, 1, pagination.pageSize, []);
   };
 
   const channelFilters = channels.map(channel => ({ text: channel.name, value: channel.name }));
@@ -203,9 +200,12 @@ const StudioLogsPage: React.FC = () => {
           <Tooltip className='mr-[8px]' title={t('common.refresh')}>
             <Button icon={<SyncOutlined />} onClick={handleRefresh} />
           </Tooltip>
-          <RangePicker
-            showTime
-            value={dates as [Dayjs, Dayjs]}
+          <TimeSelector
+            onlyTimeSelect
+            defaultValue={{
+              timeRangeValue: 1440,
+              timesValue: null
+            }}
             onChange={handleDateChange}
           />
         </div>

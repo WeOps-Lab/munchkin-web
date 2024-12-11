@@ -86,7 +86,7 @@ const KnowledgeDetailLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const TopSection = () => (
-    <div className="p-4 rounded-md w-full h-[95px]">
+    <div className="p-4 rounded-md w-full h-[88px]">
       {getTopSectionContent()}
     </div>
   );

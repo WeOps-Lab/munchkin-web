@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Spin, Tooltip, Button } from 'antd';
+import { Spin, Tooltip, Button, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import Icon from '@/components/icon';
 import { useTranslation } from '@/utils/i18n';
 import { KnowledgeBase } from '@/types/skill';
@@ -22,6 +23,7 @@ const SkillOperateModal: React.FC<OperateModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const [tempSelectedKnowledgeBases, setTempSelectedKnowledgeBases] = useState<number[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     if (visible) {
@@ -35,6 +37,10 @@ const SkillOperateModal: React.FC<OperateModalProps> = ({
     );
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
   const handleOk = () => {
     onOk(tempSelectedKnowledgeBases);
   };
@@ -42,6 +48,10 @@ const SkillOperateModal: React.FC<OperateModalProps> = ({
   const handleConfigureKnowledgeBases = () => {
     window.open('/knowledge', '_blank');
   };
+
+  const filteredKnowledgeBases = knowledgeBases.filter((base) =>
+    base.name.toLowerCase().includes(searchTerm)
+  );
 
   return (
     <OperateModal
@@ -64,8 +74,11 @@ const SkillOperateModal: React.FC<OperateModalProps> = ({
           </div>
         ) : (
           <>
+            <div className="flex justify-end">
+              <Input className="w-[300px]" placeholder={t('common.input')} suffix={<SearchOutlined />} onChange={handleSearch} />
+            </div>
             <div className="grid grid-cols-3 gap-4 py-4 max-h-[60vh] overflow-y-auto">
-              {knowledgeBases.map((base, index) => (
+              {filteredKnowledgeBases.map((base, index) => (
                 <div
                   key={base.id}
                   className={`flex items-center p-4 border rounded-md cursor-pointer ${tempSelectedKnowledgeBases.includes(base.id) ? styles.selectedKnowledge : ''}`}

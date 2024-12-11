@@ -4,7 +4,7 @@ import MarkdownRenderer from '@/components/markdown';
 const MarkdownPage: React.FC = () => {
   return (
     <div>
-      <MarkdownRenderer filePath="file/skill_api" />
+      <MarkdownRenderer filePath="module_api/" fileName="skill_api" />
     </div>
   );
 };

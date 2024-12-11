@@ -150,7 +150,6 @@ const CustomChat: React.FC<CustomChatProps> = ({ handleSendMessage, showMarkOnly
   const renderSend = (props: ButtonProps & { ignoreLoading?: boolean; placeholder?: string } = {}) => {
     const { ignoreLoading, placeholder, ...btnProps } = props;
 
-    // 使用类型转换来确保类型正确
     return (
       <Sender
         className={styles.sender}
@@ -228,7 +227,7 @@ const CustomChat: React.FC<CustomChatProps> = ({ handleSendMessage, showMarkOnly
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-semibold">{t('chat.test')}</h2>
           <div>
-            <button onClick={handleFullscreenToggle} aria-label="Toggle Fullscreen">
+            <button title="fullScreen" onClick={handleFullscreenToggle} aria-label="Toggle Fullscreen">
               {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
             </button>
           </div>

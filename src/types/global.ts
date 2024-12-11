@@ -39,3 +39,11 @@ export interface ResultItem {
   rerank_score?: number;
   score: number;
 }
+
+export interface ListItem {
+  title?: string;
+  label?: string;
+  name?: string;
+  id?: string | number;
+  value?: string | number;
+}

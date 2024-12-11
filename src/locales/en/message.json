@@ -61,7 +61,8 @@
     "viewDetails": "View Details",
     "api": "API",
     "open": "Open",
-    "close": "Close"
+    "close": "Close",
+    "version": "Version"
   },
   "knowledge": {
     "menu": "Knowledge",

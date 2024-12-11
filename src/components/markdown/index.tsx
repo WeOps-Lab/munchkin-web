@@ -10,9 +10,10 @@ import styles from './index.module.less';
 
 interface MarkdownRendererProps {
   filePath: string;
+  fileName: string;
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ filePath }) => {
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ filePath, fileName }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [content, setContent] = useState<string>('');
 
@@ -21,7 +22,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ filePath }) => {
   useEffect(() => {
     const fetchMarkdown = async () => {
       try {
-        const response = await fetch(`/api/markdown?filePath=${filePath}_${locale === 'en' ? 'en' : 'zh'}.md`);
+        const response = await fetch(`/api/markdown?filePath=${filePath}${filePath.endsWith('/') ? '' : '/'}${locale === 'en' ? 'en' : 'zh'}/${fileName}.md`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

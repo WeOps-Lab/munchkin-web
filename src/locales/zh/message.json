@@ -61,7 +61,8 @@
     "viewDetails": "查看详情",
     "api": "接口",
     "open": "开启",
-    "close": "关闭"
+    "close": "关闭",
+    "version": "版本"
   },
   "knowledge": {
     "menu": "知识",

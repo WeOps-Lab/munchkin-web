@@ -190,6 +190,7 @@ const StudioSettingsPage: React.FC = () => {
         const payload = {
           sender: "user",
           message: message?.content || '',
+          port: nodePort || 5005,
         };
         const response = await fetch('/api/webhook', {
           method: 'POST',
@@ -249,7 +250,7 @@ const StudioSettingsPage: React.FC = () => {
               </Tag>
               <Dropdown overlay={menu} trigger={['click']}>
                 <Button icon={<DownOutlined />} type="primary">
-                  {t('common.publish')}
+                  {t('common.settings')}
                 </Button>
               </Dropdown>
             </div>
@@ -361,71 +362,67 @@ const StudioSettingsPage: React.FC = () => {
                         );
                       })}
                     </div>
-                    {allChannelsDisabled && (<div className="mt-3">
+                    {allChannelsDisabled ? (<div className="mt-3">
                       {t('studio.settings.noChannelHasBeenOpened')}
                       <a onClick={handleConfigureChannels} style={{ color: 'var(--color-primary)', cursor: 'pointer' }}>
                         {t('studio.settings.clickHere')}
                       </a>
                       {t('studio.settings.toConfigureChannels')}
+                    </div>) : (<div className='mt-5'>
+                      <div className="mb-5">
+                        <div className="flex items-center justify-between">
+                          <span className='text-sm'>{t('studio.settings.domain')}</span>
+                          <Switch size="small" checked={isDomainEnabled} onChange={(checked) => {
+                            setIsDomainEnabled(checked);
+                            if (!checked) {
+                              setBotDomain('');
+                              setEnableSsl(false);
+                            }
+                          }} />
+                        </div>
+                        {isDomainEnabled && (
+                          <>
+                            <Form.Item className='mt-4 mb-0'>
+                              <div className='w-full flex items-center'>
+                                <Input
+                                  className='flex-1 mr-3'
+                                  placeholder={`${t('common.inputMsg')} ${t('studio.settings.domain')}`}
+                                  value={botDomain}
+                                  onChange={(e) => setBotDomain(e.target.value)}
+                                />
+                                <Checkbox
+                                  checked={enableSsl}
+                                  onChange={(e) => setEnableSsl(e.target.checked)}
+                                >
+                                  {t('studio.settings.enableSsl')}
+                                </Checkbox>
+                              </div>
+                            </Form.Item>
+                          </>
+                        )}
+                      </div>
+                      <div className="border-t py-4">
+                        <div className="flex items-center justify-between">
+                          <span className='text-sm'>{t('studio.settings.portMapping')}</span>
+                          <Switch size="small" checked={isPortMappingEnabled} onChange={(checked) => {
+                            setIsPortMappingEnabled(checked);
+                            if (!checked) {
+                              setNodePort(5005);
+                            }
+                          }} />
+                        </div>
+                        {isPortMappingEnabled && (
+                          <Form.Item className="mt-4 mb-0">
+                            <Input
+                              placeholder={`${t('common.inputMsg')} ${t('studio.settings.portMapping')}`}
+                              value={nodePort}
+                              onChange={(e) => setNodePort(Number(e.target.value))}
+                            />
+                          </Form.Item>
+                        )}
+                      </div>
                     </div>)}
                   </Form.Item>
-                </div>
-              </div>
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold mb-2">{t('studio.settings.title')}</h2>
-                <div className="px-4 pt-4 border rounded-md shadow-sm">
-                  <div className="mb-5">
-                    <div className="flex items-center justify-between">
-                      <span className='text-sm'>{t('studio.settings.domain')}</span>
-                      <Switch size="small" checked={isDomainEnabled} onChange={(checked) => {
-                        setIsDomainEnabled(checked);
-                        if (!checked) {
-                          setBotDomain('');
-                          setEnableSsl(false);
-                        }
-                      }} />
-                    </div>
-                    {isDomainEnabled && (
-                      <>
-                        <Form.Item className='mt-4 mb-0'>
-                          <div className='w-full flex items-center'>
-                            <Input
-                              className='flex-1 mr-3'
-                              placeholder={`${t('common.inputMsg')} ${t('studio.settings.domain')}`}
-                              value={botDomain}
-                              onChange={(e) => setBotDomain(e.target.value)}
-                            />
-                            <Checkbox
-                              checked={enableSsl}
-                              onChange={(e) => setEnableSsl(e.target.checked)}
-                            >
-                              {t('studio.settings.enableSsl')}
-                            </Checkbox>
-                          </div>
-                        </Form.Item>
-                      </>
-                    )}
-                  </div>
-                  <div className="border-t py-4">
-                    <div className="flex items-center justify-between">
-                      <span className='text-sm'>{t('studio.settings.portMapping')}</span>
-                      <Switch size="small" checked={isPortMappingEnabled} onChange={(checked) => {
-                        setIsPortMappingEnabled(checked);
-                        if (!checked) {
-                          setNodePort(5005);
-                        }
-                      }} />
-                    </div>
-                    {isPortMappingEnabled && (
-                      <Form.Item className="mt-4 mb-0">
-                        <Input
-                          placeholder={`${t('common.inputMsg')} ${t('studio.settings.portMapping')}`}
-                          value={nodePort}
-                          onChange={(e) => setNodePort(Number(e.target.value))}
-                        />
-                      </Form.Item>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>

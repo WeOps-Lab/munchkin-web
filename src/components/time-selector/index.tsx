@@ -3,7 +3,7 @@ import Icon from '@/components/icon';
 import { Select, Button, DatePicker } from 'antd';
 import { CalendarOutlined, ReloadOutlined } from '@ant-design/icons';
 import type { SelectProps, TimeRangePickerProps } from 'antd';
-import { FREQUENCY_LIST, TIME_RANGE_LIST } from '@/constants/shared';
+import { useFrequencyList, useTimeRangeList } from '@/constants/shared';
 import timeSelectorStyle from './index.module.less';
 import dayjs, { Dayjs } from 'dayjs';
 import { ListItem } from '@/types/global';
@@ -47,6 +47,8 @@ const TimeSelector: React.FC<TimeSelectorProps> = ({
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const selectRef = useRef<HTMLDivElement>(null);
   const [times, setTimes] = useState<[Dayjs, Dayjs] | null>(defaultValue.timesValue);
+  const TIME_RANGE_LIST = useTimeRangeList();
+  const FREQUENCY_LIST = useFrequencyList();
 
   useEffect(() => {
     if (defaultValue.timeRangeValue !== timeRange) {

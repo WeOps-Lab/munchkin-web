@@ -113,11 +113,6 @@ const StudioLogsPage: React.FC = () => {
     fetchLogs(searchText, dates, newPagination.current, newPagination.pageSize, selectedChannels);
   };
 
-  const handlePageSizeChange = (current: number, size: number) => {
-    setPagination({ current, pageSize: size });
-    fetchLogs(searchText, dates, current, size, selectedChannels);
-  };
-
   const handleRefresh = () => {
     fetchLogs(searchText, dates, pagination.current, pagination.pageSize, selectedChannels);
   };
@@ -230,11 +225,9 @@ const StudioLogsPage: React.FC = () => {
           <Pagination
             total={total}
             showSizeChanger
-            hideOnSinglePage
             current={pagination.current}
             pageSize={pagination.pageSize}
             onChange={handleTableChange}
-            onShowSizeChange={handlePageSizeChange}
           />
         )}
       </div>

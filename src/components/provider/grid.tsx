@@ -143,7 +143,7 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
                     <Icon type="shezhi" className="text-base" />
                   </button>
                 </PermissionWrapper>
-                
+
               </div>
               <div className="absolute bottom-0 right-0 rounded-lg z-20">
                 <span className={`${styles.iconTriangle} ${model.enabled ? styles.enabled : styles.disabled}`}>
@@ -163,7 +163,7 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
         onCancel={handleCancel}
         confirmLoading={modalLoading}
       >
-        <Form form={form} layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+        <Form form={form} layout="vertical">
           <Form.Item
             name="url"
             label={t('provider.form.url')}
@@ -177,10 +177,10 @@ const ProviderGrid: React.FC<ProviderGridProps> = ({ models, filterType, loading
               label={t('provider.form.key')}
               rules={[{ required: true, message: `${t('common.input')} ${t('provider.form.key')}` }]}
             >
-              <AntdInput.Password 
-                visibilityToggle={false} 
-                onCopy={(e) => e.preventDefault()} 
-                onCut={(e) => e.preventDefault()} 
+              <AntdInput.Password
+                visibilityToggle={false}
+                onCopy={(e) => e.preventDefault()}
+                onCut={(e) => e.preventDefault()}
               />
             </Form.Item>
           )}

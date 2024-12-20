@@ -25,12 +25,6 @@ export interface ModifyKnowledgeModalProps {
   isTraining?: boolean;
 }
 
-export interface groupProps {
-  id: string,
-  name: string,
-  path: string
-}
-
 export interface PreviewData {
   id: number;
   content: string;

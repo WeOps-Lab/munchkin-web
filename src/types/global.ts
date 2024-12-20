@@ -47,3 +47,17 @@ export interface ListItem {
   id?: string | number;
   value?: string | number;
 }
+
+export interface groupProps {
+  id: string,
+  name: string,
+  path: string
+}
+
+export interface ColumnItem {
+  title: string;
+  dataIndex: string;
+  key: string;
+  render?: (_: unknown, record: any) => JSX.Element;
+  [key: string]: unknown;
+}

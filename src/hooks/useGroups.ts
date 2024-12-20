@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
-import { groupProps } from '@/types/knowledge';
+import { groupProps } from '@/types/global';
 
 const useGroups = () => {
   const { t } = useTranslation();

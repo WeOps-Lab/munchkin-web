@@ -25,6 +25,12 @@ const ChannelPage: React.FC = () => {
   const searchParams = useSearchParams();
   const botId = searchParams.get('id');
 
+  const IconMap: any = {
+    enterprise_wechat: 'qiwei',
+    wechat_official_account: 'gongzhonghao',
+    ding_talk: 'dingding1',
+    web: 'wangye'
+  }
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -33,7 +39,7 @@ const ChannelPage: React.FC = () => {
         id: channel.id,
         name: channel.name,
         enabled: channel.enabled,
-        icon: channel.channel_type === 'enterprise_wechat' ? 'qiwei' : channel.channel_type === 'ding_talk' ? 'dingding1' : 'wangye',
+        icon: IconMap[channel.channel_type] || 'wangye',
         channel_config: channel.channel_config,
       }));
       setApps(appsData);
@@ -106,7 +112,7 @@ const ChannelPage: React.FC = () => {
   const sensitiveKeys = ['client_secret', 'aes_key', 'secret', 'token'];
 
   return (
-    <div className="flex flex-wrap justify-around">
+    <div className="flex flex-wrap justify-start">
       {loading ? (
         <Spin size="large" className="m-auto" />
       ) : (
@@ -159,7 +165,7 @@ const ChannelPage: React.FC = () => {
             <Spin size="large" className="m-auto" />
           </div>
         ) : (
-          <Form layout="horizontal" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} style={{ padding: '16px 0' }}>
+          <Form layout="vertical" style={{ padding: '16px 0' }}>
             {Object.keys(fields).map((key) => (
               <Form.Item key={key} label={key.replace(/_/g, ' ')}>
                 {sensitiveKeys.some(sensitiveKey => key.toLowerCase().includes(sensitiveKey)) ? (

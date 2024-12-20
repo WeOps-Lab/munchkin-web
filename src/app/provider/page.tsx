@@ -5,7 +5,7 @@ import { Segmented, message } from 'antd';
 import useApiClient from '@/utils/request';
 import ProviderGrid from '@/components/provider/grid';
 import { Model, TabConfig } from '@/types/provider';
-import styles from './index.module.less';
+import styles from '@/styles/common.less';
 import { useTranslation } from '@/utils/i18n';
 
 const tabConfig: TabConfig[] = [
@@ -49,13 +49,13 @@ const ProviderPage: React.FC = () => {
   };
 
   return (
-    <div className={`px-12 w-full min-h-screen ${styles.providerContainer}`}>
+    <div className={`px-12 w-full min-h-screen ${styles.segmented}`}>
       <Segmented
         options={tabConfig.map(tab => ({ label: tab.label, value: tab.key }))}
         value={activeTab}
         onChange={handleSegmentedChange}
         className="mb-4"
-      /> 
+      />
       {tabConfig.map(tab => (
         <div key={tab.key} style={{ display: activeTab === tab.key ? 'block' : 'none' }}>
           <ProviderGrid models={models} filterType={tab.type} loading={loading} setModels={setModels} />

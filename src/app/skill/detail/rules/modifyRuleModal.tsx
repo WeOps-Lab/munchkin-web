@@ -146,9 +146,7 @@ const ModifyRuleModal: React.FC<ModifyRuleModalProps> = ({ visible, onCancel, on
     >
       <Form
         form={form}
-        layout="horizontal"
-        labelCol={{ flex: '0 0 108px' }}
-        wrapperCol={{ flex: '1' }}
+        layout="vertical"
         initialValues={{
           conditionsOperator: 'or',
           conditions: [{ obj: 'user', type: 'ding_talk', operator: 'include', value: '' }],

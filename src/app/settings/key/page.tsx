@@ -1,14 +1,11 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Space, Popconfirm, message, Tooltip, Spin, Select } from 'antd';
 import { CopyOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import OperateModal from '@/components/operate-modal';
+import TopSection from '@/components/top-section';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
-
-interface ConfigurationsModalProps {
-  visible: boolean;
-  onClose: () => void;
-}
 
 interface TableData {
   id: number;
@@ -20,7 +17,7 @@ interface TableData {
 
 const initialDataSource: Array<TableData> = [];
 
-const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onClose }) => {
+const ScrectKeyPage: React.FC = () => {
   const { t } = useTranslation();
   const { get, post, del } = useApiClient();
   const [dataSource, setDataSource] = useState(initialDataSource);
@@ -60,10 +57,8 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
       }
     };
 
-    if (visible) {
-      fetchGroups().then((groupData) => fetchData(groupData));
-    }
-  }, [get, visible]);
+    fetchGroups().then((groupData) => fetchData(groupData));
+  }, [get]);
 
   const handleDelete = async (key: number) => {
     try {
@@ -78,7 +73,7 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
 
   const handleCopy = (key: string) => {
     navigator.clipboard.writeText(key);
-    message.success(t('secret.copied'));
+    message.success(t('settings.secret.copied'));
   };
 
   const handleCreate = () => {
@@ -111,7 +106,7 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
 
   const columns = [
     {
-      title: t('secret.key'),
+      title: t('settings.secret.key'),
       dataIndex: 'api_secret',
       key: 'api_secret',
       ellipsis: {
@@ -125,13 +120,13 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
       width: 200,
     },
     {
-      title: t('secret.createdAt'),
+      title: t('settings.secret.createdAt'),
       dataIndex: 'created_at',
       key: 'created_at',
       width: 150,
     },
     {
-      title: t('secret.group'),
+      title: t('settings.secret.group'),
       dataIndex: 'team_name',
       key: 'team_name',
       width: 150,
@@ -148,7 +143,7 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
             onClick={() => handleCopy(record.api_secret)}
           ></Button>
           <Popconfirm
-            title={t('secret.deleteConfirm')}
+            title={t('settings.secret.deleteConfirm')}
             onConfirm={() => handleDelete(record.id)}
             okText="Yes"
             cancelText="No"
@@ -161,41 +156,45 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
   ];
 
   return (
-    <OperateModal
-      width={800}
-      visible={visible}
-      title={t('secret.title')}
-      subTitle={t('secret.subTitle')}
-      footer={null}
-      onCancel={onClose}
-    >
-      <div style={{ overflowX: 'auto' }}>
+    <div>
+      <div className="mb-4">
+        <TopSection
+          title={t('settings.secret.title')}
+          content={t('settings.secret.content')}
+        />
+      </div>
+      <section
+        className="bg-[var(--color-bg)] p-4 rounded-md"
+        style={{ height: 'calc(100vh - 250px)' }}
+      >
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
             <Spin />
           </div>
         ) : (
-          <Table
-            dataSource={dataSource}
-            columns={columns}
-            pagination={false}
-            rowKey="id"
-          />
+          <>
+            <div className="flex justify-end mb-4">
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={handleCreate}
+                disabled={creating || loading}
+              >
+                {creating ? <Spin /> : t('settings.secret.create')}
+              </Button>
+            </div>
+            <Table
+              dataSource={dataSource}
+              columns={columns}
+              pagination={false}
+              rowKey="id"
+            />
+          </>
         )}
-      </div>
-      <div style={{ textAlign: 'right', marginTop: 16 }}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreate}
-          disabled={creating || loading}
-        >
-          {creating ? <Spin /> : t('secret.create')}
-        </Button>
-      </div>
+      </section>
       <OperateModal
         visible={groupVisible}
-        title={t('secret.selectGroup')}
+        title={t('settings.secret.selectGroup')}
         centered
         onCancel={() => setGroupVisible(false)}
         onOk={handleGroupSelect}
@@ -212,8 +211,9 @@ const ConfigurationsModal: React.FC<ConfigurationsModalProps> = ({ visible, onCl
           ))}
         </Select>
       </OperateModal>
-    </OperateModal>
+    </div>
   );
 };
 
-export default ConfigurationsModal;
+export default ScrectKeyPage;
+

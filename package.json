@@ -25,6 +25,7 @@
     "github-markdown-css": "^5.7.0",
     "highlight.js": "^11.10.0",
     "intl-messageformat": "^10.5.14",
+    "js-cookie": "^3.0.5",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
     "lodash": "^4.17.21",
@@ -42,6 +43,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.13",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^20",

@@ -11,7 +11,7 @@ import TaskProgress from './taskProgress'
 export interface MenuItem {
   label: string;
   path: string;
-  icon?: string;
+  icon: string;
 }
 
 interface SideMenuProps {
@@ -22,12 +22,12 @@ interface SideMenuProps {
   onBackButtonClick?: () => void;
 }
 
-const SideMenu: React.FC<SideMenuProps> = ({ 
-  menuItems, 
-  children, 
+const SideMenu: React.FC<SideMenuProps> = ({
+  menuItems,
+  children,
   showBackButton = true,
   showProgress = false,
-  onBackButtonClick 
+  onBackButtonClick
 }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();

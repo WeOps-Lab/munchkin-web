@@ -62,7 +62,25 @@
     "api": "接口",
     "open": "开启",
     "close": "关闭",
-    "version": "版本"
+    "version": "版本",
+    "actions": "操作",
+    "group": "分组",
+    "clear": "清空",
+    "selectAll": "全选",
+    "selected": "已选",
+    "items": "项",
+    "timeSelector": {
+      "15Minutes": "最近15分钟",
+      "30Minutes": "最近30分钟",
+      "1Hour": "最近1小时",
+      "6Hours": "最近6小时",
+      "12Hours": "最近12小时",
+      "1Day": "最近1天",
+      "7Days": "最近7天",
+      "30Days": "最近30天",
+      "custom": "自定义",
+      "off": "关闭"
+    }
   },
   "knowledge": {
     "menu": "知识",
@@ -167,18 +185,6 @@
       "title": "设置",
       "description": "支持修改知识库的基本信息和相关配置。"
     }
-  },
-  "secret": {
-    "menu": "API密钥",
-    "key": "密钥",
-    "createdAt": "创建时间",
-    "title": "API密钥",
-    "subTitle": "为了防止API滥用，请保护你的API密钥。",
-    "create": "创建新密钥",
-    "selectGroup": "选择分组",
-    "group": "分组",
-    "copied": "已复制到粘贴板",
-    "deleteConfirm": "你确定要删除选中的密钥吗？"
   },
   "skill": {
     "menu": "技能",
@@ -324,5 +330,51 @@
     "removeAnnotationConfirm": "Are you sure you want to remove this annotation?",
     "noKnowledge": "No knowledge available.",
     "knowledgeDetails": "Knowledge Details"
+  },
+  "settings": {
+    "menu": "Settings",
+    "manageQuota": {
+      "title": "Manage Quota",
+      "content": "The administrator can set different quotas for different roles.",
+      "name": "NAME",
+      "knowledgeBase": "KNOWLEDGE BASE",
+      "skill": "SKILL",
+      "bot": "BOT",
+      "form": {
+        "add": "Add Quota",
+        "edit": "Edit Quota",
+        "name": "Name",
+        "target": "Target",
+        "rule": "Rule",
+        "knowledgeBase": "Knowledge Bases",
+        "skill": "Skills",
+        "bot": "Bots",
+        "shared": "Shared Quota",
+        "sharedTooltip": "Quota shared among individuals in the organization.",
+        "uniform": "Uniform Quota",
+        "uniformTooltip": "Quota uniformly applied to each individual in the organization."
+      }
+    },
+    "myQuota": {
+      "title": "My Quota",
+      "content": "Show my total quota usage. Please contact the administrator to apply for an increase when the quota is insufficient.",
+      "usage": "Quota Usage",
+      "knowledgeBase": "Knowledge Base",
+      "skills": "Skills",
+      "bots": "Bots",
+      "shared": "Shared Quota",
+      "uniform": "Uniform Quota"
+    },
+    "secret": {
+      "key": "密钥",
+      "createdAt": "创建时间",
+      "title": "API密钥",
+      "subTitle": "为了防止API滥用，请保护你的API密钥。",
+      "create": "创建新密钥",
+      "selectGroup": "选择分组",
+      "group": "分组",
+      "copied": "已复制到粘贴板",
+      "deleteConfirm": "你确定要删除选中的密钥吗？"
+    }
   }
 }

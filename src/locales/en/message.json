@@ -62,7 +62,25 @@
     "api": "API",
     "open": "Open",
     "close": "Close",
-    "version": "Version"
+    "version": "Version",
+    "actions": "ACTIONS",
+    "group": "Group",
+    "clear": "Clear",
+    "selectAll": "Select All",
+    "selected": "Selected",
+    "items": "Items",
+    "timeSelector": {
+      "15Minutes": "The past 15 minutes",
+      "30Minutes": "The past 30 minutes",
+      "1Hour": "The past 1 hour",
+      "6Hours": "The past 6 hours",
+      "12Hours": "The past 12 hours",
+      "1Day": "The past 1 day",
+      "7Days": "The past 7 days",
+      "30Days": "The past 30 days",
+      "custom": "Custom",
+      "off": "off"
+    }
   },
   "knowledge": {
     "menu": "Knowledge",
@@ -167,18 +185,6 @@
       "title": "Settings",
       "description": "Here you can modify the properties and working methods of the Knowledge."
     }
-  },
-  "secret": {
-    "menu": "API Secret Key",
-    "key": "Secret Key",
-    "createdAt": "Created",
-    "title": "API Secret Keys",
-    "subTitle": "To prevent API abuse, protect your API Key.",
-    "create": "Create new Secret key",
-    "selectGroup": "Select Group",
-    "group": "Group",
-    "copied": "Copied to clipboard",
-    "deleteConfirm": "Are you sure you want to delete this secret key?"
   },
   "skill": {
     "menu": "Skill",
@@ -348,5 +354,51 @@
     "removeAnnotationConfirm": "Are you sure you want to remove this annotation?",
     "noKnowledge": "No knowledge available.",
     "knowledgeDetails": "Knowledge Details"
+  },
+  "settings": {
+    "menu": "Settings",
+    "manageQuota": {
+      "title": "Manage Quota",
+      "content": "The administrator can set different quotas for different roles.",
+      "name": "NAME",
+      "knowledgeBase": "KNOWLEDGE BASE",
+      "skill": "SKILL",
+      "bot": "BOT",
+      "form": {
+        "add": "Add Quota",
+        "edit": "Edit Quota",
+        "name": "Name",
+        "target": "Target",
+        "rule": "Rule",
+        "knowledgeBase": "Knowledge Bases",
+        "skill": "Skills",
+        "bot": "Bots",
+        "shared": "Shared Quota",
+        "sharedTooltip": "Quota shared among individuals in the organization.",
+        "uniform": "Uniform Quota",
+        "uniformTooltip": "Quota uniformly applied to each individual in the organization."
+      }
+    },
+    "myQuota": {
+      "title": "My Quota",
+      "content": "Show my total quota usage. Please contact the administrator to apply for an increase when the quota is insufficient.",
+      "usage": "Quota Usage",
+      "knowledgeBase": "Knowledge Base",
+      "skills": "Skills",
+      "bots": "Bots",
+      "shared": "Shared Quota",
+      "uniform": "Uniform Quota"
+    },
+    "secret": {
+      "key": "Secret Key",
+      "createdAt": "Created",
+      "title": "API Secret Keys",
+      "content": "To prevent API abuse, protect your API Key.",
+      "create": "Create new Secret key",
+      "selectGroup": "Select Group",
+      "group": "Group",
+      "copied": "Copied to clipboard",
+      "deleteConfirm": "Are you sure you want to delete this secret key?"
+    }
   }
 }

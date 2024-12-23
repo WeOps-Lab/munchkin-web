@@ -29,7 +29,7 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange, initial
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
       'text/plain', // .txt
       'text/markdown',  // .md (standard)
-      'text/x-markdown',// .md (non-standard)
+      'text/x-markdown', // .md (non-standard)
       'text/csv' // .csv
     ];
     const isAllowedType = allowedTypes.includes(file.type);

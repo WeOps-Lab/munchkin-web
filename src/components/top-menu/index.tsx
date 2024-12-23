@@ -12,8 +12,8 @@ const TopMenu = () => {
 
   const menuItems = [
     { label: t('studio.menu'), icon: 'jiqiren2', path: '/studio' },
-    { label: t('knowledge.menu'), icon: 'zhishiku1', path: '/knowledge' },
     { label: t('skill.menu'), icon: 'weibiaoti3', path: '/skill' },
+    { label: t('knowledge.menu'), icon: 'zhishiku1', path: '/knowledge' },
     { label: t('provider.menu'), icon: 'moxing2', path: '/provider' },
     { label: t('settings.menu'), icon: 'moxing2', path: '/settings' },
   ];

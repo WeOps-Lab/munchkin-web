@@ -54,6 +54,7 @@ const CustomTable = <T extends object>({
 
   const parseCalcY = (value: string): number => {
     console.log('parseCalcY');
+    if (!pagination) return 0;
     const vh = window.innerHeight;
     let total = 0;
 

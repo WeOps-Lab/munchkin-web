@@ -28,6 +28,8 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange, initial
       'application/pdf', // .pdf
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
       'text/plain', // .txt
+      'text/markdown',  // .md (standard)
+      'text/x-markdown', // .md (non-standard)
       'text/csv' // .csv
     ];
     const isAllowedType = allowedTypes.includes(file.type);
@@ -69,7 +71,7 @@ const LocalFileUpload: React.FC<LocalFileUploadProps> = ({ onFileChange, initial
         </p>
         <p className="ant-upload-text">{t('common.uploadText')}</p>
         <p className="ant-upload-hint">
-          {t('common.supports')}: .docx .pdf .xlsx .txt .csv...
+          {t('common.supports')}: .docx .pdf .xlsx .txt .csv, .md...
         </p>
       </Dragger>
     </div>

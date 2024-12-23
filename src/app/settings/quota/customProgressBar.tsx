@@ -4,10 +4,13 @@ import { QuotaData } from '@/types/settings'
 
 const CustomProgressBar: React.FC<QuotaData> = ({ label, usage, total, unit }) => {
   const [progress, setProgress] = useState(0);
+  const [isOverLimit, setIsOverLimit] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setProgress((usage / total) * 100);
+      const calculatedProgress = (usage / total) * 100;
+      setProgress(calculatedProgress);
+      setIsOverLimit(calculatedProgress > 100);
     }, 100);
 
     return () => clearTimeout(timeout);
@@ -22,7 +25,7 @@ const CustomProgressBar: React.FC<QuotaData> = ({ label, usage, total, unit }) =
         </div>
       </div>
       <div className={`flex-1 ${styles.progressBar}`}>
-        <div className={styles.progress} style={{ width: `${progress}%` }}>
+        <div className={`${styles.progress} ${isOverLimit ? styles.overLimit : ''}`} style={{ width: `${progress}%` }}>
         </div>
       </div>
     </div>

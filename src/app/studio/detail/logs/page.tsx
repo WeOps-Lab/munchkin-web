@@ -124,7 +124,6 @@ const StudioLogsPage: React.FC = () => {
   };
 
   const handleDateChange = (value: number[]) => {
-    console.log('value', value);
     setDates(value);
     setSelectedChannels([]);
     setPagination({ ...pagination, current: 1 });

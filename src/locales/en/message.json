@@ -69,6 +69,7 @@
     "selectAll": "Select All",
     "selected": "Selected",
     "items": "Items",
+    "theme": "Theme",
     "timeSelector": {
       "15Minutes": "The past 15 minutes",
       "30Minutes": "The past 30 minutes",

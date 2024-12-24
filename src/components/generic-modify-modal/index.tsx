@@ -12,12 +12,9 @@ interface GenericModifyModalProps {
   onConfirm: (values: any) => void;
   initialValues: any;
   formType: string;
-  initForm?: (form: any, groups: any) => void;
-  groups: any[];
-  loading: boolean;
 }
 
-const GenericModifyModal: React.FC<GenericModifyModalProps> = ({ visible, onCancel, onConfirm, initialValues, formType, initForm, groups = [], loading }) => { // 确保 groups 默认为 []
+const GenericModifyModal: React.FC<GenericModifyModalProps> = ({ visible, onCancel, onConfirm, initialValues, formType }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -29,11 +26,8 @@ const GenericModifyModal: React.FC<GenericModifyModalProps> = ({ visible, onCanc
       form.setFieldsValue(initialValues);
     } else {
       form.resetFields();
-      if (initForm) {
-        initForm(form, groups);
-      }
     }
-  }, [initialValues, form, groups, visible, initForm]);
+  }, [initialValues, form, visible]);
 
   const handleConfirm = async () => {
     try {
@@ -57,7 +51,7 @@ const GenericModifyModal: React.FC<GenericModifyModalProps> = ({ visible, onCanc
       onOk={handleConfirm}
       confirmLoading={confirmLoading}
     >
-      <CommonForm form={form} loading={loading} groups={groups} formType={formType} visible={visible} />
+      <CommonForm form={form} formType={formType} visible={visible} />
     </OperateModal>
   );
 };

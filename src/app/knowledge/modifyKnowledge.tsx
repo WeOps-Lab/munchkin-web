@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
-import useGroups from '@/hooks/useGroups';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import OperateModal from '@/components/operate-modal';
@@ -10,7 +9,6 @@ import { ModifyKnowledgeModalProps, ModelOption } from '@/types/knowledge';
 const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, onCancel, onConfirm, initialValues, isTraining }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const { groups, loading } = useGroups();
   const { get } = useApiClient();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
@@ -41,15 +39,12 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
     } else {
       form.resetFields();
       const defaultValues: any = {};
-      if (groups.length > 0) {
-        defaultValues.team = [groups[0].id];
-      }
       if (modelOptions.length > 0) {
         defaultValues.embed_model = modelOptions.filter(option => option.enabled)?.[0]?.id;
       }
       form.setFieldsValue(defaultValues);
     }
-  }, [initialValues, form, groups, modelOptions, visible]);
+  }, [initialValues, form, modelOptions, visible]);
 
   const handleConfirm = async () => {
     try {
@@ -99,8 +94,6 @@ const ModifyKnowledgeModal: React.FC<ModifyKnowledgeModalProps> = ({ visible, on
       >
         <CommonForm
           form={form}
-          loading={loading}
-          groups={groups}
           modelOptions={modelOptions}
           isTraining={isTraining}
           formType="knowledge"

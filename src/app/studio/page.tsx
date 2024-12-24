@@ -8,12 +8,10 @@ import { Studio } from '@/types/studio';
 import { message, Modal } from 'antd';
 import { useTranslation } from '@/utils/i18n';
 import useApiClient from '@/utils/request';
-import useGroups from '@/hooks/useGroups';
 
 const StudioPage: React.FC = () => {
   const { t } = useTranslation();
   const { del } = useApiClient();
-  const { groups, loading } = useGroups();
 
   const beforeDelete = (studio: Studio, deleteCallback: () => void) => {
     const onDelete = async () => {
@@ -40,12 +38,6 @@ const StudioPage: React.FC = () => {
     }
   };
 
-  const initStudioForm = (form: any, groups: any) => {
-    if (groups.length > 0) {
-      form.setFieldsValue({ team: [groups[0].id] });
-    }
-  };
-
   return (
     <EntityList<Studio>
       endpoint="/bot_mgmt/bot/"
@@ -54,9 +46,6 @@ const StudioPage: React.FC = () => {
         <GenericModifyModal
           {...props}
           formType="studio"
-          initForm={initStudioForm}
-          groups={groups}
-          loading={loading}
         />
       )}
       itemType="studios"

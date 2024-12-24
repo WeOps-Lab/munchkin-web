@@ -5,6 +5,7 @@ import { Input, message, Spin, Modal } from 'antd';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import styles from '@/styles/common.less';
+import Cookies from 'js-cookie';
 
 interface EntityListProps<T> {
   endpoint: string;
@@ -45,13 +46,18 @@ const EntityList = <T,>({ endpoint, CardComponent, ModifyModalComponent, itemTyp
   };
 
   const handleAddItem = async (values: T) => {
+    const team = Cookies.get('current_team') || null;
+    const params = {
+      ...values,
+      team: [team]
+    }
     try {
       if (editingItem) {
-        await patch(`${endpoint}${(editingItem as any).id}/`, values);
+        await patch(`${endpoint}${(editingItem as any).id}/`, params);
         fetchItems();
         message.success(t('common.updateSuccess'));
       } else {
-        await post(endpoint, values);
+        await post(endpoint, params);
         fetchItems();
         message.success(t('common.addSuccess'));
       }

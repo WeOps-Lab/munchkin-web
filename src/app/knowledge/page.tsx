@@ -10,6 +10,7 @@ import knowledgeStyle from './index.module.less';
 import useApiClient from '@/utils/request';
 import { useTranslation } from '@/utils/i18n';
 import { getIconTypeByIndex } from '@/utils/knowledgeBaseUtils';
+import Cookies from 'js-cookie';
 
 const KnowledgePage = () => {
   const router = useRouter();
@@ -42,13 +43,18 @@ const KnowledgePage = () => {
   };
 
   const handleAddKnowledge = async (values: KnowledgeValues) => {
+    const team = Cookies.get('current_team') || null;
+    const params = {
+      ...values,
+      team: [team]
+    }
     try {
       if (editingCard) {
-        await patch(`/knowledge_mgmt/knowledge_base/${editingCard.id}/`, values);
+        await patch(`/knowledge_mgmt/knowledge_base/${editingCard.id}/`, params);
         setCards(cards.map(card => card.id === editingCard?.id ? { ...card, ...values } : card));
         message.success(t('common.updateSuccess'));
       } else {
-        const newCard = await post('/knowledge_mgmt/knowledge_base/', values);
+        const newCard = await post('/knowledge_mgmt/knowledge_base/', params);
         setCards([newCard, ...cards]);
         message.success(t('common.addSuccess'));
       }
